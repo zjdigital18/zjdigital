@@ -914,7 +914,7 @@ export default function Home() {
       /* Hero */
       #hero { padding: 120px 20px 60px; min-height: 100vh; }
       .hero-content { padding: 32px 16px; }
-      .hero-scroll-layer { display: none; }
+      .hero-scroll-layer { opacity: 0.5; transform: scale(0.8); }
       .social-stats { display: none; }
       /* Services */
       .services-header { flex-direction: column; align-items: flex-start; }
@@ -960,7 +960,7 @@ export default function Home() {
       .hero-tagline { font-size: 14px; margin-top: 14px; }
       .hero-buttons { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
       .btn-hero { width: 100% !important; padding: 18px 24px !important; font-size: 15px !important; text-align: center; }
-      .hero-scroll-layer { display: none; }
+      .hero-scroll-layer { opacity: 0.5; transform: scale(0.8); }
       .social-stats { display: none; }
       /* Marquee */
       .marquee-item { font-size: 13px; padding: 0 20px; }
@@ -1103,7 +1103,7 @@ export default function Home() {
 
       {/* APOLLO NAV */}
       <nav className={scrollY > 60 ? "scrolled" : ""}>
-        <button onClick={() => goTo("home")} className="nav-brand" style={{ background:"none", border:"none", cursor:"pointer" }}>ZJ Digital</button>
+        <button onClick={() => goTo("home")} className="nav-brand" style={{ border:"none", cursor:"pointer", padding:0 }}>ZJ Digital</button>
         <div className="nav-links">
           <button onClick={() => goTo("home")} className={`nav-link${currentPage === "home" ? " active" : ""}`}>Home</button>
           <button onClick={() => goTo("makeovers")} className={`nav-link${currentPage === "makeovers" ? " active" : ""}`}>Makeovers</button>
@@ -1399,58 +1399,6 @@ export default function Home() {
               <h3>Turn Your Content Into a Growth Machine</h3>
               <p>Join 500+ brands that already look premium online. Tap to get started.</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* MAKEOVER CTA */}
-      <section className="makeover-cta-section zj-animate">
-        <div className="section-inner">
-          <div className="makeover-cta-inner">
-            {/* Teaser preview strip */}
-            <div className="makeover-preview-strip">
-              {makeoverPairs.slice(0,6).map((p) => (
-                <div className="makeover-preview-thumb" key={p.id}>
-                  <img src={p.before} alt="before" className="thumb-before" />
-                  <img src={p.after}  alt="after"  className="thumb-after"  />
-                </div>
-              ))}
-            </div>
-            <div className="makeover-cta-text zj-animate zj-delay-1">
-              <div className="section-chip" style={{ margin:"0 auto 20px" }}>✦ Real Transformations</div>
-              <h2 className="section-title" style={{ textAlign:"center" }}>
-                See What We Did For<br /><em>Brands Like Yours</em>
-              </h2>
-              <p className="makeover-cta-sub">
-                These are real AI visual makeovers — same brand, same product, completely transformed. Scroll through and see the difference premium visuals make.
-              </p>
-              <button className="makeover-open-btn" onClick={() => goTo("makeovers")}>
-                🎨 Explore All Makeovers
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* MAKEOVER SECTION */}
-      <section id="makeovers" ref={makeoverRef} style={{ background:"var(--bg2)", padding:"80px 40px" }}>
-        <div className="section-inner">
-          <div className="zj-animate" style={{ textAlign:"center", marginBottom:56 }}>
-            <div className="section-chip" style={{ margin:"0 auto 20px" }}>Before &amp; After</div>
-            <h2 className="section-title">Our <em>Makeovers</em></h2>
-            <p style={{ fontSize:16, color:"var(--text2)", marginTop:16, fontWeight:600, maxWidth:520, margin:"16px auto 0" }}>
-              Hover over each card to reveal the transformation. Every visual was created with AI.
-            </p>
-          </div>
-          <div className="makeover-grid">
-            {makeoverPairs.map((p) => (
-              <MakeoverCard key={p.id} before={p.before} after={p.after} index={p.id} />
-            ))}
-          </div>
-          <div style={{ textAlign:"center", marginTop:56 }}>
-            <button onClick={() => goTo("intake")} className="btn-primary" style={{ fontSize:16, padding:"18px 48px" }}>
-              🚀 Get My Own Makeover
-            </button>
           </div>
         </div>
       </section>
