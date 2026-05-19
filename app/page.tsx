@@ -458,7 +458,9 @@ export default function Home() {
 
   const goTo = (page: "home"|"makeovers"|"pricing"|"intake") => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0 });
+    // Reset all animations so they replay on return
+    document.querySelectorAll(".zj-animate").forEach((el) => el.classList.remove("zj-visible"));
   };
 
   const handleIntakeSubmit = async () => {
@@ -523,13 +525,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("zj-visible"); }),
-      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
-    );
-    document.querySelectorAll(".zj-animate").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("zj-visible"); }),
+        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+      );
+      document.querySelectorAll(".zj-animate").forEach((el) => observer.observe(el));
+      return () => observer.disconnect();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [currentPage]);
 
   const navLinks = ["Services", "Makeovers", "Industries", "Reviews", "Contact"];
 
@@ -903,6 +908,11 @@ export default function Home() {
     .makeover-label-before { left: 12px; background: rgba(0,0,0,0.5); color: white; }
     .makeover-label-after { right: 12px; background: linear-gradient(135deg,#7c3aed,#0891b2); color: white; }
 
+    .hero-mobile-rockets { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+    @keyframes mobileRocketFloat1 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-18px);} }
+    @keyframes mobileRocketFloat2 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-22px);} }
+    @keyframes mobileRocketFloat3 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-15px);} }
+
     /* ── TABLET (max 900px) ── */
     @media (max-width: 900px) {
       nav { padding: 0 20px; }
@@ -914,7 +924,8 @@ export default function Home() {
       /* Hero */
       #hero { padding: 120px 20px 60px; min-height: 100vh; }
       .hero-content { padding: 32px 16px; }
-      .hero-scroll-layer { opacity: 0.5; transform: scale(0.8); }
+      .hero-scroll-layer { display: none; }
+      .hero-mobile-rockets { display: block; }
       .social-stats { display: none; }
       /* Services */
       .services-header { flex-direction: column; align-items: flex-start; }
@@ -960,7 +971,8 @@ export default function Home() {
       .hero-tagline { font-size: 14px; margin-top: 14px; }
       .hero-buttons { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
       .btn-hero { width: 100% !important; padding: 18px 24px !important; font-size: 15px !important; text-align: center; }
-      .hero-scroll-layer { opacity: 0.5; transform: scale(0.8); }
+      .hero-scroll-layer { display: none; }
+      .hero-mobile-rockets { display: block; }
       .social-stats { display: none; }
       /* Marquee */
       .marquee-item { font-size: 13px; padding: 0 20px; }
@@ -1251,6 +1263,65 @@ export default function Home() {
         </div>
 
         {/* STAT CARDS - always visible, stay in place */}
+        
+        {/* MOBILE ROCKETS — 3 big rockets for small screens */}
+        <div className="hero-mobile-rockets">
+          <svg width="100%" height="100%" viewBox="0 0 380 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="mflame1" cx="50%" cy="0%" r="100%">
+                <stop offset="0%" stopColor="white" stopOpacity="1" />
+                <stop offset="25%" stopColor="#FFD700" stopOpacity="0.9" />
+                <stop offset="55%" stopColor="#FF6600" stopOpacity="0.7" />
+                <stop offset="100%" stopColor="#FF2800" stopOpacity="0" />
+              </radialGradient>
+              <radialGradient id="mflame2" cx="50%" cy="0%" r="100%">
+                <stop offset="0%" stopColor="white" stopOpacity="1" />
+                <stop offset="20%" stopColor="#FFE066" stopOpacity="0.9" />
+                <stop offset="50%" stopColor="#FF8800" stopOpacity="0.7" />
+                <stop offset="100%" stopColor="#FF2800" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+
+            {/* LEFT ROCKET — big purple */}
+            <g style={{ animation: "mobileRocketFloat1 3.2s ease-in-out infinite" }}>
+              <ellipse cx="45" cy="340" rx="14" ry="65" fill="url(#mflame1)" style={{ filter: "blur(4px)" }} />
+              <ellipse cx="45" cy="340" rx="8" ry="42" fill="url(#mflame2)" style={{ filter: "blur(2px)" }} />
+              <ellipse cx="45" cy="270" rx="18" ry="48" fill="#c4b5fd" />
+              <ellipse cx="45" cy="270" rx="12" ry="42" fill="#7c3aed" />
+              <path d="M28,226 Q45,192 62,226 Z" fill="#5b21b6" />
+              <circle cx="45" cy="260" r="9" fill="#e0f2fe" opacity="0.9" />
+              <circle cx="45" cy="260" r="6" fill="#0891b2" opacity="0.7" />
+              <path d="M28,308 L12,338 L28,326 Z" fill="#5b21b6" />
+              <path d="M62,308 L78,338 L62,326 Z" fill="#5b21b6" />
+            </g>
+
+            {/* RIGHT ROCKET — big cyan */}
+            <g style={{ animation: "mobileRocketFloat2 3.6s ease-in-out infinite" }}>
+              <ellipse cx="335" cy="280" rx="14" ry="65" fill="url(#mflame1)" style={{ filter: "blur(4px)" }} />
+              <ellipse cx="335" cy="280" rx="8" ry="42" fill="url(#mflame2)" style={{ filter: "blur(2px)" }} />
+              <ellipse cx="335" cy="210" rx="18" ry="48" fill="#a5f3fc" />
+              <ellipse cx="335" cy="210" rx="12" ry="42" fill="#0891b2" />
+              <path d="M318,166 Q335,132 352,166 Z" fill="#0e7490" />
+              <circle cx="335" cy="200" r="9" fill="#e0f2fe" opacity="0.9" />
+              <circle cx="335" cy="200" r="6" fill="#7c3aed" opacity="0.8" />
+              <path d="M318,248 L302,278 L318,266 Z" fill="#0e7490" />
+              <path d="M352,248 L368,278 L352,266 Z" fill="#0e7490" />
+            </g>
+
+            {/* TOP CENTER ROCKET — smaller purple */}
+            <g style={{ animation: "mobileRocketFloat3 2.8s ease-in-out infinite" }}>
+              <ellipse cx="190" cy="130" rx="11" ry="50" fill="url(#mflame1)" style={{ filter: "blur(4px)" }} />
+              <ellipse cx="190" cy="130" rx="6" ry="32" fill="url(#mflame2)" style={{ filter: "blur(2px)" }} />
+              <ellipse cx="190" cy="72" rx="14" ry="38" fill="#c4b5fd" />
+              <ellipse cx="190" cy="72" rx="9" ry="32" fill="#7c3aed" />
+              <path d="M177,38 Q190,12 203,38 Z" fill="#4c1d95" />
+              <circle cx="190" cy="63" r="7" fill="#e0f2fe" opacity="0.9" />
+              <circle cx="190" cy="63" r="4" fill="#0891b2" opacity="0.8" />
+              <path d="M178,100 L166,124 L178,114 Z" fill="#4c1d95" />
+              <path d="M202,100 L214,124 L202,114 Z" fill="#4c1d95" />
+            </g>
+          </svg>
+        </div>
         <div className="social-stats" style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none" }}>
           <StatCard icon="❤️" label="Likes Generated"  target={4800000} suffix="+" color="linear-gradient(135deg,#f472b6,#e879f9)" delay={0} />
           <StatCard icon="👥" label="Followers Gained" target={3200000} suffix="+" color="linear-gradient(135deg,#7c3aed,#9d5cf6)" delay={0} />
