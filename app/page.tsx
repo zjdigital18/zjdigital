@@ -4,439 +4,14 @@ import { useEffect, useState, useRef } from "react";
 
 const CONTACT_EMAIL = "jzmarketing1808@gmail.com";
 const CALENDLY_LINK = "https://calendly.com/jocazilavac11/30min";
-
-function useCountUp(target: number, duration: number = 2000, suffix: string = "") {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => { if (entries[0].isIntersecting && !started) setStarted(true); },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    let start = 0;
-    const step = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(start));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [started, target, duration]);
-
-  const display = count >= 1000000 ? (count / 1000000).toFixed(1) + "M" :
-    count >= 1000 ? (count / 1000).toFixed(0) + "K" : count.toString();
-
-  return { display: display + suffix, ref };
-}
-
-function StatCard({ icon, label, target, suffix, color, delay }: { icon: string; label: string; target: number; suffix: string; color: string; delay: number }) {
-  const { display, ref } = useCountUp(target, 2200, suffix);
-  return (
-    <div ref={ref} className="stat-card zj-animate" style={{ animationDelay: `${delay}s` }}>
-      <div className="stat-icon" style={{ background: color }}>{icon}</div>
-      <div className="stat-num" style={{ background: color, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{display}</div>
-      <div className="stat-label">{label}</div>
-    </div>
-  );
-}
-
-
-// ── MAKEOVER CARD COMPONENT ───────────────────────────────────────────────
-function MakeoverCard({ before, after, index }: { before:string; after:string; index:number }) {
-  const [hovered, setHovered] = useState(false);
-  const [sliderX, setSliderX] = useState(50);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMove = (clientX: number) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const pct = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 0), 100);
-    setSliderX(pct);
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      className="makeover-card"
-      style={{ transitionDelay: `${(index % 4) * 0.1}s` }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setSliderX(50); }}
-      onMouseMove={(e) => hovered && handleMove(e.clientX)}
-      onTouchMove={(e) => handleMove(e.touches[0].clientX)}
-    >
-      {/* Before */}
-      <img src={before} alt="Before" className="makeover-img makeover-before" />
-      {/* After - clip to slider */}
-      <div className="makeover-after-wrap" style={{ clipPath:`inset(0 0 0 ${sliderX}%)` }}>
-        <img src={after} alt="After" className="makeover-img" />
-      </div>
-      {/* Divider line */}
-      <div className="makeover-divider" style={{ left:`${sliderX}%` }}>
-        <div className="makeover-handle">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M7 4l-4 6 4 6M13 4l4 6-4 6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
-      </div>
-      {/* Labels */}
-      <span className="makeover-label makeover-label-before">Before</span>
-      <span className="makeover-label makeover-label-after">After</span>
-    </div>
-  );
-}
-
-// ── BRAND AUDIT COMPONENT ──────────────────────────────────────────────────
-function BrandAudit() {
-  const [platform, setPlatform] = useState<string|null>(null);
-  const [handle, setHandle] = useState("");
-  const [phase, setPhase] = useState<"idle"|"input"|"loading"|"results">("idle");
-  const [loadStep, setLoadStep] = useState(0);
-  const [loadPct, setLoadPct] = useState(0);
-  const [visibleResults, setVisibleResults] = useState(0);
-  const [showCTA, setShowCTA] = useState(false);
-  const [score, setScore] = useState(0);
-  const [resultFills, setResultFills] = useState([22, 18, 30]);
-
-  const platforms = [
-    {
-      id: "website", label: "Website",
-      logo: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="14" stroke="#7c3aed" strokeWidth="2"/>
-          <ellipse cx="16" cy="16" rx="6" ry="14" stroke="#7c3aed" strokeWidth="2"/>
-          <line x1="2" y1="16" x2="30" y2="16" stroke="#7c3aed" strokeWidth="2"/>
-          <line x1="4" y1="9" x2="28" y2="9" stroke="#7c3aed" strokeWidth="1.5"/>
-          <line x1="4" y1="23" x2="28" y2="23" stroke="#7c3aed" strokeWidth="1.5"/>
-        </svg>
-      )
-    },
-    {
-      id: "instagram", label: "Instagram",
-      logo: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <defs>
-            <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#f09433"/>
-              <stop offset="25%" stopColor="#e6683c"/>
-              <stop offset="50%" stopColor="#dc2743"/>
-              <stop offset="75%" stopColor="#cc2366"/>
-              <stop offset="100%" stopColor="#bc1888"/>
-            </linearGradient>
-          </defs>
-          <rect x="2" y="2" width="28" height="28" rx="8" stroke="url(#igGrad)" strokeWidth="2.2"/>
-          <circle cx="16" cy="16" r="6.5" stroke="url(#igGrad)" strokeWidth="2.2"/>
-          <circle cx="23.5" cy="8.5" r="1.5" fill="#dc2743"/>
-        </svg>
-      )
-    },
-    {
-      id: "tiktok", label: "TikTok",
-      logo: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <path d="M21 2h-4v19a4 4 0 1 1-4-4v-4a8 8 0 1 0 8 8V10a10 10 0 0 0 6 2V8a6 6 0 0 1-6-6z" fill="#010101"/>
-          <path d="M21 2h-4v19a4 4 0 1 1-4-4v-4a8 8 0 1 0 8 8V10a10 10 0 0 0 6 2V8a6 6 0 0 1-6-6z" fill="none" stroke="#fe2c55" strokeWidth="1" opacity="0.6"/>
-          <path d="M20 1h-4v19a4 4 0 1 1-4-4v-4a8 8 0 1 0 8 8V9a10 10 0 0 0 6 2V7a6 6 0 0 1-6-6z" fill="none" stroke="#25f4ee" strokeWidth="1" opacity="0.6"/>
-        </svg>
-      )
-    },
-    {
-      id: "facebook", label: "Facebook",
-      logo: (
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="1" y="1" width="30" height="30" rx="8" fill="#1877f2"/>
-          <path d="M22 16h-4v12h-4V16h-3v-4h3v-2.5C14 7.36 15.36 6 17.5 6H22v4h-3c-.55 0-1 .45-1 1V12h4l-.5 4z" fill="white"/>
-        </svg>
-      )
-    },
-  ];
-
-  const placeholders: Record<string,string> = {
-    website:   "Paste your website URL (e.g. yourbrand.com)",
-    instagram: "Paste your Instagram link or @handle",
-    tiktok:    "Paste your TikTok link or @handle",
-    facebook:  "Paste your Facebook page link",
-  };
-
-  const loadingSteps = [
-    { icon: "🔍", text: "Scanning profile...",                   detail: "Fetching public data and metadata" },
-    { icon: "🖼️", text: "Analysing content quality...",          detail: "Reviewing visual consistency and production value" },
-    { icon: "📊", text: "Reviewing engagement structure...",     detail: "Comparing interaction rates against industry benchmarks" },
-    { icon: "🧠", text: "Evaluating conversion potential...",    detail: "Identifying gaps in your sales funnel visuals" },
-    { icon: "⚡", text: "Generating your brand audit report...", detail: "Compiling findings and scoring your brand" },
-  ];
-
-  const auditResults = [
-    { icon: "📉", label: "Low Engagement Detected",            detail: "Your content is generating below-average interaction for your niche. Visual quality is the #1 driver of engagement.",            color: "#ef4444" },
-    { icon: "🎨", label: "Lacks Premium Visual Identity",      detail: "Your brand visuals don't communicate the value of what you offer. First impressions are costing you conversions.",               color: "#f59e0b" },
-    { icon: "💸", label: "Conversion Potential Not Optimised", detail: "Browsers aren't becoming buyers. AI-enhanced visuals could increase your conversion rate significantly.",                        color: "#8b5cf6" },
-  ];
-
-  const selectPlatform = (id: string) => {
-    setPlatform(id);
-    setHandle("");
-    setPhase("input");
-  };
-
-  const runAudit = () => {
-    if (!handle.trim()) return;
-    // Randomise score 45–62
-    const newScore = Math.floor(Math.random() * 18) + 45;
-    setScore(newScore);
-    // Randomise fill bars a bit
-    setResultFills([
-      Math.floor(Math.random() * 20) + 12,
-      Math.floor(Math.random() * 20) + 10,
-      Math.floor(Math.random() * 25) + 18,
-    ]);
-    setPhase("loading");
-    setLoadStep(0);
-    setLoadPct(0);
-    setVisibleResults(0);
-    setShowCTA(false);
-
-    // Step through loading states over 10 seconds
-    // Steps at: 0s, 2s, 4s, 6s, 8s — results at 10s
-    const stepTimes = [0, 2000, 4000, 6500, 8500];
-    stepTimes.forEach((t, i) => setTimeout(() => setLoadStep(i), t));
-
-    // Smooth progress bar: tick every 200ms for 10 seconds
-    let pct = 0;
-    const ticker = setInterval(() => {
-      pct += Math.random() * 1.8 + 0.8;
-      if (pct >= 99) { pct = 99; clearInterval(ticker); }
-      setLoadPct(Math.min(Math.round(pct), 99));
-    }, 200);
-
-    // Show results after 10s
-    setTimeout(() => {
-      clearInterval(ticker);
-      setLoadPct(100);
-      setTimeout(() => {
-        setPhase("results");
-        [0,1,2].forEach((i) => setTimeout(() => setVisibleResults(i + 1), i * 700 + 300));
-        setTimeout(() => setShowCTA(true), 3 * 700 + 800);
-      }, 400);
-    }, 10000);
-  };
-
-  const reset = () => {
-    setPlatform(null);
-    setHandle("");
-    setPhase("idle");
-    setLoadStep(0);
-    setLoadPct(0);
-    setVisibleResults(0);
-    setShowCTA(false);
-  };
-
-  const scoreColor = score >= 60 ? "#22c55e" : score >= 50 ? "#f59e0b" : "#ef4444";
-  const scoreTag   = score >= 60 ? "✓ Average"  : score >= 50 ? "⚠ Needs Work" : "⚠ Critical";
-
-  const auditCSS = `
-    .audit-wrap { background:white; border-radius:28px; padding:56px 48px; box-shadow:0 20px 60px rgba(124,58,237,0.08),0 4px 20px rgba(0,0,0,0.04); border:1px solid rgba(124,58,237,0.1); position:relative; overflow:hidden; margin-top:64px; }
-    .audit-wrap::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#7c3aed,#0891b2,#7c3aed); background-size:200%; animation:gradShift 3s linear infinite; }
-    @keyframes gradShift { 0%{background-position:0%}100%{background-position:200%} }
-    .audit-header { text-align:center; margin-bottom:36px; }
-    .audit-chip { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(8,145,178,0.08)); color:#7c3aed; padding:7px 18px; border-radius:100px; font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; border:1px solid rgba(124,58,237,0.15); }
-    .audit-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(32px,4vw,52px); color:#1a1520; letter-spacing:0.04em; line-height:1; }
-    .audit-title span { background:linear-gradient(135deg,#7c3aed,#0891b2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .audit-sub { font-size:15px; color:#4a4458; margin-top:10px; font-weight:500; line-height:1.6; }
-    .audit-step-label { text-align:center; font-size:12px; font-weight:800; color:#9ca3af; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:20px; }
-    .audit-step-label span { color:#7c3aed; }
-    /* Platform cards */
-    .audit-platforms { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-bottom:8px; }
-    .audit-platform-btn { display:flex; flex-direction:column; align-items:center; gap:10px; padding:22px 28px; border:2px solid rgba(124,58,237,0.12); border-radius:20px; background:white; cursor:pointer; transition:all 0.3s; min-width:110px; box-shadow:0 2px 12px rgba(0,0,0,0.04); }
-    .audit-platform-btn:hover { border-color:#7c3aed; background:rgba(124,58,237,0.03); transform:translateY(-4px); box-shadow:0 10px 28px rgba(124,58,237,0.12); }
-    .audit-platform-btn.selected { border-color:#7c3aed; background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(8,145,178,0.04)); box-shadow:0 8px 24px rgba(124,58,237,0.16); transform:translateY(-4px); }
-    .audit-platform-label { font-size:13px; font-weight:800; color:#1a1520; }
-    /* Input step */
-    .audit-input-step { animation:fadeSlideInUp 0.45s cubic-bezier(0.16,1,0.3,1) both; margin-top:28px; }
-    @keyframes fadeSlideInUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
-    .audit-selected-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(124,58,237,0.07); color:#7c3aed; padding:6px 14px; border-radius:100px; font-size:12px; font-weight:800; margin-bottom:18px; cursor:pointer; transition:background 0.2s; border:1px solid rgba(124,58,237,0.15); }
-    .audit-selected-badge:hover { background:rgba(124,58,237,0.14); }
-    .audit-input-row { display:flex; gap:12px; max-width:580px; margin:0 auto; }
-    .audit-input { flex:1; padding:16px 22px; border:1.5px solid rgba(124,58,237,0.2); border-radius:100px; font-size:15px; font-family:'Satoshi',sans-serif; font-weight:500; color:#1a1520; outline:none; background:white; transition:all 0.3s; box-shadow:0 2px 12px rgba(124,58,237,0.06); }
-    .audit-input:focus { border-color:#7c3aed; box-shadow:0 0 0 4px rgba(124,58,237,0.08); }
-    .audit-input::placeholder { color:#bbb; }
-    .audit-btn { background:linear-gradient(135deg,#7c3aed,#0891b2); color:white; padding:16px 28px; border-radius:100px; font-size:14px; font-weight:800; border:none; cursor:pointer; font-family:'Satoshi',sans-serif; white-space:nowrap; box-shadow:0 6px 20px rgba(124,58,237,0.35); transition:all 0.3s; }
-    .audit-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(124,58,237,0.45); }
-    .audit-btn:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
-    /* Loading */
-    .audit-loading { animation:fadeSlideInUp 0.4s both; max-width:560px; margin:0 auto; }
-    .audit-load-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-    .audit-load-title { font-size:13px; font-weight:800; color:#7c3aed; letter-spacing:0.06em; }
-    .audit-load-pct { font-family:'Bebas Neue',sans-serif; font-size:22px; color:#7c3aed; letter-spacing:0.06em; }
-    .audit-load-bar { height:6px; background:rgba(124,58,237,0.1); border-radius:100px; overflow:hidden; margin-bottom:28px; }
-    .audit-load-fill { height:100%; background:linear-gradient(90deg,#7c3aed,#0891b2); border-radius:100px; transition:width 0.3s ease; }
-    .audit-steps-list { display:flex; flex-direction:column; gap:12px; }
-    .audit-load-step { display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:14px; background:#faf9ff; border:1px solid rgba(124,58,237,0.08); transition:all 0.4s; opacity:0.35; }
-    .audit-load-step.active { opacity:1; background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(8,145,178,0.04)); border-color:rgba(124,58,237,0.2); box-shadow:0 4px 16px rgba(124,58,237,0.08); }
-    .audit-load-step.done { opacity:0.6; }
-    .audit-load-step-icon { font-size:20px; flex-shrink:0; }
-    .audit-load-step-body { flex:1; }
-    .audit-load-step-text { font-size:14px; font-weight:800; color:#1a1520; }
-    .audit-load-step-detail { font-size:12px; color:#9ca3af; margin-top:2px; font-weight:500; }
-    .audit-load-step-status { font-size:11px; font-weight:800; letter-spacing:0.06em; padding:3px 10px; border-radius:100px; }
-    .audit-load-step.active .audit-load-step-status { background:rgba(124,58,237,0.1); color:#7c3aed; }
-    .audit-load-step.done .audit-load-step-status { background:rgba(34,197,94,0.1); color:#22c55e; }
-    .audit-load-step-spinner { width:16px; height:16px; border:2px solid rgba(124,58,237,0.2); border-top-color:#7c3aed; border-radius:50%; animation:spin 0.8s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    /* Results */
-    .audit-results-wrap { animation:fadeSlideInUp 0.4s both; }
-    .audit-score-row { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; background:linear-gradient(135deg,rgba(124,58,237,0.04),rgba(8,145,178,0.04)); border-radius:16px; border:1px solid rgba(124,58,237,0.1); margin-bottom:20px; }
-    .audit-score-label { font-size:12px; font-weight:800; color:#4a4458; letter-spacing:0.08em; text-transform:uppercase; }
-    .audit-score-val { font-family:'Bebas Neue',sans-serif; font-size:40px; letter-spacing:0.04em; }
-    .audit-score-tag { font-size:12px; font-weight:800; padding:4px 12px; border-radius:100px; }
-    .audit-results { display:flex; flex-direction:column; gap:14px; margin-bottom:28px; }
-    .audit-result-card { display:flex; align-items:flex-start; gap:18px; padding:20px 24px; border-radius:16px; border:1.5px solid rgba(0,0,0,0.06); background:#faf9ff; opacity:0; transform:translateY(16px); transition:opacity 0.5s ease,transform 0.5s ease; }
-    .audit-result-card.visible { opacity:1; transform:translateY(0); }
-    .audit-result-card:hover { box-shadow:0 8px 24px rgba(124,58,237,0.08); transform:translateY(-2px); }
-    .audit-result-icon { font-size:28px; flex-shrink:0; margin-top:2px; }
-    .audit-result-body { flex:1; }
-    .audit-result-label { font-size:15px; font-weight:800; color:#1a1520; margin-bottom:5px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .audit-result-badge { font-size:10px; padding:3px 10px; border-radius:100px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:white; }
-    .audit-result-detail { font-size:13px; color:#6b6880; line-height:1.65; font-weight:500; }
-    .audit-result-bar { height:3px; border-radius:100px; background:rgba(0,0,0,0.06); margin-top:10px; overflow:hidden; }
-    .audit-result-fill { height:100%; border-radius:100px; animation:barGrow 0.8s ease-out 0.2s both; }
-    @keyframes barGrow { from{width:0%} }
-    .audit-fix-cta { text-align:center; opacity:0; transform:translateY(12px); transition:opacity 0.5s ease,transform 0.5s ease; }
-    .audit-fix-cta.visible { opacity:1; transform:translateY(0); }
-    .audit-fix-title { font-size:16px; font-weight:700; color:#1a1520; margin-bottom:16px; }
-    .audit-fix-btn { background:linear-gradient(135deg,#7c3aed,#0891b2); color:white; padding:18px 48px; border-radius:100px; font-size:16px; font-weight:900; text-decoration:none; display:inline-block; box-shadow:0 10px 32px rgba(124,58,237,0.4); transition:all 0.3s; font-family:'Satoshi',sans-serif; letter-spacing:0.02em; animation:fixGlow 2.5s ease-in-out infinite; }
-    .audit-fix-btn:hover { transform:translateY(-3px); box-shadow:0 18px 44px rgba(124,58,237,0.55); }
-    @keyframes fixGlow { 0%,100%{box-shadow:0 10px 32px rgba(124,58,237,0.4)}50%{box-shadow:0 10px 48px rgba(124,58,237,0.65),0 0 0 8px rgba(124,58,237,0.06)} }
-    .audit-disclaimer { font-size:11px; color:#bbb; margin-top:12px; font-weight:600; }
-    .audit-restart { background:none; border:none; color:#9ca3af; font-size:12px; font-weight:700; cursor:pointer; margin-top:16px; text-decoration:underline; font-family:'Satoshi',sans-serif; display:block; margin-left:auto; margin-right:auto; }
-    .audit-restart:hover { color:#7c3aed; }
-    @media(max-width:600px){
-      .audit-wrap{padding:32px 16px;}
-      .audit-input-row{flex-direction:column;}
-      .audit-btn{width:100%;text-align:center;}
-      .audit-platforms{gap:10px;}
-      .audit-platform-btn{min-width:72px;padding:16px 14px;}
-    }
-  `;
-
-  return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: auditCSS }} />
-      <div className="audit-wrap zj-animate zj-delay-2">
-        <div className="audit-header">
-          <div className="audit-chip">✦ Free Brand Audit</div>
-          <div className="audit-title">Is Your Brand <span>Losing Money</span> Online?</div>
-          <p className="audit-sub">Select your platform and get a free instant audit in seconds.</p>
-        </div>
-
-        {/* STEP 1 — Platform */}
-        {(phase === "idle" || phase === "input") && (
-          <>
-            <p className="audit-step-label"><span>Step 1</span> — Choose your platform</p>
-            <div className="audit-platforms">
-              {platforms.map((p) => (
-                <button key={p.id} className={`audit-platform-btn${platform === p.id ? " selected" : ""}`} onClick={() => selectPlatform(p.id)}>
-                  {p.logo}
-                  <span className="audit-platform-label">{p.label}</span>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* STEP 2 — Input */}
-        {phase === "input" && platform && (
-          <div className="audit-input-step">
-            <p className="audit-step-label" style={{ marginBottom: 14 }}>
-              <span>Step 2</span> — Enter your {platforms.find(p=>p.id===platform)?.label} details
-            </p>
-            <div style={{ textAlign:"center", marginBottom:16 }}>
-              <span className="audit-selected-badge" onClick={reset}>
-                {platforms.find(p=>p.id===platform)?.label} &nbsp;·&nbsp; ✕ Change
-              </span>
-            </div>
-            <div className="audit-input-row">
-              <input className="audit-input" placeholder={placeholders[platform]} value={handle}
-                onChange={(e) => setHandle(e.target.value)} onKeyDown={(e) => e.key==="Enter" && runAudit()} autoFocus />
-              <button className="audit-btn" onClick={runAudit} disabled={!handle.trim()}>Run My Audit →</button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3 — Loading (10 seconds) */}
-        {phase === "loading" && (
-          <div className="audit-loading">
-            <div className="audit-load-header">
-              <span className="audit-load-title">SCANNING {handle.toUpperCase()}</span>
-              <span className="audit-load-pct">{loadPct}%</span>
-            </div>
-            <div className="audit-load-bar">
-              <div className="audit-load-fill" style={{ width: `${loadPct}%` }} />
-            </div>
-            <div className="audit-steps-list">
-              {loadingSteps.map((s, i) => {
-                const isDone   = i < loadStep;
-                const isActive = i === loadStep;
-                return (
-                  <div key={i} className={`audit-load-step${isActive?" active":isDone?" done":""}`}>
-                    <span className="audit-load-step-icon">{s.icon}</span>
-                    <div className="audit-load-step-body">
-                      <div className="audit-load-step-text">{s.text}</div>
-                      {(isActive || isDone) && <div className="audit-load-step-detail">{s.detail}</div>}
-                    </div>
-                    {isActive && <div className="audit-load-step-spinner" />}
-                    {isDone   && <span className="audit-load-step-status">✓ Done</span>}
-                    {!isActive && !isDone && <span className="audit-load-step-status" style={{ color:"#ddd", background:"rgba(0,0,0,0.04)" }}>Pending</span>}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* STEP 4 — Results */}
-        {phase === "results" && (
-          <div className="audit-results-wrap">
-            <div className="audit-score-row">
-              <span className="audit-score-label">Brand Health Score</span>
-              <span className="audit-score-val" style={{ color: scoreColor }}>{score}/100</span>
-              <span className="audit-score-tag" style={{ background:`${scoreColor}18`, color:scoreColor }}>{scoreTag}</span>
-            </div>
-            <div className="audit-results">
-              {auditResults.map((r, i) => (
-                <div className={`audit-result-card${visibleResults > i ? " visible" : ""}`} key={r.label}>
-                  <div className="audit-result-icon">{r.icon}</div>
-                  <div className="audit-result-body">
-                    <div className="audit-result-label">
-                      {r.label}
-                      <span className="audit-result-badge" style={{ background:r.color }}>Issue Found</span>
-                    </div>
-                    <p className="audit-result-detail">{r.detail}</p>
-                    <div className="audit-result-bar">
-                      <div className="audit-result-fill" style={{ width:`${resultFills[i]}%`, background:r.color }} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className={`audit-fix-cta${showCTA ? " visible" : ""}`}>
-              <p className="audit-fix-title">Your brand is leaving money on the table. Let us fix that.</p>
-              <a href="#contact" className="audit-fix-btn">🚀 Fix My Brand Now</a>
-              <p className="audit-disclaimer">Free consultation · No commitment · Results in days</p>
-              <button className="audit-restart" onClick={reset}>← Run another audit</button>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
+// Hero scrub track: user scrolls this many viewport-heights while the hero stage stays pinned
+const HERO_SCRUB_DISTANCE = 1.25;
+// Services pin: viewport-heights of scroll travel while the services stage stays pinned
+const SERVICES_PIN = 1.7;
+// Industries pin: scroll travel that drives the rotating globe + orbiting cards
+const INDUSTRIES_PIN = 1.8;
+// Makeover showcase: scroll-scrub distance for the makeover product video entrance
+const SHOW_SCRUB = 1.5;
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<"home"|"makeovers"|"pricing"|"intake">("home");
@@ -487,42 +62,135 @@ export default function Home() {
     setIntakeSubmitting(false);
   };
 
-  const makeoverPairs = [
-    { id:1,  before:"/makeovers/old1.png",  after:"/makeovers/new1.png" },
-    { id:2,  before:"/makeovers/old2.png",  after:"/makeovers/new2.jpeg" },
-    { id:3,  before:"/makeovers/old3.png",  after:"/makeovers/new3.jpeg" },
-    { id:4,  before:"/makeovers/old4.png",  after:"/makeovers/new4.jpeg" },
-    { id:5,  before:"/makeovers/old5.png",  after:"/makeovers/new5.png" },
-    { id:6,  before:"/makeovers/old6.png",  after:"/makeovers/new6.jpeg" },
-    { id:7,  before:"/makeovers/old7.png",  after:"/makeovers/new7.jpeg" },
-    { id:8,  before:"/makeovers/old8.png",  after:"/makeovers/new8.png" },
-    { id:9,  before:"/makeovers/old9.png",  after:"/makeovers/new9.png" },
-    { id:10, before:"/makeovers/old10.png", after:"/makeovers/new10.png" },
-    { id:11, before:"/makeovers/old11.png", after:"/makeovers/new11.png" },
-    { id:12, before:"/makeovers/old12.png", after:"/makeovers/new12.png" },
-    { id:13, before:"/makeovers/old13.png", after:"/makeovers/new13.png" },
-    { id:14, before:"/makeovers/old14.png", after:"/makeovers/new14.jpeg" },
-    { id:15, before:"/makeovers/old15.png", after:"/makeovers/new15.png" },
-    { id:16, before:"/makeovers/old16.png", after:"/makeovers/new16.jpeg" },
-    { id:17, before:"/makeovers/old17.png", after:"/makeovers/new17.jpeg" },
-    { id:18, before:"/makeovers/old18.png", after:"/makeovers/new18.jpeg" },
-    { id:19, before:"/makeovers/old19.png", after:"/makeovers/new19.jpeg" },
-  ];
   const [windowHeight, setWindowHeight] = useState(900);
-  // Parallax: bg=slow, cards=medium, rockets=fast
-  const parallaxBg      = scrollY * 0.08;
-  const parallaxRockets = scrollY * 0.45;
   const [menuOpen, setMenuOpen] = useState(false);
   const [phoneShaking, setPhoneShaking] = useState(false);
   const phoneRef = useRef<HTMLDivElement>(null);
-  const [meshAngle, setMeshAngle] = useState(0);
+
+  // Hero scroll-scrub video
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const [heroVideoReady, setHeroVideoReady] = useState(false);
+
+  // Makeover showcase — scroll-scrubbed product makeover video (entrance)
+  const mkShowRef = useRef<HTMLVideoElement>(null);
+  const [mkShowReady, setMkShowReady] = useState(false);
+  const showSectionRef = useRef<HTMLElement>(null);
+  const [showTop, setShowTop] = useState(0);
+
+  // Pinned services section — scroll-driven card reveal
+  const servicesRef = useRef<HTMLElement>(null);
+  const [servicesTop, setServicesTop] = useState(0);
+
+  // Pinned industries section — scroll-driven rotating globe + orbiting cards
+  const industriesRef = useRef<HTMLElement>(null);
+  const [industriesTop, setIndustriesTop] = useState(0);
+
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
+    const handleResize = () => { if (window.innerHeight > 0) setWindowHeight(window.innerHeight); };
+    handleResize();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    const meshTimer = setInterval(() => setMeshAngle(a => (a + 0.3) % 360), 50);
-    return () => { window.removeEventListener("scroll", handleScroll); clearInterval(meshTimer); };
+    window.addEventListener("resize", handleResize);
+    return () => { window.removeEventListener("scroll", handleScroll); window.removeEventListener("resize", handleResize); };
   }, []);
+
+  // Track pinned-section offsets so we can map scroll → reveal/rotation progress
+  useEffect(() => {
+    const measure = () => {
+      if (servicesRef.current) setServicesTop(servicesRef.current.offsetTop);
+      if (industriesRef.current) setIndustriesTop(industriesRef.current.offsetTop);
+      if (showSectionRef.current) setShowTop(showSectionRef.current.offsetTop);
+    };
+    measure();
+    const t = setTimeout(measure, 400);
+    window.addEventListener("resize", measure);
+    return () => { window.removeEventListener("resize", measure); clearTimeout(t); };
+  }, [currentPage]);
+
+  // Buzz the phone like an incoming notification while it's on screen
+  useEffect(() => {
+    const el = phoneRef.current;
+    if (!el || currentPage !== "home") return;
+    let interval: ReturnType<typeof setInterval> | undefined;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        interval = setInterval(() => {
+          setPhoneShaking(true);
+          timeout = setTimeout(() => setPhoneShaking(false), 850);
+        }, 4500);
+      } else if (interval) {
+        clearInterval(interval);
+      }
+    }, { threshold: 0.5 });
+    io.observe(el);
+    return () => { io.disconnect(); if (interval) clearInterval(interval); if (timeout) clearTimeout(timeout); };
+  }, [currentPage]);
+
+  // The metadata event can fire before hydration attaches the listener — catch up here
+  useEffect(() => {
+    const v = heroVideoRef.current;
+    if (v && v.readyState >= 1) setHeroVideoReady(true);
+  }, [currentPage]);
+
+  // Scrub the hero video in sync with scroll, smoothed with rAF so the pill rotation feels buttery.
+  // The loop sleeps once the video catches up with the scroll position and is re-kicked by scroll events.
+  useEffect(() => {
+    const v = heroVideoRef.current;
+    if (!v || !heroVideoReady || currentPage !== "home") return;
+    let raf = 0;
+    let active = false;
+    let t = v.currentTime || 0;
+    const settle = () => {
+      const dur = v.duration;
+      if (!dur || isNaN(dur)) { active = false; return; }
+      const progress = Math.min(Math.max(window.scrollY / (window.innerHeight * HERO_SCRUB_DISTANCE), 0), 1);
+      const target = progress * Math.max(dur - 0.05, 0);
+      t += (target - t) * 0.18;
+      if (Math.abs(target - t) > 0.002) {
+        if (v.readyState >= 2) v.currentTime = t;
+        raf = requestAnimationFrame(settle);
+      } else {
+        active = false;
+      }
+    };
+    const kick = () => { if (!active) { active = true; raf = requestAnimationFrame(settle); } };
+    kick();
+    window.addEventListener("scroll", kick, { passive: true });
+    return () => { window.removeEventListener("scroll", kick); cancelAnimationFrame(raf); };
+  }, [heroVideoReady, currentPage]);
+
+  // Makeover showcase: scrub the product video as you scroll through its pinned section
+  useEffect(() => {
+    const v = mkShowRef.current;
+    if (v && v.readyState >= 1) setMkShowReady(true);
+  }, [currentPage]);
+
+  useEffect(() => {
+    const v = mkShowRef.current;
+    if (!v || !mkShowReady || currentPage !== "makeovers") return;
+    let raf = 0;
+    let active = false;
+    let t = v.currentTime || 0;
+    const settle = () => {
+      const dur = v.duration;
+      if (!dur || isNaN(dur)) { active = false; return; }
+      const progress = Math.min(Math.max((window.scrollY - showTop) / (window.innerHeight * SHOW_SCRUB), 0), 1);
+      const target = progress * Math.max(dur - 0.05, 0);
+      t += (target - t) * 0.18;
+      if (Math.abs(target - t) > 0.002) {
+        if (v.readyState >= 2) v.currentTime = t;
+        raf = requestAnimationFrame(settle);
+      } else {
+        active = false;
+      }
+    };
+    const kick = () => { if (!active) { active = true; raf = requestAnimationFrame(settle); } };
+    kick();
+    window.addEventListener("scroll", kick, { passive: true });
+    return () => { window.removeEventListener("scroll", kick); cancelAnimationFrame(raf); };
+  }, [mkShowReady, currentPage, showTop]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -601,7 +269,7 @@ export default function Home() {
 
     /* NAV */
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 48px; height: 76px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: all 0.4s ease; }
-    nav.scrolled { background: rgba(250,248,245,0.93); border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); box-shadow: 0 4px 24px rgba(124,58,237,0.07); }
+    nav.scrolled { background: rgba(255,255,255,0.72); border-bottom: 1px solid rgba(0,0,0,0.05); backdrop-filter: blur(22px) saturate(1.1); -webkit-backdrop-filter: blur(22px) saturate(1.1); box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
     .nav-left { display: flex; align-items: center; justify-content: flex-start; }
     .nav-center { display: flex; align-items: center; justify-content: center; }
     .nav-right { display: flex; align-items: center; justify-content: flex-end; }
@@ -619,41 +287,32 @@ export default function Home() {
     .dropdown-menu .dropdown-cta:hover { color: white; background: var(--grad); opacity: 0.9; }
     @keyframes dropIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* HERO */
-    #hero { position: relative; min-height: 110vh; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; padding: 140px 24px 80px; transform: translateZ(0); }
-    .hero-scroll-layer { position: absolute; left: 0; right: 0; top: 0; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-    .hero-mesh { position: absolute; inset: 0; pointer-events: none; }
-    .hero-content { position: relative; z-index: 5; width: 100%; max-width: 900px; padding: 40px 20px; background: transparent; }
+    /* HERO — full-bleed scroll-scrubbed video (light studio look) */
+    /* hero-video.mp4 is encoded with its background clipped to pure white (ffmpeg colorlevels) — stage must stay #ffffff to match */
+    #hero { position: relative; height: ${100 + HERO_SCRUB_DISTANCE * 100}vh; padding: 0; background: #ffffff; }
+    .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding: 108px 24px 48px; background: #ffffff; }
+    /* the box matches the drawn video column exactly so the mask feathers the video's REAL edges */
+    .hero-video-box { position: absolute; left: 50%; top: 50%; height: 100%; aspect-ratio: 800 / 1440; z-index: 1; transition: opacity 0.6s ease; will-change: transform; }
+    .hero-video { width: 100%; height: 100%; object-fit: cover; display: block; mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 58%, transparent 98%); -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 58%, transparent 98%); }
+    .hero-vignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse 110% 85% at 50% 45%, transparent 55%, rgba(255,255,255,0.35) 85%, rgba(255,255,255,0.7) 100%), linear-gradient(to top, rgba(255,255,255,0.85) 0%, transparent 16%), linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, transparent 12%); }
 
-    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 10vw, 130px); font-weight: 400; line-height: 0.88; color: #22d3ee; margin-bottom: 12px; text-shadow: 0 0 40px rgba(34,211,238,0.5); animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.35s both; letter-spacing: 0.06em; width: 100%; }
-    @keyframes colorCycleAll { 0%{color:#22d3ee;text-shadow:0 0 40px rgba(34,211,238,0.5);} 25%{color:#0891b2;text-shadow:0 0 40px rgba(8,145,178,0.5);} 50%{color:#7c3aed;text-shadow:0 0 40px rgba(124,58,237,0.5);} 75%{color:#22d3ee;text-shadow:0 0 40px rgba(34,211,238,0.5);} 100%{color:#22d3ee;text-shadow:0 0 40px rgba(34,211,238,0.5);}}
-    .hero-title-grad { display: block; margin-top: 4px; animation: colorCycleAll 4s linear infinite; }
-    .hero-tagline { font-family: 'Satoshi', sans-serif; font-size: clamp(15px, 1.6vw, 18px); color: var(--text2); font-weight: 600; line-height: 1.65; margin: 18px auto 0; max-width: 600px; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.5s both; letter-spacing: 0.01em; }
-    @keyframes colorCycle {
-      0%   { color: #22d3ee; text-shadow: 0 0 40px rgba(34,211,238,0.5); }
-      25%  { color: #0891b2; text-shadow: 0 0 40px rgba(8,145,178,0.5); }
-      50%  { color: #7c3aed; text-shadow: 0 0 40px rgba(124,58,237,0.5); }
-      75%  { color: #22d3ee; text-shadow: 0 0 40px rgba(34,211,238,0.5); }
-      100% { color: #22d3ee; text-shadow: 0 0 40px rgba(34,211,238,0.5); }
-    }
+    .hero-content { position: relative; z-index: 5; width: 100%; max-width: 980px; will-change: transform, opacity; }
+    .hero-kicker { display: inline-flex; align-items: center; gap: 10px; padding: 9px 22px; border-radius: 100px; border: 1px solid rgba(26,21,32,0.14); background: rgba(255,255,255,0.55); backdrop-filter: blur(12px); color: rgba(26,21,32,0.55); font-size: 11px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; margin-bottom: 26px; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
+    .hero-kicker::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: rgba(26,21,32,0.45); }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(54px, 7.5vw, 104px); font-weight: 400; line-height: 0.92; color: var(--text); letter-spacing: 0.05em; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
+    .hero-title-grad { display: block; margin-top: 4px; color: transparent; -webkit-text-stroke: 2px rgba(26,21,32,0.34); }
+    .hero-tagline { font-family: 'Satoshi', sans-serif; font-size: clamp(14px, 1.4vw, 17px); color: var(--muted); font-weight: 600; line-height: 1.6; margin: 18px auto 0; max-width: 540px; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.5s both; }
+    .hero-cta { position: relative; z-index: 5; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; will-change: transform, opacity; }
+    .hero-cta a { animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.65s both; }
+    .btn-dark { background: #1a1520; color: #ffffff; padding: 18px 44px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; box-shadow: 0 10px 32px rgba(26,21,32,0.25); }
+    .btn-dark:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(26,21,32,0.35); background: #2a2233; }
+    .btn-ghost { background: rgba(255,255,255,0.6); color: var(--text); padding: 17px 44px; font-size: 15px; font-weight: 800; border: 1.5px solid rgba(26,21,32,0.2); cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; backdrop-filter: blur(10px); }
+    .btn-ghost:hover { border-color: var(--text); background: rgba(255,255,255,0.9); transform: translateY(-2px); }
 
-    .hero-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.5s both; margin-top: 40px; }
-
-    /* SOCIAL STATS - floating behind hero text */
-    .social-stats { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-    .stat-card { background: rgba(255,220,230,0.75); backdrop-filter: blur(14px); border-radius: 28px; padding: 28px 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1.5px solid rgba(255,182,210,0.7); box-shadow: 0 12px 40px rgba(255,100,150,0.12); position: absolute; pointer-events: auto; transition: all 0.4s; animation: floatCard 6s ease-in-out infinite; }
-    .stat-card:hover { transform: translateY(-8px) scale(1.04); box-shadow: 0 24px 56px rgba(255,100,150,0.2); }
-    .stat-card:nth-child(1) { top: 16%; left: 14%; animation-delay: 0s; }
-    .stat-card:nth-child(2) { top: 56%; left: 12%; animation-delay: 1.2s; }
-    .stat-card:nth-child(3) { top: 16%; right: 14%; animation-delay: 0.6s; }
-    .stat-card:nth-child(4) { top: 56%; right: 12%; animation-delay: 1.8s; }
-    .stat-card:nth-child(5) { bottom: 2%; left: 50%; transform: translateX(-50%); animation-delay: 2.4s; }
-    .stat-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; }
-    .stat-num { font-family: 'Satoshi', sans-serif; font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
-    .stat-label { font-size: 11px; font-weight: 800; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; text-align: center; }
-    @keyframes floatCard { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
-    .stat-card:nth-child(5) { animation: floatCard5 6s ease-in-out infinite; animation-delay: 2.4s; }
-    @keyframes floatCard5 { 0%, 100% { transform: translateX(-50%) translateY(0px); } 50% { transform: translateX(-50%) translateY(-10px); } }
+    /* scroll cue — bottom-right corner, clear of the CTAs */
+    .hero-scroll-cue { position: absolute; bottom: 40px; right: 48px; z-index: 7; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; pointer-events: none; }
+    .hero-scroll-cue span { display: block; width: 1.5px; height: 44px; background: linear-gradient(to bottom, transparent, #7c3aed); animation: scrollCue 1.8s ease-in-out infinite; }
+    @keyframes scrollCue { 0%{transform:scaleY(0);transform-origin:top;} 45%{transform:scaleY(1);transform-origin:top;} 55%{transform:scaleY(1);transform-origin:bottom;} 100%{transform:scaleY(0);transform-origin:bottom;} }
 
     /* BUTTONS */
     .btn-primary { background: var(--grad); color: white; padding: 18px 44px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; box-shadow: 0 8px 32px rgba(124,58,237,0.35); letter-spacing: 0.02em; }
@@ -672,108 +331,86 @@ export default function Home() {
     .cta-banner h3 { font-family: 'Satoshi', sans-serif; font-size: clamp(24px, 4vw, 40px); font-weight: 800; color: white; margin-bottom: 12px; position: relative; letter-spacing: -0.02em; }
     .cta-banner p { color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 32px; font-weight: 600; position: relative; }
     .btn-white { background: white; color: var(--purple); padding: 16px 40px; font-size: 14px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-    /* IPHONE CTA */
-    .iphone-cta { display: flex; align-items: center; justify-content: center; gap: 80px; margin-top: 80px; flex-wrap: wrap; }
-    .iphone-text { max-width: 380px; }
-    .iphone-text h3 { font-family: 'Satoshi', sans-serif; font-size: clamp(24px,3vw,38px); font-weight: 800; color: var(--text); margin-bottom: 16px; letter-spacing: -0.02em; line-height: 1.2; }
-    .iphone-text p { font-size: 16px; color: var(--text2); line-height: 1.8; font-weight: 600; }
-    .iphone-wrap { position: relative; flex-shrink: 0; }
-    /* Soft ambient glow */
-    .iphone-glow { position: absolute; inset: -40px; background: radial-gradient(ellipse at 50% 60%, rgba(124,58,237,0.22) 0%, rgba(8,145,178,0.1) 50%, transparent 75%); border-radius: 50%; z-index: 0; animation: glowPulse 4s ease-in-out infinite; filter: blur(30px); pointer-events: none; }
-    @keyframes glowPulse { 0%,100%{opacity:0.38;} 50%{opacity:0.62;} }
-    /* Phone outer shell - matches reference exactly */
-    .iphone-shell {
-      position: relative; z-index: 1;
-      width: 300px;
-      background: linear-gradient(175deg, #3d3d3f 0%, #242426 30%, #18181a 70%, #0f0f10 100%);
-      border-radius: 52px;
-      padding: 14px;
+    /* PHONE CTA — realistic retina device */
+    .phone-cta { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 72px; }
+    .phone-copy { max-width: 460px; }
+    .phone-copy h3 { font-family: 'Satoshi', sans-serif; font-size: clamp(30px, 4vw, 50px); font-weight: 800; color: var(--text); line-height: 1.08; letter-spacing: -0.025em; margin-top: 18px; }
+    .phone-copy h3 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .phone-copy p { font-size: 16.5px; color: var(--text2); line-height: 1.7; font-weight: 600; margin-top: 20px; }
+    .phone-copy-actions { display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap; }
+
+    /* stage + ambient glow */
+    .phone-stage { position: relative; flex-shrink: 0; justify-self: center; }
+    .phone-glow { position: absolute; inset: -70px; background: radial-gradient(ellipse at 50% 55%, rgba(124,58,237,0.26), rgba(8,145,178,0.12) 45%, transparent 72%); filter: blur(44px); z-index: 0; animation: glowPulse 5s ease-in-out infinite; pointer-events: none; }
+    @keyframes glowPulse { 0%,100%{opacity:0.4;} 50%{opacity:0.72;} }
+
+    /* titanium frame */
+    .phone-device { position: relative; z-index: 1; width: 384px; padding: 15px; border-radius: 66px;
+      background: linear-gradient(135deg, #8c8c90 0%, #3a3a3d 20%, #1b1b1e 50%, #2f2f33 80%, #76767a 100%);
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.13),
-        0 0 0 2.5px #0a0a0b,
-        inset 0 0 0 1px rgba(255,255,255,0.04),
-        0 50px 100px rgba(0,0,0,0.55),
-        0 20px 40px rgba(0,0,0,0.3),
-        0 8px 16px rgba(0,0,0,0.2);
-      animation: phoneFloat 5s ease-in-out infinite;
-    }
-    @keyframes phoneFloat {
-      0%,100% { transform: translateY(0px) rotate(-1deg); }
-      50% { transform: translateY(-16px) rotate(1deg); }
-    }
-    @keyframes phoneShake {
-      0%   { transform: translateX(0) rotate(-1deg); }
-      10%  { transform: translateX(-8px) rotate(-3deg); }
-      20%  { transform: translateX(8px) rotate(3deg); }
-      30%  { transform: translateX(-7px) rotate(-2deg); }
-      40%  { transform: translateX(7px) rotate(2deg); }
-      50%  { transform: translateX(-5px) rotate(-1.5deg); }
-      60%  { transform: translateX(5px) rotate(1.5deg); }
-      70%  { transform: translateX(-3px) rotate(-1deg); }
-      80%  { transform: translateX(3px) rotate(1deg); }
-      90%  { transform: translateX(-1px) rotate(-0.5deg); }
-      100% { transform: translateX(0) rotate(-1deg); }
-    }
-    .phone-shaking { animation: phoneShake 0.9s ease-in-out forwards !important; }
-    /* Left buttons */
-    .iphone-vol-up { position:absolute; left:-3.5px; top:108px; width:3.5px; height:34px; background:linear-gradient(to right,#4a4a4c,#2c2c2e); border-radius:2px 0 0 2px; }
-    .iphone-vol-down { position:absolute; left:-3.5px; top:152px; width:3.5px; height:34px; background:linear-gradient(to right,#4a4a4c,#2c2c2e); border-radius:2px 0 0 2px; }
-    .iphone-mute { position:absolute; left:-3.5px; top:76px; width:3.5px; height:24px; background:linear-gradient(to right,#4a4a4c,#2c2c2e); border-radius:2px 0 0 2px; }
-    /* Right power button */
-    .iphone-power { position:absolute; right:-3.5px; top:138px; width:3.5px; height:68px; background:linear-gradient(to left,#4a4a4c,#2c2c2e); border-radius:0 2px 2px 0; }
-    /* Inner screen area */
-    .iphone-inner { background: #000; border-radius: 40px; overflow: hidden; }
-    /* Dynamic island */
-    .iphone-island { width: 120px; height: 34px; background: #000; border-radius: 22px; margin: 0 auto; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 14px; }
-    .iphone-island-cam { width: 12px; height: 12px; border-radius: 50%; background: #0d0d14; border: 1.5px solid #1a1a2e; box-shadow: 0 0 0 2px rgba(0,120,255,0.12); }
-    .iphone-island-sensor { width: 5px; height: 5px; border-radius: 50%; background: #1a1a1a; }
-    /* Screen content */
-    .iphone-screen { background: linear-gradient(160deg, #f2efff 0%, #eaf3ff 60%, #f0f8ff 100%); min-height: 510px; position: relative; padding: 0; }
-    .iphone-screen-inner { padding: 14px 22px 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    /* Status bar */
-    .iphone-status { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 2px 0 6px; }
-    .iphone-time { font-family: 'Satoshi', sans-serif; font-size: 15px; font-weight: 800; color: #111; letter-spacing: -0.02em; }
-    .iphone-icons { display: flex; align-items: center; gap: 5px; }
-    .iphone-signal { display:flex; align-items:flex-end; gap:1.5px; height:12px; }
-    .iphone-signal span { display:block; background:#111; border-radius:1px; width:3px; }
-    .iphone-signal span:nth-child(1){height:4px;}
-    .iphone-signal span:nth-child(2){height:6px;}
-    .iphone-signal span:nth-child(3){height:9px;}
-    .iphone-signal span:nth-child(4){height:12px;}
-    .iphone-wifi { font-size:12px; color:#111; }
-    .iphone-batt { display:flex; align-items:center; gap:1px; }
-    .iphone-batt-body { width:22px; height:11px; border:1.5px solid #111; border-radius:3px; padding:1.5px 1.5px; display:flex; }
-    .iphone-batt-fill { width:65%; background:#111; border-radius:1.5px; }
-    .iphone-batt-tip { width:2px; height:5px; background:#111; border-radius:0 1px 1px 0; margin-left:1px; align-self:center; }
-    /* App content */
-    .iphone-app-icon { width: 80px; height: 80px; background: var(--grad); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 36px; color: white; box-shadow: 0 12px 32px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.25); }
-    .iphone-app-name { font-family: 'Satoshi', sans-serif; font-size: 21px; font-weight: 800; color: #111; }
-    .iphone-app-sub { font-size: 13px; color: #555; line-height: 1.65; font-weight: 600; max-width: 210px; text-align: center; }
-    /* CTA - matches site gradient */
-    .iphone-btn { background: var(--grad); color: white; padding: 20px 28px; border-radius: 100px; font-size: 17px; font-weight: 900; text-decoration: none; display: block; box-shadow: 0 10px 32px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.2); transition: all 0.3s; font-family: 'Satoshi', sans-serif; width: 100%; text-align: center; letter-spacing: 0.01em; }
-    .iphone-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(124,58,237,0.6); }
-    /* Dots & home bar */
-    .iphone-dots { display: flex; gap: 6px; align-items: center; justify-content: center; }
-    .iphone-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.15); }
-    .iphone-dots span.active { width: 22px; border-radius: 3px; background: var(--grad); }
-    .iphone-home-bar { width: 110px; height: 5px; background: rgba(0,0,0,0.18); border-radius: 3px; margin: 8px auto 2px; }
+        inset 0 0 0 2px rgba(255,255,255,0.10),
+        inset 0 2px 4px rgba(255,255,255,0.28),
+        inset 0 -3px 5px rgba(0,0,0,0.55),
+        0 1px 0 rgba(0,0,0,0.5),
+        0 60px 120px rgba(20,10,40,0.42),
+        0 28px 56px rgba(0,0,0,0.32);
+      animation: phoneFloat 6s ease-in-out infinite; }
+    @keyframes phoneFloat { 0%,100%{ transform: translateY(0) rotate(-1deg); } 50%{ transform: translateY(-18px) rotate(1deg); } }
+    @keyframes phoneBuzz {
+      0%,100%{ transform: translateX(0) rotate(-1deg); }
+      15%{ transform: translateX(-6px) rotate(-2.4deg); } 30%{ transform: translateX(6px) rotate(2.4deg); }
+      45%{ transform: translateX(-5px) rotate(-1.8deg); } 60%{ transform: translateX(5px) rotate(1.8deg); }
+      75%{ transform: translateX(-3px) rotate(-1deg); } 88%{ transform: translateX(2px) rotate(0.6deg); } }
+    .phone-buzz { animation: phoneBuzz 0.85s ease-in-out !important; }
+
+    /* side buttons */
+    .phone-btn-mute, .phone-btn-volup, .phone-btn-voldown { position:absolute; left:-3px; width:3px; background:linear-gradient(to right,#55555a,#28282b); border-radius:2px 0 0 2px; box-shadow:-1px 0 1px rgba(0,0,0,0.3); }
+    .phone-btn-mute { top:118px; height:30px; }
+    .phone-btn-volup { top:166px; height:48px; }
+    .phone-btn-voldown { top:226px; height:48px; }
+    .phone-btn-power { position:absolute; right:-3px; top:182px; width:3px; height:82px; background:linear-gradient(to left,#55555a,#28282b); border-radius:0 2px 2px 0; box-shadow:1px 0 1px rgba(0,0,0,0.3); }
+
+    /* retina screen */
+    .phone-screen { position: relative; width: 354px; aspect-ratio: 354 / 766; border-radius: 52px; overflow: hidden;
+      background: linear-gradient(165deg, #2a1b54 0%, #3a2a78 26%, #245a82 68%, #0e7490 100%);
+      box-shadow: inset 0 0 0 2px #050509; }
+    /* iOS-style wallpaper orbs */
+    .phone-screen::before { content:''; position:absolute; width:240px; height:240px; left:-60px; top:60px; border-radius:50%; background:radial-gradient(circle, rgba(196,181,253,0.55), transparent 65%); filter:blur(20px); }
+    .phone-screen::after { content:''; position:absolute; width:220px; height:220px; right:-50px; bottom:90px; border-radius:50%; background:radial-gradient(circle, rgba(34,211,238,0.45), transparent 65%); filter:blur(22px); }
+    /* dynamic island */
+    .phone-island { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:108px; height:32px; background:#000; border-radius:20px; z-index:8; display:flex; align-items:center; justify-content:flex-end; padding-right:12px; }
+    .phone-island-cam { width:11px; height:11px; border-radius:50%; background:#0a0a12; box-shadow:inset 0 0 0 2px #1c1c2e, 0 0 3px rgba(60,130,255,0.4); }
+    /* glass reflection */
+    .phone-glass { position:absolute; inset:0; z-index:7; pointer-events:none; border-radius:52px; background:linear-gradient(125deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.05) 16%, transparent 36%); overflow:hidden; }
+    .phone-glass::after { content:''; position:absolute; top:-40%; left:-70%; width:45%; height:180%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent); transform:rotate(16deg); animation:glassSweep 7s ease-in-out infinite; }
+    @keyframes glassSweep { 0%,68%{ left:-70%; } 100%{ left:150%; } }
+
+    /* screen UI */
+    .phone-ui { position:relative; z-index:6; height:100%; display:flex; flex-direction:column; padding:16px 22px 14px; }
+    .phone-status { display:flex; justify-content:space-between; align-items:center; padding:2px 8px 0; }
+    .phone-time { font-family:'Satoshi',sans-serif; font-size:15px; font-weight:800; color:#fff; letter-spacing:-0.01em; }
+    .phone-status-icons { display:flex; align-items:center; gap:6px; }
+    .phone-signal { display:flex; align-items:flex-end; gap:2px; height:11px; }
+    .phone-signal span { width:3px; background:#fff; border-radius:1px; }
+    .phone-signal span:nth-child(1){height:4px;} .phone-signal span:nth-child(2){height:6px;} .phone-signal span:nth-child(3){height:9px;} .phone-signal span:nth-child(4){height:11px;}
+    .phone-wifi { width:16px; height:12px; border-radius:2px; background:conic-gradient(from 225deg at 50% 100%, #fff 0deg, #fff 90deg, transparent 90deg); -webkit-mask:radial-gradient(circle at 50% 100%, transparent 2px, #000 2.5px); mask:radial-gradient(circle at 50% 100%, transparent 2px, #000 2.5px); }
+    .phone-batt { width:24px; height:12px; border:1.5px solid rgba(255,255,255,0.7); border-radius:3px; padding:1.5px; position:relative; }
+    .phone-batt::after { content:''; position:absolute; right:-3px; top:50%; transform:translateY(-50%); width:2px; height:5px; background:rgba(255,255,255,0.7); border-radius:0 1px 1px 0; }
+    .phone-batt-fill { height:100%; width:72%; background:#fff; border-radius:1.5px; }
+    /* app card */
+    .phone-app { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:0 6px; }
+    .phone-app-icon { width:78px; height:78px; border-radius:22px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:38px; color:#fff; box-shadow:0 14px 34px rgba(124,58,237,0.5), inset 0 1px 0 rgba(255,255,255,0.4); animation:appIconPop 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+    @keyframes appIconPop { from{ transform:scale(0.6); opacity:0; } to{ transform:scale(1); opacity:1; } }
+    .phone-app-name { font-family:'Satoshi',sans-serif; font-size:23px; font-weight:800; color:#fff; }
+    .phone-app-sub { font-size:13.5px; color:rgba(255,255,255,0.78); line-height:1.6; font-weight:600; text-align:center; max-width:210px; margin-top:-4px; }
+    .phone-app-cta { margin-top:8px; background:#fff; color:#1a1520; font-family:'Satoshi',sans-serif; font-size:15px; font-weight:800; padding:15px 30px; border-radius:100px; text-decoration:none; box-shadow:0 10px 28px rgba(0,0,0,0.28); transition:transform 0.3s; }
+    .phone-app-cta:hover { transform:translateY(-2px); }
+    .phone-app-trust { display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:6px; }
+    .phone-app-stars { color:#fbbf24; font-size:14px; letter-spacing:2px; }
+    .phone-app-trust span { font-size:11px; color:rgba(255,255,255,0.7); font-weight:700; letter-spacing:0.04em; }
+    .phone-homebar { width:128px; height:5px; background:rgba(255,255,255,0.55); border-radius:3px; margin:6px auto 2px; }
     .btn-white:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
 
-    /* MARQUEE */
-    .marquee-section { padding: 26px 0; overflow: hidden; background: #ffffff; border-top: 2px solid rgba(0,0,0,0.06); border-bottom: 2px solid rgba(0,0,0,0.06); }
-    .marquee-track { display: flex; gap: 0; animation: marquee 28s linear infinite; white-space: nowrap; }
-    .marquee-item { display: flex; align-items: center; gap: 16px; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; flex-shrink: 0; font-weight: 900; padding: 0 36px; font-family: 'Satoshi', sans-serif; }
-    .marquee-item:nth-child(10n+1)  { color: #ff4757; }
-    .marquee-item:nth-child(10n+2)  { color: #ff6b35; }
-    .marquee-item:nth-child(10n+3)  { color: #ffa502; }
-    .marquee-item:nth-child(10n+4)  { color: #2ed573; }
-    .marquee-item:nth-child(10n+5)  { color: #1e90ff; }
-    .marquee-item:nth-child(10n+6)  { color: #a855f7; }
-    .marquee-item:nth-child(10n+7)  { color: #ff6b81; }
-    .marquee-item:nth-child(10n+8)  { color: #00d2d3; }
-    .marquee-item:nth-child(10n+9)  { color: #ff9f43; }
-    .marquee-item:nth-child(10n+10) { color: #48dbfb; }
-    .marquee-star { font-size: 10px; opacity: 0.6; }
 
     /* SECTION COMMONS */
     section { padding: 120px 40px; }
@@ -784,56 +421,46 @@ export default function Home() {
     .section-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .section-title .cyan-em { font-style: normal; background: var(--grad2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-    /* SERVICES */
-    #services { background: var(--white); }
-    .services-header { text-align: center; margin-bottom: 48px; }
-    .services-header p { font-size: 16px; color: var(--text2); max-width: 560px; line-height: 1.75; font-weight: 600; margin: 16px auto 0; }
-    /* Service name list */
-    .services-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 64px; }
-    .services-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 22px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 100px; font-size: 14px; font-weight: 700; color: var(--text2); }
-    .services-list-item span { font-size: 16px; }
-    /* Flip cards */
-    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; perspective: 1200px; }
-    .flip-card:nth-last-child(2):nth-child(3n+1) { grid-column: 1; }
-    .flip-card:last-child:nth-child(3n+2) { grid-column: 2; }
-    .services-grid-wrap { display: flex; flex-direction: column; gap: 28px; }
-    .services-row { display: flex; justify-content: center; gap: 28px; perspective: 1200px; }
-    .services-row .flip-card { width: calc(33.333% - 19px); max-width: 340px; flex-shrink: 0; }
-    .flip-card { height: 300px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-    .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(0.4,0.2,0.2,1); transform-style: preserve-3d; }
-    .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-    @media (hover: none) { .flip-card:active .flip-card-inner { transform: rotateY(180deg); } }
-    .flip-card-front, .flip-card-back { position: absolute; inset: 0; border-radius: 24px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 36px 32px; text-align: center; }
-    .flip-card-front { background: var(--bg); border: 1.5px solid var(--border); }
-    .flip-card-back { background: var(--grad); border: none; transform: rotateY(180deg); }
-    .flip-front-icon { width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; background: var(--purple-light); }
-    .flip-card:nth-child(even) .flip-front-icon { background: var(--cyan-light); }
-    .flip-front-title { font-family: 'Satoshi', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.25; }
-    .flip-front-hint { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 12px; letter-spacing: 0.06em; }
-    .flip-back-desc { font-size: 15px; color: rgba(255,255,255,0.92); line-height: 1.75; font-weight: 600; }
-    .flip-back-icon { font-size: 36px; margin-bottom: 20px; }
+    /* SERVICES — pinned scroll-reveal */
+    .services-pin { position: relative; height: ${100 + SERVICES_PIN * 100}vh; background: var(--white); padding: 0; }
+    .services-stage { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; align-items: center; overflow: hidden; }
+    .services-stage-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 40px; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: center; }
+    .services-title-col { position: relative; }
+    .services-title-col .section-chip { margin-bottom: 22px; }
+    .services-title-col .section-title { font-size: clamp(34px, 4vw, 54px); }
+    .services-title-sub { font-size: 16px; color: var(--text2); line-height: 1.75; font-weight: 600; margin-top: 20px; max-width: 420px; }
+    .services-progress { display: flex; gap: 9px; margin-top: 36px; }
+    .services-dot { width: 28px; height: 4px; border-radius: 100px; background: var(--border2); transition: background 0.4s ease, transform 0.4s ease; }
+    .services-dot.on { background: var(--grad); transform: scaleY(1.5); }
+    /* card stack */
+    .services-cards-col { display: flex; flex-direction: column; gap: 16px; }
+    .service-card { display: flex; align-items: center; gap: 22px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 22px; padding: 22px 26px; will-change: transform, opacity; box-shadow: 0 10px 30px rgba(124,58,237,0.04); }
+    .service-card-icon { width: 58px; height: 58px; flex-shrink: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: var(--purple-light); }
+    .service-card:nth-child(even) .service-card-icon { background: var(--cyan-light); }
+    .service-card-body { flex: 1; }
+    .service-card-title { font-family: 'Satoshi', sans-serif; font-size: 19px; font-weight: 800; color: var(--text); line-height: 1.25; }
+    .service-card-desc { font-size: 14.5px; color: var(--text2); line-height: 1.6; font-weight: 600; margin-top: 6px; }
+    .service-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--border2); letter-spacing: 0.04em; flex-shrink: 0; }
+    /* CTA section that follows the pin */
+    .services-cta-section { background: var(--white); padding: 40px 40px 120px; }
 
-    /* INDUSTRIES */
-    #industries { background: var(--bg2); }
-    .industries-header { text-align: center; margin-bottom: 48px; }
-    .industries-header p { font-size: 16px; color: var(--text2); max-width: 560px; line-height: 1.75; font-weight: 600; margin: 16px auto 0; }
-    /* pill list */
-    .industries-pill-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 56px; }
-    .industry-pill { display: flex; align-items: center; gap: 10px; padding: 10px 22px; background: var(--white); border: 1.5px solid var(--border); border-radius: 100px; font-size: 14px; font-weight: 700; color: var(--text2); transition: all 0.3s; cursor: default; }
-    .industry-pill:hover { border-color: var(--cyan); background: var(--cyan-light); color: var(--cyan); transform: translateY(-2px); }
-    .industry-emoji { font-size: 18px; }
-    /* hover cards */
-    .industries-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .industry-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 24px; padding: 36px 28px; text-align: center; transition: all 0.4s; cursor: default; position: relative; overflow: hidden; }
-    .industry-card::before { content: ''; position: absolute; inset: 0; background: var(--grad2); opacity: 0; transition: opacity 0.4s; border-radius: 24px; }
-    .industry-card:hover::before { opacity: 1; }
-    .industry-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(8,145,178,0.18); border-color: transparent; }
-    .industry-card-icon { font-size: 40px; margin-bottom: 16px; display: block; position: relative; z-index: 1; transition: transform 0.4s; }
-    .industry-card:hover .industry-card-icon { transform: scale(1.2); }
-    .industry-card-label { font-family: 'Satoshi', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); position: relative; z-index: 1; transition: color 0.4s; }
-    .industry-card:hover .industry-card-label { color: white; }
-    .industry-card-desc { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 600; margin-top: 10px; position: relative; z-index: 1; opacity: 0; transform: translateY(8px); transition: all 0.4s; }
-    .industry-card:hover .industry-card-desc { opacity: 1; transform: translateY(0); color: rgba(255,255,255,0.88); }
+    /* INDUSTRIES — pinned rotating digital globe + orbiting cards */
+    .industries-pin { position: relative; height: ${100 + INDUSTRIES_PIN * 100}vh; background: var(--bg2); padding: 0; }
+    .industries-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; align-items: center; background: radial-gradient(ellipse 80% 60% at 50% 60%, #ffffff 0%, var(--bg2) 70%); }
+    .industries-heading { text-align: center; padding: 92px 24px 0; position: relative; z-index: 3; }
+    .industries-heading .section-title { font-size: clamp(32px, 4.5vw, 54px); }
+    /* orbit field */
+    .orbit { position: relative; flex: 1; width: 100%; max-width: 760px; }
+    .orbit-glow { position: absolute; left: 50%; top: 50%; width: 360px; height: 360px; transform: translate(-50%,-50%); background: radial-gradient(circle, rgba(34,211,238,0.18), rgba(124,58,237,0.08) 50%, transparent 72%); filter: blur(30px); pointer-events: none; }
+    .globe { position: absolute; left: 50%; top: 50%; width: 250px; height: 250px; will-change: transform; filter: drop-shadow(0 20px 50px rgba(8,145,178,0.22)); }
+    .globe svg { width: 100%; height: 100%; display: block; }
+    .globe-ring { position: absolute; left: 50%; top: 50%; width: 330px; height: 330px; border: 1.5px dashed rgba(8,145,178,0.3); border-radius: 50%; will-change: transform; }
+    .orbit-card { position: absolute; left: 50%; top: 50%; width: 158px; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 18px 14px; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: 0 14px 34px rgba(8,145,178,0.1); will-change: transform, opacity; }
+    .orbit-card-icon { font-size: 28px; }
+    .orbit-card-label { font-family: 'Satoshi', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--text); text-align: center; line-height: 1.3; }
+    /* mobile fallback hidden on desktop */
+    .industries-fallback { display: none; }
+    .orbit-card-static { display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 20px 14px; background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: 0 12px 30px rgba(8,145,178,0.08); }
 
 
 
@@ -879,7 +506,6 @@ export default function Home() {
     .footer-links a:hover { color: var(--purple3); }
 
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.85); } }
 
     /* MAKEOVER CTA SECTION */
@@ -908,11 +534,6 @@ export default function Home() {
     .makeover-label-before { left: 12px; background: rgba(0,0,0,0.5); color: white; }
     .makeover-label-after { right: 12px; background: linear-gradient(135deg,#7c3aed,#0891b2); color: white; }
 
-    .hero-mobile-rockets { display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
-    @keyframes mobileRocketFloat1 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-18px);} }
-    @keyframes mobileRocketFloat2 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-22px);} }
-    @keyframes mobileRocketFloat3 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-15px);} }
-
     /* ── TABLET (max 900px) ── */
     @media (max-width: 900px) {
       nav { padding: 0 20px; }
@@ -922,20 +543,26 @@ export default function Home() {
       section { padding: 72px 20px; }
       .section-inner { padding: 0; }
       /* Hero */
-      #hero { padding: 120px 20px 60px; min-height: 100vh; }
-      .hero-content { padding: 32px 16px; }
-      .hero-scroll-layer { display: none; }
-      .hero-mobile-rockets { display: block; }
-      .social-stats { display: none; }
-      /* Services */
-      .services-header { flex-direction: column; align-items: flex-start; }
-      .services-row { flex-wrap: wrap; }
-      .services-row .flip-card { width: calc(50% - 14px); }
-      .services-list { gap: 8px; }
-      /* Industries */
-      .industries-grid { grid-template-columns: 1fr 1fr; }
-      .iphone-cta { flex-direction: column; align-items: center; gap: 48px; }
-      .iphone-text { text-align: center; }
+      #hero { padding: 0; }
+      .hero-stage { padding-bottom: 40px; }
+      /* Services — unpin and stack on tablet/mobile */
+      .services-pin { height: auto; }
+      .services-stage { position: static; height: auto; padding: 72px 0; }
+      .services-stage-inner { grid-template-columns: 1fr; gap: 32px; padding: 0 20px; }
+      .services-title-sub { max-width: 100%; }
+      .service-card { opacity: 1 !important; transform: none !important; }
+      /* Industries — unpin, static globe + grid */
+      .industries-pin { height: auto; }
+      .industries-stage { position: static; height: auto; padding-bottom: 72px; }
+      .orbit { display: none; }
+      .industries-fallback { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 520px; margin: 40px auto 0; padding: 0 20px; }
+      .phone-cta { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 48px; }
+      /* Makeover entrance video on mobile */
+      .mk-show-copy { top: 80px; padding: 0 16px; }
+      .mk-show-media { height: auto; width: 94vw; }
+      .mk-show-video { height: auto; width: 100%; }
+      .phone-copy { max-width: 560px; }
+      .phone-copy-actions { justify-content: center; }
       /* Reviews */
       .reviews-grid { grid-template-columns: 1fr 1fr; }
       /* Contact */
@@ -965,35 +592,25 @@ export default function Home() {
       nav { padding: 0 16px; height: 64px; }
       .nav-brand { font-size: 20px; }
       /* Hero */
-      #hero { padding: 100px 16px 48px; }
-      .hero-title { font-size: clamp(52px, 14vw, 80px); letter-spacing: 0.04em; }
-      .hero-title-grad { font-size: inherit; }
+      .hero-stage { padding: 92px 16px 36px; }
+      .hero-title { font-size: clamp(42px, 12vw, 64px); letter-spacing: 0.04em; }
+      .hero-title-grad { font-size: inherit; -webkit-text-stroke-width: 1.5px; }
       .hero-tagline { font-size: 14px; margin-top: 14px; }
-      .hero-buttons { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
-      .btn-hero { width: 100% !important; padding: 18px 24px !important; font-size: 15px !important; text-align: center; }
-      .hero-scroll-layer { display: none; }
-      .hero-mobile-rockets { display: block; }
-      .social-stats { display: none; }
-      /* Marquee */
-      .marquee-item { font-size: 13px; padding: 0 20px; }
+      .hero-cta { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+      .btn-hero { width: 100% !important; padding: 17px 24px !important; font-size: 15px !important; text-align: center; }
+      .hero-kicker { font-size: 10px; letter-spacing: 0.16em; padding: 8px 16px; }
+      .hero-scroll-cue { display: none; }
       /* Services */
-      .services-header { text-align: center; }
-      .services-list { gap: 8px; }
-      .services-list-item { font-size: 13px; padding: 8px 14px; }
-      .services-grid-wrap { gap: 16px; }
-      .services-row { flex-direction: column; align-items: center; gap: 16px; }
-      .services-row .flip-card { width: 100%; max-width: 100%; }
-      .flip-card { height: 260px; }
-      /* iPhone */
-      .iphone-cta { flex-direction: column; gap: 40px; }
-      .iphone-text { text-align: center; }
-      .iphone-shell { width: 260px; }
-      .iphone-screen { min-height: 440px; }
+      .service-card { padding: 18px 18px; gap: 16px; }
+      .service-card-icon { width: 50px; height: 50px; font-size: 22px; }
+      .service-card-title { font-size: 17px; }
+      .service-card-num { font-size: 24px; }
+      /* Phone */
+      .phone-cta { gap: 40px; }
+      .phone-device { width: 300px; padding: 12px; border-radius: 52px; }
+      .phone-screen { width: 276px; border-radius: 42px; }
       /* Industries */
-      .industries-pill-list { gap: 8px; }
-      .industry-pill { font-size: 13px; padding: 8px 14px; }
-      .industries-grid { grid-template-columns: 1fr; }
-      .industry-card { padding: 28px 20px; }
+      .industries-fallback { grid-template-columns: 1fr 1fr; }
       /* Reviews */
       .reviews-grid { grid-template-columns: 1fr; gap: 16px; }
       .review-card { padding: 28px 22px; }
@@ -1018,7 +635,8 @@ export default function Home() {
     /* ── SMALL MOBILE (max 380px) ── */
     @media (max-width: 380px) {
       .hero-title { font-size: 48px; }
-      .iphone-shell { width: 240px; }
+      .phone-device { width: 270px; }
+      .phone-screen { width: 246px; }
       .nav-brand { font-size: 18px; }
     }
 
@@ -1086,17 +704,62 @@ export default function Home() {
     .intake-back:hover { border-color:var(--purple); color:var(--purple); }
     @media(max-width:640px){ .intake-card{padding:36px 24px;} .intake-choice-grid{grid-template-columns:1fr;} }
 
-    /* ── MAKEOVERS PAGE ── */
-    .makeovers-page { padding: 80px 40px 120px; background: var(--bg); min-height: 80vh; }
-    .makeovers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
-    @media(max-width:900px){ .makeovers-grid{grid-template-columns:repeat(2,1fr); gap:12px;} }
+    /* ── MAKEOVERS PAGE — large scroll-scrubbed makeover video ── */
+    .mk-page { background: #f9f9ed; }
+    .mk-show-pin { position: relative; height: ${100 + SHOW_SCRUB * 100}vh; background: #f9f9ed; padding: 0; }
+    .mk-show-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f9f9ed; }
+    /* title overlaid at the top, fades out as you scroll into the video */
+    .mk-show-copy { position: absolute; top: 96px; left: 0; right: 0; z-index: 5; text-align: center; pointer-events: none; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
+    .mk-show-chip { display: inline-flex; align-items: center; gap: 9px; padding: 8px 20px; border-radius: 100px; background: var(--grad); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(124,58,237,0.3); }
+    .mk-show-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 6vw, 92px); line-height: 0.9; letter-spacing: 0.03em; color: var(--text); }
+    .mk-show-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    /* BIG video, centered, matched cream bg with feathered edges so it reads seamless and high-res */
+    .mk-show-media { position: relative; z-index: 2; height: min(92vh, 980px); display: flex; align-items: center; justify-content: center; }
+    .mk-show-video { height: 100%; width: auto; max-width: 94vw; display: block; transition: opacity 0.6s ease; -webkit-mask-image: radial-gradient(ellipse 86% 86% at 50% 50%, #000 70%, transparent 97%); mask-image: radial-gradient(ellipse 86% 86% at 50% 50%, #000 70%, transparent 97%); }
+    .mk-scroll-cue { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; pointer-events: none; }
+    .mk-scroll-cue span { display: block; width: 1.5px; height: 42px; background: linear-gradient(to bottom, transparent, var(--purple)); animation: scrollCue 1.8s ease-in-out infinite; }
+
+    /* CTA */
+    .mk-cta-section { background: #f9f9ed; padding: 30px 40px 120px; }
+    .mk-cta { text-align: center; max-width: 560px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-radius: 28px; padding: 52px 40px; position: relative; overflow: hidden; }
+    .mk-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
+    .mk-cta-title { font-family: 'Satoshi', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+    .mk-cta-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .mk-cta p { font-size: 16px; color: var(--text2); font-weight: 600; margin: 14px auto 28px; }
   `;
 
-  // 0 = sitting still, 1 = fully launched (rockets gone)
-  const launchProgress = windowHeight > 0 ? Math.min(scrollY / (windowHeight * 0.6), 1) : 0;
-  const rocketY    = launchProgress * -320;   // fly upward px
-  const rocketOp   = 1 - launchProgress * 1.2; // fade out
-  const rocketScale = 1 + launchProgress * 0.4; // scale up slightly as they accelerate
+  // Hero scrub: 0 = top of page, 1 = sticky stage about to release
+  const heroProgress = windowHeight > 0 ? Math.min(Math.max(scrollY / (windowHeight * HERO_SCRUB_DISTANCE), 0), 1) : 0;
+  // Scroll choreography: headline exits first, CTAs linger, video slowly zooms; the moment the
+  // scrub completes the stage unpins and the next section scrolls straight in (white-on-white, no seam)
+  const heroContentFade = Math.max(0, 1 - Math.max(0, heroProgress - 0.18) * 3.2);
+  const heroCtaFade = Math.max(0, 1 - Math.max(0, heroProgress - 0.55) * 4);
+  const heroVideoScale = 1 + heroProgress * 0.015;
+
+  // Pinned services: scroll travel through the section drives the card reveal
+  const servicesProgress = windowHeight > 0
+    ? Math.min(Math.max((scrollY - servicesTop) / (windowHeight * SERVICES_PIN), 0), 1)
+    : 0;
+  // Each card eases in one after another across the pinned scroll
+  const cardReveal = (i: number) => {
+    const start = 0.06 + i * 0.15;
+    return Math.min(Math.max((servicesProgress - start) / 0.22, 0), 1);
+  };
+
+  // Pinned industries: scroll drives the globe spin and the orbiting card ring
+  const industriesProgress = windowHeight > 0
+    ? Math.min(Math.max((scrollY - industriesTop) / (windowHeight * INDUSTRIES_PIN), 0), 1)
+    : 0;
+  const globeSpin = industriesProgress * 300;        // digital globe rotates as you scroll
+  const ringSpin = -26 + industriesProgress * 52;    // the orbit of cards rotates around it
+  // Each industry card pops + spins in, one after another, in sync with the rotation
+  const orbitReveal = (i: number) => {
+    const start = i * 0.12;
+    return Math.min(Math.max((industriesProgress - start) / 0.26, 0), 1);
+  };
+
+  // makeover showcase scrub progress (entrance video sits at top of the page)
+  const showProgress = windowHeight > 0 ? Math.min(Math.max((scrollY - showTop) / (windowHeight * SHOW_SCRUB), 0), 1) : 0;
 
   return (
     <>
@@ -1114,7 +777,7 @@ export default function Home() {
       </div>
 
       {/* APOLLO NAV */}
-      <nav className={scrollY > 60 ? "scrolled" : ""}>
+      <nav className={currentPage === "makeovers" ? "" : scrollY > 60 ? "scrolled" : ""}>
         <button onClick={() => goTo("home")} className="nav-brand" style={{ border:"none", cursor:"pointer", padding:0 }}>ZJ Digital</button>
         <div className="nav-links">
           <button onClick={() => goTo("home")} className={`nav-link${currentPage === "home" ? " active" : ""}`}>Home</button>
@@ -1133,380 +796,227 @@ export default function Home() {
       {/* ── HOME PAGE ── */}
       {currentPage === "home" && <>
 
-      {/* HERO */}
+      {/* HERO — full-bleed scroll-scrubbed video */}
       <section id="hero">
-        {/* static dot grid background */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 0, backgroundImage: "radial-gradient(circle, rgba(124,58,237,0.05) 1px, transparent 1px)", backgroundSize: "40px 40px", transform: `translateY(${parallaxBg}px)` }} />
+        <div className="hero-stage">
+          {/* the video IS the hero — scrubbing it with scroll rotates the pill */}
+          <div
+            className="hero-video-box"
+            style={{ opacity: heroVideoReady ? 1 : 0, transform: `translate(-50%, -50%) scale(${heroVideoScale})` }}
+          >
+            <video
+              ref={heroVideoRef}
+              className="hero-video"
+              src="/hero-video.mp4"
+              muted
+              playsInline
+              preload="auto"
+              onLoadedMetadata={() => setHeroVideoReady(true)}
+            />
+          </div>
+          <div className="hero-vignette" />
 
-        {/* ROCKETS - scrolling upward infinitely */}
-        <div className="hero-scroll-layer" style={{
-          transform: `translateY(${rocketY - parallaxRockets}px) scale(${rocketScale}) translateZ(0)`,
-          opacity: Math.max(rocketOp, 0),
-          transition: scrollY === 0 ? "transform 0.5s ease, opacity 0.5s ease" : "none",
-          willChange: "transform, opacity",
-        }}>
-          <svg style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }} viewBox="0 0 1200 900" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="flame1" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stopColor="white" stopOpacity="1" />
-                <stop offset="25%" stopColor="#FFD700" stopOpacity="0.9" />
-                <stop offset="55%" stopColor="#FF6600" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#FF2800" stopOpacity="0" />
-              </radialGradient>
-              <radialGradient id="flame2" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stopColor="white" stopOpacity="1" />
-                <stop offset="20%" stopColor="#FFE066" stopOpacity="0.9" />
-                <stop offset="50%" stopColor="#FF8800" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#FF2800" stopOpacity="0" />
-              </radialGradient>
-            </defs>
+          {/* headline pinned to the top — recedes as you scroll, keeping the animation clear */}
+          <div
+            className="hero-content"
+            style={{
+              transform: `translate3d(0, ${heroProgress * -70}px, 0)`,
+              opacity: heroContentFade,
+              pointerEvents: heroContentFade < 0.3 ? "none" : "auto",
+            }}
+          >
+            <div className="hero-kicker">AI-Powered Brand Studio</div>
+            <h1 className="hero-title">
+              Make Your Brand
+              <span className="hero-title-grad">Impossible to Ignore</span>
+            </h1>
+            <p className="hero-tagline">We create viral short-form content using AI that drives views, followers, and sales.</p>
+          </div>
 
-            {/* ROCKET A — FAR LEFT TOP — clear of left widget */}
-            <g style={{ animation: "rocketFloat1 3.2s ease-in-out infinite", transform: "scale(1.4)", transformOrigin: "60px 170px" }}>
-              <ellipse cx="60" cy="235" rx="13" ry="60" fill="url(#flame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="60" cy="235" rx="7" ry="40" fill="url(#flame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="60" cy="228" rx="3" ry="20" fill="white" opacity="0.9" />
-              <ellipse cx="60" cy="170" rx="15" ry="40" fill="#c4b5fd" />
-              <ellipse cx="60" cy="170" rx="10" ry="36" fill="#7c3aed" />
-              <path d="M46,133 Q60,104 74,133 Z" fill="#5b21b6" />
-              <circle cx="60" cy="161" r="8" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="60" cy="161" r="5" fill="#0891b2" opacity="0.7" />
-              <path d="M46,198 L32,224 L46,212 Z" fill="#5b21b6" />
-              <path d="M74,198 L88,224 L74,212 Z" fill="#5b21b6" />
-            </g>
+          {/* CTAs anchored low so the animation stays in view */}
+          <div
+            className="hero-cta"
+            style={{
+              transform: `translate3d(0, ${heroProgress * 30}px, 0)`,
+              opacity: heroCtaFade,
+              pointerEvents: heroCtaFade < 0.3 ? "none" : "auto",
+            }}
+          >
+            <a href="#contact" className="btn-dark btn-hero">Claim My FREE Visual Makeover</a>
+            <a href="#services" className="btn-ghost btn-hero">See What We Do</a>
+          </div>
 
-            {/* ROCKET B — FAR LEFT MID — between left widgets */}
-            <g style={{ animation: "rocketFloat3 3.8s ease-in-out infinite", transform: "scale(1.4)", transformOrigin: "55px 420px" }}>
-              <ellipse cx="55" cy="478" rx="10" ry="50" fill="url(#flame2)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="55" cy="478" rx="6" ry="32" fill="url(#flame1)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="55" cy="420" rx="12" ry="34" fill="#a5f3fc" />
-              <ellipse cx="55" cy="420" rx="8" ry="30" fill="#0891b2" />
-              <path d="M44,390 Q55,366 66,390 Z" fill="#0e7490" />
-              <circle cx="55" cy="412" r="7" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="55" cy="412" r="4" fill="#7c3aed" opacity="0.8" />
-              <path d="M44,444 L31,466 L44,456 Z" fill="#0e7490" />
-              <path d="M66,444 L79,466 L66,456 Z" fill="#0e7490" />
-            </g>
-
-            {/* ROCKET C — FAR LEFT BOTTOM — below left widgets */}
-            <g style={{ animation: "rocketFloat2 4.2s ease-in-out infinite", transform: "scale(1.4)", transformOrigin: "58px 720px" }}>
-              <ellipse cx="58" cy="782" rx="11" ry="56" fill="url(#flame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="58" cy="782" rx="6" ry="36" fill="url(#flame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="58" cy="720" rx="13" ry="36" fill="#c4b5fd" />
-              <ellipse cx="58" cy="720" rx="9" ry="32" fill="#7c3aed" />
-              <path d="M46,688 Q58,663 70,688 Z" fill="#4c1d95" />
-              <circle cx="58" cy="712" r="7" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="58" cy="712" r="4" fill="#0891b2" opacity="0.8" />
-              <path d="M46,746 L33,768 L46,757 Z" fill="#4c1d95" />
-              <path d="M70,746 L83,768 L70,757 Z" fill="#4c1d95" />
-            </g>
-
-            {/* ROCKET D — FAR RIGHT TOP — clear of right widget */}
-            <g style={{ animation: "rocketFloat2 2.9s ease-in-out infinite", transform: "scale(1.4)", transformOrigin: "1140px 170px" }}>
-              <ellipse cx="1140" cy="235" rx="13" ry="60" fill="url(#flame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="1140" cy="235" rx="7" ry="40" fill="url(#flame2)" style={{ filter: "blur(3px)" }} />
-              <ellipse cx="1140" cy="228" rx="3" ry="20" fill="white" opacity="0.9" />
-              <ellipse cx="1140" cy="170" rx="15" ry="40" fill="#a5f3fc" />
-              <ellipse cx="1140" cy="170" rx="10" ry="36" fill="#0891b2" />
-              <path d="M1126,133 Q1140,104 1154,133 Z" fill="#0e7490" />
-              <circle cx="1140" cy="161" r="8" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="1140" cy="161" r="5" fill="#7c3aed" opacity="0.7" />
-              <path d="M1126,198 L1112,224 L1126,212 Z" fill="#0e7490" />
-              <path d="M1154,198 L1168,224 L1154,212 Z" fill="#0e7490" />
-            </g>
-
-            {/* ROCKET E — FAR RIGHT MID — between right widgets */}
-            <g style={{ animation: "rocketFloat1 3.5s ease-in-out infinite", transform: "scale(1.4)", transformOrigin: "1145px 420px" }}>
-              <ellipse cx="1145" cy="478" rx="10" ry="50" fill="url(#flame2)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="1145" cy="478" rx="6" ry="32" fill="url(#flame1)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="1145" cy="420" rx="12" ry="34" fill="#c4b5fd" />
-              <ellipse cx="1145" cy="420" rx="8" ry="30" fill="#7c3aed" />
-              <path d="M1134,390 Q1145,366 1156,390 Z" fill="#5b21b6" />
-              <circle cx="1145" cy="412" r="7" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="1145" cy="412" r="4" fill="#0891b2" opacity="0.8" />
-              <path d="M1134,444 L1121,466 L1134,456 Z" fill="#5b21b6" />
-              <path d="M1156,444 L1169,466 L1156,456 Z" fill="#5b21b6" />
-            </g>
-
-            {/* ROCKET F — FAR RIGHT BOTTOM — below right widgets */}
-            <g style={{ animation: "rocketFloat3 3.1s ease-in-out infinite", transform: "scale(1.4)", transformOrigin: "1142px 720px" }}>
-              <ellipse cx="1142" cy="782" rx="11" ry="56" fill="url(#flame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="1142" cy="782" rx="6" ry="36" fill="url(#flame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="1142" cy="720" rx="13" ry="36" fill="#a5f3fc" />
-              <ellipse cx="1142" cy="720" rx="9" ry="32" fill="#0891b2" />
-              <path d="M1130,688 Q1142,663 1154,688 Z" fill="#0e7490" />
-              <circle cx="1142" cy="712" r="7" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="1142" cy="712" r="4" fill="#7c3aed" opacity="0.8" />
-              <path d="M1130,746 L1117,768 L1130,757 Z" fill="#0e7490" />
-              <path d="M1154,746 L1167,768 L1154,757 Z" fill="#0e7490" />
-            </g>
-
-            {/* ROCKET G — TOP CENTER — above headline */}
-            <g style={{ animation: "rocketFloat2 3.6s ease-in-out infinite", transform: "scale(1.5)", transformOrigin: "600px 80px" }}>
-              <ellipse cx="600" cy="140" rx="9" ry="46" fill="url(#flame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="600" cy="140" rx="5" ry="30" fill="url(#flame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="600" cy="80" rx="11" ry="30" fill="#c4b5fd" />
-              <ellipse cx="600" cy="80" rx="7" ry="26" fill="#7c3aed" />
-              <path d="M590,54 Q600,34 610,54 Z" fill="#4c1d95" />
-              <circle cx="600" cy="73" r="6" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="600" cy="73" r="3" fill="#0891b2" opacity="0.8" />
-              <path d="M591,100 L580,118 L591,110 Z" fill="#4c1d95" />
-              <path d="M609,100 L620,118 L609,110 Z" fill="#4c1d95" />
-            </g>
-
-            <style>{`
-              @keyframes rocketFloat1 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-16px);} }
-              @keyframes rocketFloat2 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-20px);} }
-              @keyframes rocketFloat3 { 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-13px);} }
-            `}</style>
-          </svg>
-        </div>
-
-        {/* STAT CARDS - always visible, stay in place */}
-        
-        {/* MOBILE ROCKETS — 3 big rockets for small screens */}
-        <div className="hero-mobile-rockets">
-          <svg width="100%" height="100%" viewBox="0 0 380 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="mflame1" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stopColor="white" stopOpacity="1" />
-                <stop offset="25%" stopColor="#FFD700" stopOpacity="0.9" />
-                <stop offset="55%" stopColor="#FF6600" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#FF2800" stopOpacity="0" />
-              </radialGradient>
-              <radialGradient id="mflame2" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stopColor="white" stopOpacity="1" />
-                <stop offset="20%" stopColor="#FFE066" stopOpacity="0.9" />
-                <stop offset="50%" stopColor="#FF8800" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#FF2800" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-
-            {/* LEFT ROCKET — big purple */}
-            <g style={{ animation: "mobileRocketFloat1 3.2s ease-in-out infinite" }}>
-              <ellipse cx="45" cy="340" rx="14" ry="65" fill="url(#mflame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="45" cy="340" rx="8" ry="42" fill="url(#mflame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="45" cy="270" rx="18" ry="48" fill="#c4b5fd" />
-              <ellipse cx="45" cy="270" rx="12" ry="42" fill="#7c3aed" />
-              <path d="M28,226 Q45,192 62,226 Z" fill="#5b21b6" />
-              <circle cx="45" cy="260" r="9" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="45" cy="260" r="6" fill="#0891b2" opacity="0.7" />
-              <path d="M28,308 L12,338 L28,326 Z" fill="#5b21b6" />
-              <path d="M62,308 L78,338 L62,326 Z" fill="#5b21b6" />
-            </g>
-
-            {/* RIGHT ROCKET — big cyan */}
-            <g style={{ animation: "mobileRocketFloat2 3.6s ease-in-out infinite" }}>
-              <ellipse cx="335" cy="280" rx="14" ry="65" fill="url(#mflame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="335" cy="280" rx="8" ry="42" fill="url(#mflame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="335" cy="210" rx="18" ry="48" fill="#a5f3fc" />
-              <ellipse cx="335" cy="210" rx="12" ry="42" fill="#0891b2" />
-              <path d="M318,166 Q335,132 352,166 Z" fill="#0e7490" />
-              <circle cx="335" cy="200" r="9" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="335" cy="200" r="6" fill="#7c3aed" opacity="0.8" />
-              <path d="M318,248 L302,278 L318,266 Z" fill="#0e7490" />
-              <path d="M352,248 L368,278 L352,266 Z" fill="#0e7490" />
-            </g>
-
-            {/* TOP CENTER ROCKET — smaller purple */}
-            <g style={{ animation: "mobileRocketFloat3 2.8s ease-in-out infinite" }}>
-              <ellipse cx="190" cy="130" rx="11" ry="50" fill="url(#mflame1)" style={{ filter: "blur(4px)" }} />
-              <ellipse cx="190" cy="130" rx="6" ry="32" fill="url(#mflame2)" style={{ filter: "blur(2px)" }} />
-              <ellipse cx="190" cy="72" rx="14" ry="38" fill="#c4b5fd" />
-              <ellipse cx="190" cy="72" rx="9" ry="32" fill="#7c3aed" />
-              <path d="M177,38 Q190,12 203,38 Z" fill="#4c1d95" />
-              <circle cx="190" cy="63" r="7" fill="#e0f2fe" opacity="0.9" />
-              <circle cx="190" cy="63" r="4" fill="#0891b2" opacity="0.8" />
-              <path d="M178,100 L166,124 L178,114 Z" fill="#4c1d95" />
-              <path d="M202,100 L214,124 L202,114 Z" fill="#4c1d95" />
-            </g>
-          </svg>
-        </div>
-        <div className="social-stats" style={{ position: "absolute", inset: 0, zIndex: 4, pointerEvents: "none" }}>
-          <StatCard icon="❤️" label="Likes Generated"  target={4800000} suffix="+" color="linear-gradient(135deg,#f472b6,#e879f9)" delay={0} />
-          <StatCard icon="👥" label="Followers Gained" target={3200000} suffix="+" color="linear-gradient(135deg,#7c3aed,#9d5cf6)" delay={0} />
-          <StatCard icon="📈" label="Brands Elevated"  target={500}     suffix="+" color="linear-gradient(135deg,#d97706,#fbbf24)" delay={0} />
-          <StatCard icon="👁️" label="Views Driven"     target={12000000} suffix="+" color="linear-gradient(135deg,#059669,#34d399)" delay={0} />
-        </div>
-
-        {/* HERO TEXT - fixed in center, always readable */}
-        <div className="hero-content">
-          <h1 className="hero-title">
-            Make Your Brand
-            <span className="hero-title-grad">Impossible to Ignore</span>
-          </h1>
-          <p className="hero-tagline">We create viral short-form content using AI that drives views, followers, and sales.</p>
-          <div className="hero-buttons">
-            <a href="#contact" className="btn-primary btn-hero">🚀 Claim My FREE Visual Makeover</a>
-            <a href="#services" className="btn-secondary btn-hero">See What We Do</a>
+          {/* scroll cue */}
+          <div className="hero-scroll-cue" style={{ opacity: Math.max(0, 1 - heroProgress * 7) }}>
+            Scroll
+            <span />
           </div>
         </div>
       </section>
 
-      {/* MARQUEE */}
-      <div className="marquee-section">
-        <div className="marquee-track">
-          {[
-            "4.8M+ Likes Generated", "12M+ Views Driven", "3.2M+ Followers Gained", "500+ Brands Elevated",
-            "Stop The Scroll ✦", "Look Premium. Sell More.", "AI Visuals That Convert",
-            "Product Makeovers", "Ad Creatives That Hit", "Brand Elevation Fast",
-            "4.8M+ Likes Generated", "12M+ Views Driven", "3.2M+ Followers Gained", "500+ Brands Elevated",
-            "Stop The Scroll ✦", "Look Premium. Sell More.", "AI Visuals That Convert",
-            "Product Makeovers", "Ad Creatives That Hit", "Brand Elevation Fast",
-          ].map((item, i) => (
-            <div className="marquee-item" key={i}><span className="marquee-star">✦</span>{item}</div>
-          ))}
-        </div>
-      </div>
-
-
-      {/* FREE AUDIT */}
-      <section style={{ background: "var(--white)", padding: "80px 40px" }}>
-        <div className="section-inner">
-          <BrandAudit />
-        </div>
-      </section>
-
-      {/* SERVICES */}
-      <section id="services">
-        <div className="section-inner">
-          <div className="services-header zj-animate">
-            <div className="section-chip" style={{ margin: "0 auto 20px" }}>What We Do</div>
-            <h2 className="section-title">AI Visuals <em>Built</em> to Sell</h2>
-            <p>Every service is designed to make your brand look premium, professional, and impossible to scroll past.</p>
-          </div>
-
-          {/* Service name pills */}
-          <div className="services-list zj-animate zj-delay-1">
-            {services.map((s) => (
-              <div className="services-list-item" key={s.title}>
-                <span>{s.icon}</span>{s.title}
+      {/* SERVICES — pinned scroll-reveal: sticky title, cards stack in one by one */}
+      <section id="services" ref={servicesRef} className="services-pin">
+        <div className="services-stage">
+          <div className="services-stage-inner">
+            <div className="services-title-col">
+              <div className="section-chip">What We Do</div>
+              <h2 className="section-title">AI Visuals <em>Built</em> to Sell</h2>
+              <p className="services-title-sub">Every service is designed to make your brand look premium, professional, and impossible to scroll past.</p>
+              <div className="services-progress">
+                {services.map((_, i) => (
+                  <span key={i} className={`services-dot${cardReveal(i) > 0.5 ? " on" : ""}`} />
+                ))}
               </div>
-            ))}
-          </div>
-
-          {/* Flip cards - top row 3, bottom row 2 centered */}
-          <div className="services-grid-wrap">
-            <div className="services-row">
-              {services.slice(0, 3).map((s, i) => (
-                <div className={`flip-card zj-animate zj-delay-${i + 1}`} key={s.title}>
-                  <div className="flip-card-inner">
-                    <div className="flip-card-front">
-                      <div className="flip-front-icon">{s.icon}</div>
-                      <div className="flip-front-title">{s.title}</div>
-                      <div className="flip-front-hint">Hover to learn more ↗</div>
-                    </div>
-                    <div className="flip-card-back">
-                      <div className="flip-back-icon">{s.icon}</div>
-                      <p className="flip-back-desc">{s.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
-            <div className="services-row">
-              {services.slice(3).map((s, i) => (
-                <div className={`flip-card zj-animate zj-delay-${i + 4}`} key={s.title}>
-                  <div className="flip-card-inner">
-                    <div className="flip-card-front">
-                      <div className="flip-front-icon">{s.icon}</div>
-                      <div className="flip-front-title">{s.title}</div>
-                      <div className="flip-front-hint">Hover to learn more ↗</div>
+            <div className="services-cards-col">
+              {services.map((s, i) => {
+                const r = cardReveal(i);
+                return (
+                  <div
+                    key={s.title}
+                    className="service-card"
+                    style={{
+                      opacity: r,
+                      transform: `translateY(${(1 - r) * 46}px)`,
+                    }}
+                  >
+                    <div className="service-card-icon">{s.icon}</div>
+                    <div className="service-card-body">
+                      <div className="service-card-title">{s.title}</div>
+                      <p className="service-card-desc">{s.desc}</p>
                     </div>
-                    <div className="flip-card-back">
-                      <div className="flip-back-icon">{s.icon}</div>
-                      <p className="flip-back-desc">{s.desc}</p>
-                    </div>
+                    <div className="service-card-num">{String(i + 1).padStart(2, "0")}</div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="iphone-cta zj-animate zj-delay-2">
-            <div className="iphone-wrap">
-              {/* iPhone shell */}
-            <div ref={phoneRef} className={`iphone-shell${phoneShaking ? " phone-shaking" : ""}`}>
-              <div className="iphone-mute" />
-              <div className="iphone-vol-up" />
-              <div className="iphone-vol-down" />
-              <div className="iphone-power" />
-              <div className="iphone-inner">
-                <div className="iphone-island">
-                  <div className="iphone-island-sensor" />
-                  <div className="iphone-island-cam" />
-                </div>
-                <div className="iphone-screen">
-                  <div className="iphone-screen-inner">
-                    <div className="iphone-status">
-                      <span className="iphone-time">9:41</span>
-                      <div className="iphone-icons">
-                        <div className="iphone-signal">
-                          <span/><span/><span/><span/>
-                        </div>
-                        <span className="iphone-wifi">WiFi</span>
-                        <div className="iphone-batt">
-                          <div className="iphone-batt-body"><div className="iphone-batt-fill"/></div>
-                          <div className="iphone-batt-tip"/>
-                        </div>
+      {/* SERVICES CTA */}
+      <section className="services-cta-section">
+        <div className="section-inner">
+          <div className="phone-cta">
+            {/* Left: clean call-to-action */}
+            <div className="phone-copy zj-animate">
+              <div className="section-chip">Get Started</div>
+              <h3>Turn Your Content Into a <em>Growth Machine</em></h3>
+              <p>Join 500+ brands that already look premium online. Premium AI visuals, delivered in days — not months.</p>
+              <div className="phone-copy-actions">
+                <button onClick={() => goTo("intake")} className="btn-dark btn-hero">Start Your Project</button>
+                <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn-ghost btn-hero">Book a Call</a>
+              </div>
+            </div>
+
+            {/* Right: realistic retina phone */}
+            <div className="phone-stage zj-animate zj-delay-2">
+              <div className="phone-glow" />
+              <div ref={phoneRef} className={`phone-device${phoneShaking ? " phone-buzz" : ""}`}>
+                <span className="phone-btn-mute" />
+                <span className="phone-btn-volup" />
+                <span className="phone-btn-voldown" />
+                <span className="phone-btn-power" />
+                <div className="phone-screen">
+                  <div className="phone-island"><span className="phone-island-cam" /></div>
+                  <div className="phone-glass" />
+                  <div className="phone-ui">
+                    <div className="phone-status">
+                      <span className="phone-time">9:41</span>
+                      <div className="phone-status-icons">
+                        <div className="phone-signal"><span/><span/><span/><span/></div>
+                        <span className="phone-wifi" />
+                        <div className="phone-batt"><div className="phone-batt-fill" /></div>
                       </div>
                     </div>
-                    <div className="iphone-app-icon">✦</div>
-                    <div className="iphone-app-name">ZJ Digital</div>
-                    <p className="iphone-app-sub">Your brand deserves to look premium. Let's build something extraordinary together.</p>
-                    <a href="#contact" className="iphone-btn">🚀 Claim My Free Visual Makeover</a>
-                    <div className="iphone-dots">
-                      <span /><span className="active" /><span />
+                    <div className="phone-app">
+                      <div className="phone-app-icon">✦</div>
+                      <div className="phone-app-name">ZJ Digital</div>
+                      <p className="phone-app-sub">Your brand, premium — on every platform.</p>
+                      <a href="#contact" className="phone-app-cta">Claim Free Makeover</a>
+                      <div className="phone-app-trust">
+                        <span className="phone-app-stars">★★★★★</span>
+                        <span>Trusted by 500+ brands</span>
+                      </div>
                     </div>
+                    <div className="phone-homebar" />
                   </div>
                 </div>
-                <div className="iphone-home-bar" />
               </div>
-            </div>
-                            {/* Glow behind phone */}
-              <div className="iphone-glow" />
-            </div>
-            <div className="iphone-text">
-              <h3>Turn Your Content Into a Growth Machine</h3>
-              <p>Join 500+ brands that already look premium online. Tap to get started.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* INDUSTRIES */}
-      <section id="industries">
-        <div className="section-inner">
-          <div className="industries-header zj-animate">
-            <div className="section-chip cyan" style={{ margin: "0 auto 20px" }}>Who We Help</div>
+      {/* INDUSTRIES — pinned: rotating digital globe with orbiting "who it's for" cards */}
+      <section id="industries" ref={industriesRef} className="industries-pin">
+        <div className="industries-stage">
+          <div className="industries-heading">
+            <div className="section-chip cyan">Who We Help</div>
             <h2 className="section-title">Built for Brands That <span className="cyan-em">Sell Online</span></h2>
-            <p>Whether you are launching a supplement line, scaling an e-commerce store, or growing a coaching business — your visuals are your first impression.</p>
           </div>
 
-          {/* Pill list */}
-          <div className="industries-pill-list zj-animate zj-delay-1">
+          {/* desktop: rotating globe + orbiting cards */}
+          <div className="orbit">
+            <div className="orbit-glow" />
+            <div className="globe-ring" style={{ transform: `translate(-50%,-50%) rotate(${-globeSpin * 0.6}deg)` }} />
+            <div className="globe" style={{ transform: `translate(-50%,-50%) rotate(${globeSpin}deg)` }}>
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="globeFill" cx="42%" cy="38%" r="68%">
+                    <stop offset="0%" stopColor="#ffffff" />
+                    <stop offset="62%" stopColor="#eafdff" />
+                    <stop offset="100%" stopColor="#dcf5fb" />
+                  </radialGradient>
+                  <linearGradient id="globeLine" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#22d3ee" />
+                    <stop offset="100%" stopColor="#7c3aed" />
+                  </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="90" fill="url(#globeFill)" stroke="url(#globeLine)" strokeWidth="1.5" opacity="0.9" />
+                {/* latitude lines */}
+                <ellipse cx="100" cy="100" rx="90" ry="30" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
+                <ellipse cx="100" cy="100" rx="90" ry="62" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.35" />
+                <line x1="10" y1="100" x2="190" y2="100" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
+                {/* meridian lines */}
+                <ellipse cx="100" cy="100" rx="30" ry="90" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
+                <ellipse cx="100" cy="100" rx="62" ry="90" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.35" />
+                <line x1="100" y1="10" x2="100" y2="190" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
+                {/* digital nodes */}
+                {[[100,10],[100,190],[10,100],[190,100],[38,46],[162,46],[38,154],[162,154],[100,100]].map((p,i)=>(
+                  <circle key={i} cx={p[0]} cy={p[1]} r={i===8?4:3} fill="#22d3ee">
+                    <animate attributeName="opacity" values="0.4;1;0.4" dur={`${2 + (i % 4) * 0.5}s`} repeatCount="indefinite" />
+                  </circle>
+                ))}
+              </svg>
+            </div>
+
+            {industries.map((ind, i) => {
+              const baseAngle = i * 60;
+              const pop = orbitReveal(i);
+              const a = baseAngle + ringSpin;
+              return (
+                <div
+                  key={ind.label}
+                  className="orbit-card"
+                  style={{
+                    transform: `translate(-50%,-50%) rotate(${a}deg) translateY(-230px) rotate(${-a + (1 - pop) * -50}deg) scale(${0.5 + pop * 0.5})`,
+                    opacity: pop,
+                  }}
+                >
+                  <span className="orbit-card-icon">{ind.icon}</span>
+                  <span className="orbit-card-label">{ind.label}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* mobile fallback: static globe + grid */}
+          <div className="industries-fallback">
             {industries.map((ind) => (
-              <div className="industry-pill" key={ind.label}>
-                <span className="industry-emoji">{ind.icon}</span>
-                <span>{ind.label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Hover cards - 3 top, 3 bottom centered */}
-          <div className="industries-grid">
-            {[
-              { icon: "💊", label: "Supplement Brands", desc: "Make your products stand out on shelves and screens with premium AI visuals that drive real sales." },
-              { icon: "🏋️", label: "Fitness Trainers", desc: "Build a brand that looks as powerful as your training. Attract more clients with elite visuals." },
-              { icon: "🎯", label: "Online Coaching", desc: "Position yourself as the premium choice with visuals that communicate authority and results." },
-              { icon: "🛍️", label: "E-Commerce Stores", desc: "Product visuals that convert browsers into buyers. Look premium, sell more, scale faster." },
-              { icon: "📚", label: "Course Creators", desc: "Launch your course with visuals so polished that students sign up before they even read the details." },
-              { icon: "🌐", label: "Online Businesses", desc: "Any business with an online presence deserves to look elite. We make that happen fast." },
-            ].map((ind, i) => (
-              <div className={`industry-card zj-animate zj-delay-${Math.min(i + 1, 6)}`} key={ind.label}>
-                <span className="industry-card-icon">{ind.icon}</span>
-                <div className="industry-card-label">{ind.label}</div>
-                <p className="industry-card-desc">{ind.desc}</p>
+              <div className="orbit-card-static" key={ind.label}>
+                <span className="orbit-card-icon">{ind.icon}</span>
+                <span className="orbit-card-label">{ind.label}</span>
               </div>
             ))}
           </div>
@@ -1572,27 +1082,41 @@ export default function Home() {
 
       </> /* end home page */}
 
-      {/* ── MAKEOVERS PAGE ── */}
+      {/* ── MAKEOVERS PAGE — large scroll-scrubbed makeover video ── */}
       {currentPage === "makeovers" && (
-        <div style={{ background:"var(--bg)", minHeight:"80vh", padding:"80px 40px 120px" }}>
-          <div style={{ maxWidth:1200, margin:"0 auto" }}>
-            <div style={{ textAlign:"center", marginBottom:64 }}>
-              <div className="section-chip" style={{ margin:"0 auto 20px" }}>Before &amp; After</div>
-              <h1 className="section-title">Real AI <em>Makeovers</em></h1>
-              <p style={{ fontSize:16, color:"var(--text2)", fontWeight:600, maxWidth:520, margin:"16px auto 0", lineHeight:1.75 }}>Hover over each card to reveal the transformation. Every visual was created with AI — same brand, completely elevated.</p>
+        <div className="mk-page">
+          <section className="mk-show-pin" ref={showSectionRef}>
+            <div className="mk-show-stage">
+              <div className="mk-show-copy" style={{ opacity: Math.max(0, 1 - showProgress * 2.2) }}>
+                <div className="mk-show-chip">This is a makeover</div>
+                <h1 className="mk-show-title">A Brand, <em>In Motion</em></h1>
+              </div>
+              <div className="mk-show-media">
+                <video
+                  ref={mkShowRef}
+                  className="mk-show-video"
+                  src="/makeover-dense.mp4"
+                  muted
+                  playsInline
+                  preload="auto"
+                  onLoadedMetadata={() => setMkShowReady(true)}
+                  style={{ opacity: mkShowReady ? 1 : 0 }}
+                />
+              </div>
+              <div className="mk-scroll-cue" style={{ opacity: Math.max(0, 1 - showProgress * 7) }}>
+                Scroll<span />
+              </div>
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))", gap:20 }}>
-              {makeoverPairs.map((p) => (
-                <MakeoverCard key={p.id} before={p.before} after={p.after} index={p.id} />
-              ))}
+          </section>
+
+          {/* CTA */}
+          <section className="mk-cta-section">
+            <div className="mk-cta">
+              <h2 className="mk-cta-title">Ready for Your Own <em>Makeover?</em></h2>
+              <p>Delivered within 48 hours. Unlimited revisions until you love it.</p>
+              <button onClick={() => goTo("intake")} className="btn-dark btn-hero">Start Your Project</button>
             </div>
-            <div style={{ textAlign:"center", marginTop:72, padding:"48px 40px", background:"white", border:"1.5px solid rgba(100,80,140,0.12)", borderRadius:28, position:"relative", overflow:"hidden" }}>
-              <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(135deg,#7c3aed,#0891b2)" }} />
-              <h2 className="section-title" style={{ marginBottom:12 }}>Ready for Your Own <em>Makeover?</em></h2>
-              <p style={{ fontSize:16, color:"var(--text2)", fontWeight:600, marginBottom:32, maxWidth:480, margin:"0 auto 32px" }}>Delivered within 48 hours. Unlimited revisions until you love it.</p>
-              <button onClick={() => goTo("intake")} className="btn-primary" style={{ fontSize:16, padding:"18px 44px" }}>🚀 Start Your Project</button>
-            </div>
-          </div>
+          </section>
         </div>
       )}
 
