@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef } from "react";
 
-const CONTACT_EMAIL = "jzmarketing1808@gmail.com";
-const CALENDLY_LINK = "https://calendly.com/jocazilavac11/30min";
+const CONTACT_EMAIL = "jovan@getjovan.com";
+const CALENDLY_LINK = "https://calendly.com/jovan-getjovan/30min";
 // Hero scrub track: user scrolls this many viewport-heights while the hero stage stays pinned
 const HERO_SCRUB_DISTANCE = 1.25;
 // Services pin: viewport-heights of scroll travel while the services stage stays pinned
@@ -12,6 +12,32 @@ const SERVICES_PIN = 1.7;
 const INDUSTRIES_PIN = 1.8;
 // Makeover showcase: scroll-scrub distance for the makeover product video entrance
 const SHOW_SCRUB = 1.5;
+
+// Clean line-icon set (replaces emojis) — 24x24, inherits color via currentColor
+function Icon({ name, size = 24 }: { name: string; size?: number }) {
+  const p: Record<string, React.ReactNode> = {
+    sparkle: <><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" /></>,
+    person: <><circle cx="12" cy="8" r="3.4" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
+    megaphone: <><path d="M4 10v4a1 1 0 0 0 1 1h2l4 4V5L7 9H5a1 1 0 0 0-1 1z" /><path d="M16 8.5a4 4 0 0 1 0 7" /></>,
+    film: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M10 9l5 3-5 3V9z" /></>,
+    layers: <><path d="M12 3l9 5-9 5-9-5 9-5z" /><path d="M3 13l9 5 9-5" /></>,
+    capsule: <><rect x="3.5" y="8.5" width="17" height="7" rx="3.5" transform="rotate(-40 12 12)" /><path d="M9 9l6 6" /></>,
+    dumbbell: <><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12" /></>,
+    target: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r="1" /></>,
+    bag: <><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8a3 3 0 0 1 6 0" /></>,
+    book: <><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4z" /><path d="M5 16h13" /></>,
+    globe: <><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5c2.5 2.4 2.5 14.6 0 17M12 3.5c-2.5 2.4-2.5 14.6 0 17" /></>,
+    mail: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M4 7l8 6 8-6" /></>,
+    calendar: <><rect x="4" y="5" width="16" height="16" rx="2.5" /><path d="M4 9h16M8 3v4M16 3v4" /></>,
+    bolt: <><path d="M13 3L5 13h5l-1 8 8-10h-5l1-8z" /></>,
+    check: <><path d="M5 12.5l4.5 4.5L19 7" /></>,
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {p[name]}
+    </svg>
+  );
+}
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<"home"|"makeovers"|"pricing"|"intake">("home");
@@ -207,20 +233,20 @@ export default function Home() {
   const navLinks = ["Services", "Makeovers", "Industries", "Reviews", "Contact"];
 
   const services = [
-    { icon: "✦", title: "Product Visual Makeovers", desc: "Transform ordinary product shots into stunning, conversion-driving AI visuals that make your brand impossible to ignore on any platform." },
-    { icon: "✧", title: "Service Visual Makeovers", desc: "Give your coaching or consulting business the visual identity it deserves — polished, professional, and built to attract premium clients." },
-    { icon: "◈", title: "Ad Creatives", desc: "High-converting ad visuals for Instagram, Facebook, TikTok, and beyond. Stop the scroll. Start the sale." },
-    { icon: "◉", title: "Promotional Videos", desc: "Short-form video content that moves — dynamic AI-enhanced promos built for reels, stories, and paid campaigns." },
-    { icon: "❋", title: "Branded Social Content", desc: "A complete visual library for your website, Instagram, Facebook, and TikTok. Consistent, premium, on-brand — every post, every platform." },
+    { icon: "sparkle", title: "Product Visual Makeovers", desc: "We transform ordinary product shots into striking, conversion-driven visuals that make your brand look premium on every platform." },
+    { icon: "person", title: "Service Visual Makeovers", desc: "Give your coaching or consulting brand the visual identity it deserves — polished, professional, and built to attract premium clients." },
+    { icon: "megaphone", title: "Ad Creatives", desc: "High-converting ad visuals for Instagram, Facebook and TikTok. Built to stop the scroll and drive the sale." },
+    { icon: "film", title: "Promotional Videos", desc: "Short-form video content that moves — dynamic, cinematic promos crafted for reels, stories and paid campaigns." },
+    { icon: "layers", title: "Branded Social Content", desc: "A complete, consistent visual library for your website and socials — premium and on-brand, every post, every platform." },
   ];
 
   const industries = [
-    { label: "Supplement Brands", icon: "💊" },
-    { label: "Fitness Trainers", icon: "🏋️" },
-    { label: "Online Coaching Programs", icon: "🎯" },
-    { label: "E-Commerce Stores", icon: "🛍️" },
-    { label: "Course Creators", icon: "📚" },
-    { label: "Online Businesses", icon: "🌐" },
+    { label: "Supplement Brands", icon: "capsule" },
+    { label: "Fitness Trainers", icon: "dumbbell" },
+    { label: "Online Coaching Programs", icon: "target" },
+    { label: "E-Commerce Stores", icon: "bag" },
+    { label: "Course Creators", icon: "book" },
+    { label: "Online Businesses", icon: "globe" },
   ];
 
   const whyUs = [
@@ -247,16 +273,18 @@ export default function Home() {
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #faf8f5; --bg2: #f3f0eb; --bg3: #ede9e2; --white: #ffffff;
-      --text: #1a1520; --text2: #4a4458; --muted: #8b829a;
-      --border: rgba(100,80,140,0.12); --border2: rgba(100,80,140,0.22);
-      --purple: #7c3aed; --purple2: #9d5cf6; --purple3: #c4b5fd;
-      --purple-light: rgba(124,58,237,0.08);
-      --cyan: #0891b2; --cyan2: #22d3ee; --cyan3: #a5f3fc;
-      --cyan-light: rgba(8,145,178,0.08);
-      --grad: linear-gradient(135deg, #7c3aed 0%, #0891b2 100%);
-      --grad2: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
-      --grad3: linear-gradient(135deg, #9d5cf6 0%, #22d3ee 100%);
+      /* Refined ink + violet — clean white space, near-black ink, one restrained violet accent */
+      --bg: #ffffff; --bg2: #f6f6f8; --bg3: #eeeef1; --white: #ffffff;
+      --ink: #0d0d12;
+      --text: #101014; --text2: #55555f; --muted: #9a9aa6;
+      --border: rgba(16,16,24,0.09); --border2: rgba(16,16,24,0.16);
+      --purple: #6d28d9; --purple2: #8b5cf6; --purple3: #c4b5fd;
+      --purple-light: rgba(109,40,217,0.07);
+      --cyan: #4f46e5; --cyan2: #818cf8; --cyan3: #c7d2fe;
+      --cyan-light: rgba(79,70,229,0.07);
+      --grad: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 55%, #5b21b6 100%);
+      --grad2: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%);
+      --grad3: linear-gradient(135deg, #8b5cf6 0%, #818cf8 100%);
     }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
@@ -290,21 +318,19 @@ export default function Home() {
     /* HERO — full-bleed scroll-scrubbed video (light studio look) */
     /* hero-video.mp4 is encoded with its background clipped to pure white (ffmpeg colorlevels) — stage must stay #ffffff to match */
     #hero { position: relative; height: ${100 + HERO_SCRUB_DISTANCE * 100}vh; padding: 0; background: #ffffff; }
-    .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding: 108px 24px 48px; background: #ffffff; }
+    .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding: 90px 24px 52px; background: #ffffff; }
     /* the box matches the drawn video column exactly so the mask feathers the video's REAL edges */
     .hero-video-box { position: absolute; left: 50%; top: 50%; height: 100%; aspect-ratio: 800 / 1440; z-index: 1; transition: opacity 0.6s ease; will-change: transform; }
     .hero-video { width: 100%; height: 100%; object-fit: cover; display: block; mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 58%, transparent 98%); -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 58%, transparent 98%); }
     .hero-vignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse 110% 85% at 50% 45%, transparent 55%, rgba(255,255,255,0.35) 85%, rgba(255,255,255,0.7) 100%), linear-gradient(to top, rgba(255,255,255,0.85) 0%, transparent 16%), linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, transparent 12%); }
 
     .hero-content { position: relative; z-index: 5; width: 100%; max-width: 980px; will-change: transform, opacity; }
-    .hero-kicker { display: inline-flex; align-items: center; gap: 10px; padding: 9px 22px; border-radius: 100px; border: 1px solid rgba(26,21,32,0.14); background: rgba(255,255,255,0.55); backdrop-filter: blur(12px); color: rgba(26,21,32,0.55); font-size: 11px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; margin-bottom: 26px; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-    .hero-kicker::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: rgba(26,21,32,0.45); }
-    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(54px, 7.5vw, 104px); font-weight: 400; line-height: 0.92; color: var(--text); letter-spacing: 0.05em; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
-    .hero-title-grad { display: block; margin-top: 4px; color: transparent; -webkit-text-stroke: 2px rgba(26,21,32,0.34); }
-    .hero-tagline { font-family: 'Satoshi', sans-serif; font-size: clamp(14px, 1.4vw, 17px); color: var(--muted); font-weight: 600; line-height: 1.6; margin: 18px auto 0; max-width: 540px; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.5s both; }
-    .hero-cta { position: relative; z-index: 5; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; will-change: transform, opacity; }
-    .hero-cta a { animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.65s both; }
-    .btn-dark { background: #1a1520; color: #ffffff; padding: 18px 44px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; box-shadow: 0 10px 32px rgba(26,21,32,0.25); }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 7.6vw, 108px); font-weight: 400; line-height: 0.9; color: var(--text); letter-spacing: 0.04em; animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
+    .hero-title-grad { display: block; margin-top: 2px; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-tagline { font-family: 'Satoshi', sans-serif; font-size: clamp(15px, 1.5vw, 18px); color: var(--text2); font-weight: 600; line-height: 1.65; margin: 22px auto 0; max-width: 560px; animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.32s both; }
+    .hero-cta { position: relative; z-index: 5; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; will-change: transform, opacity; }
+    .hero-cta a, .hero-cta button { animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.5s both; }
+    .btn-dark { background: var(--ink); color: #ffffff; padding: 18px 44px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; box-shadow: 0 10px 32px rgba(13,13,18,0.22); }
     .btn-dark:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(26,21,32,0.35); background: #2a2233; }
     .btn-ghost { background: rgba(255,255,255,0.6); color: var(--text); padding: 17px 44px; font-size: 15px; font-weight: 800; border: 1.5px solid rgba(26,21,32,0.2); cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; backdrop-filter: blur(10px); }
     .btn-ghost:hover { border-color: var(--text); background: rgba(255,255,255,0.9); transform: translateY(-2px); }
@@ -399,7 +425,7 @@ export default function Home() {
     .phone-batt-fill { height:100%; width:72%; background:#fff; border-radius:1.5px; }
     /* app card */
     .phone-app { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:0 6px; }
-    .phone-app-icon { width:78px; height:78px; border-radius:22px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-size:38px; color:#fff; box-shadow:0 14px 34px rgba(124,58,237,0.5), inset 0 1px 0 rgba(255,255,255,0.4); animation:appIconPop 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+    .phone-app-icon { width:78px; height:78px; border-radius:22px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-family:'Satoshi',sans-serif; font-weight:800; font-size:30px; letter-spacing:-0.02em; color:#fff; box-shadow:0 14px 34px rgba(109,40,217,0.45), inset 0 1px 0 rgba(255,255,255,0.4); animation:appIconPop 0.7s cubic-bezier(0.16,1,0.3,1) both; }
     @keyframes appIconPop { from{ transform:scale(0.6); opacity:0; } to{ transform:scale(1); opacity:1; } }
     .phone-app-name { font-family:'Satoshi',sans-serif; font-size:23px; font-weight:800; color:#fff; }
     .phone-app-sub { font-size:13.5px; color:rgba(255,255,255,0.78); line-height:1.6; font-weight:600; text-align:center; max-width:210px; margin-top:-4px; }
@@ -435,8 +461,8 @@ export default function Home() {
     /* card stack */
     .services-cards-col { display: flex; flex-direction: column; gap: 16px; }
     .service-card { display: flex; align-items: center; gap: 22px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 22px; padding: 22px 26px; will-change: transform, opacity; box-shadow: 0 10px 30px rgba(124,58,237,0.04); }
-    .service-card-icon { width: 58px; height: 58px; flex-shrink: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: var(--purple-light); }
-    .service-card:nth-child(even) .service-card-icon { background: var(--cyan-light); }
+    .service-card-icon { width: 58px; height: 58px; flex-shrink: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--purple); background: var(--purple-light); }
+    .service-card:nth-child(even) .service-card-icon { background: var(--cyan-light); color: var(--cyan); }
     .service-card-body { flex: 1; }
     .service-card-title { font-family: 'Satoshi', sans-serif; font-size: 19px; font-weight: 800; color: var(--text); line-height: 1.25; }
     .service-card-desc { font-size: 14.5px; color: var(--text2); line-height: 1.6; font-weight: 600; margin-top: 6px; }
@@ -456,7 +482,7 @@ export default function Home() {
     .globe svg { width: 100%; height: 100%; display: block; }
     .globe-ring { position: absolute; left: 50%; top: 50%; width: 330px; height: 330px; border: 1.5px dashed rgba(8,145,178,0.3); border-radius: 50%; will-change: transform; }
     .orbit-card { position: absolute; left: 50%; top: 50%; width: 158px; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 18px 14px; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: 0 14px 34px rgba(8,145,178,0.1); will-change: transform, opacity; }
-    .orbit-card-icon { font-size: 28px; }
+    .orbit-card-icon { display: inline-flex; color: var(--purple); }
     .orbit-card-label { font-family: 'Satoshi', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--text); text-align: center; line-height: 1.3; }
     /* mobile fallback hidden on desktop */
     .industries-fallback { display: none; }
@@ -488,8 +514,8 @@ export default function Home() {
     .contact-options { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
     .contact-option { padding: 44px 40px; border: 1.5px solid var(--border); border-radius: 24px; text-align: left; transition: all 0.4s; text-decoration: none; display: block; background: var(--bg); }
     .contact-option:hover { border-color: var(--purple2); background: var(--purple-light); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(124,58,237,0.1); }
-    .contact-option-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--purple-light); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 24px; }
-    .contact-option:last-child .contact-option-icon { background: var(--cyan-light); }
+    .contact-option-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--purple-light); color: var(--purple); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+    .contact-option:last-child .contact-option-icon { background: var(--cyan-light); color: var(--cyan); }
     .contact-option-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; font-weight: 800; }
     .contact-option:last-child .contact-option-label { color: var(--cyan); }
     .contact-option-title { font-family: 'Satoshi', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
@@ -557,10 +583,8 @@ export default function Home() {
       .orbit { display: none; }
       .industries-fallback { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 520px; margin: 40px auto 0; padding: 0 20px; }
       .phone-cta { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 48px; }
-      /* Makeover entrance video on mobile */
-      .mk-show-copy { top: 80px; padding: 0 16px; }
-      .mk-show-media { height: auto; width: 94vw; }
-      .mk-show-video { height: auto; width: 100%; }
+      /* Makeover showcase on mobile */
+      .mk-show-copy { top: 84px; padding: 0 18px; }
       .phone-copy { max-width: 560px; }
       .phone-copy-actions { justify-content: center; }
       /* Reviews */
@@ -647,6 +671,11 @@ export default function Home() {
     .nav-link { font-size: 14px; font-weight: 700; color: var(--text2); text-decoration: none; padding: 8px 13px; border-radius: 10px; transition: all 0.2s; white-space: nowrap; font-family: 'Satoshi', sans-serif; background: none; border: none; cursor: pointer; }
     .nav-link:hover { color: var(--purple); background: var(--purple-light); }
     .nav-link.active { color: var(--purple); background: var(--purple-light); }
+    /* nav over a dark section (makeovers) — light text */
+    nav.nav-on-dark .nav-link { color: rgba(245,243,255,0.78); }
+    nav.nav-on-dark .nav-link:hover, nav.nav-on-dark .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); }
+    nav.nav-on-dark .nav-menu-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.22); }
+    nav.nav-on-dark .nav-menu-btn span { background: #fff; }
     @media (max-width: 900px) { .nav-links { display: none; } }
 
     /* ── PRICING PAGE ── */
@@ -704,24 +733,26 @@ export default function Home() {
     .intake-back:hover { border-color:var(--purple); color:var(--purple); }
     @media(max-width:640px){ .intake-card{padding:36px 24px;} .intake-choice-grid{grid-template-columns:1fr;} }
 
-    /* ── MAKEOVERS PAGE — large scroll-scrubbed makeover video ── */
-    .mk-page { background: #f9f9ed; }
-    .mk-show-pin { position: relative; height: ${100 + SHOW_SCRUB * 100}vh; background: #f9f9ed; padding: 0; }
-    .mk-show-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f9f9ed; }
-    /* title overlaid at the top, fades out as you scroll into the video */
-    .mk-show-copy { position: absolute; top: 96px; left: 0; right: 0; z-index: 5; text-align: center; pointer-events: none; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-    .mk-show-chip { display: inline-flex; align-items: center; gap: 9px; padding: 8px 20px; border-radius: 100px; background: var(--grad); color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(124,58,237,0.3); }
-    .mk-show-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 6vw, 92px); line-height: 0.9; letter-spacing: 0.03em; color: var(--text); }
-    .mk-show-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    /* BIG video, centered, matched cream bg with feathered edges so it reads seamless and high-res */
-    .mk-show-media { position: relative; z-index: 2; height: min(92vh, 980px); display: flex; align-items: center; justify-content: center; }
-    .mk-show-video { height: 100%; width: auto; max-width: 94vw; display: block; transition: opacity 0.6s ease; -webkit-mask-image: radial-gradient(ellipse 86% 86% at 50% 50%, #000 70%, transparent 97%); mask-image: radial-gradient(ellipse 86% 86% at 50% 50%, #000 70%, transparent 97%); }
+    /* ── MAKEOVERS PAGE — cinematic white showcase ── */
+    .mk-page { background: #ffffff; }
+    .mk-show-pin { position: relative; height: ${100 + SHOW_SCRUB * 100}vh; background: #ffffff; padding: 0; }
+    .mk-show-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #edeef1; }
+    /* full-bleed cinematic video — fills the whole stage, no visible box */
+    .mk-show-media { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; transform-origin: center; will-change: transform; }
+    .mk-show-video { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.8s ease; }
+    .mk-show-veil { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(to bottom, rgba(248,248,250,0.92) 0%, rgba(248,248,250,0.45) 24%, transparent 44%, transparent 86%, rgba(237,238,241,0.6) 100%); }
+    /* title overlaid top, fades out as you scroll into the video */
+    .mk-show-copy { position: absolute; top: clamp(94px, 13vh, 150px); left: 0; right: 0; z-index: 5; text-align: center; padding: 0 24px; pointer-events: none; animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
+    .mk-show-chip { display: inline-flex; align-items: center; gap: 9px; padding: 8px 20px; border-radius: 100px; border: 1px solid rgba(109,40,217,0.22); background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: var(--purple); font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 20px; }
+    .mk-show-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(46px, 6.4vw, 104px); line-height: 0.92; letter-spacing: 0.03em; color: var(--text); text-shadow: 0 2px 30px rgba(255,255,255,0.9); }
+    .mk-show-title span { display: block; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .mk-show-sub { font-family: 'Satoshi', sans-serif; font-size: clamp(15px, 1.5vw, 18px); color: var(--text2); font-weight: 600; line-height: 1.65; margin: 20px auto 0; max-width: 560px; text-shadow: 0 1px 14px rgba(255,255,255,0.95); }
     .mk-scroll-cue { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; pointer-events: none; }
     .mk-scroll-cue span { display: block; width: 1.5px; height: 42px; background: linear-gradient(to bottom, transparent, var(--purple)); animation: scrollCue 1.8s ease-in-out infinite; }
 
     /* CTA */
-    .mk-cta-section { background: #f9f9ed; padding: 30px 40px 120px; }
-    .mk-cta { text-align: center; max-width: 560px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-radius: 28px; padding: 52px 40px; position: relative; overflow: hidden; }
+    .mk-cta-section { background: #ffffff; padding: 20px 40px 130px; }
+    .mk-cta { text-align: center; max-width: 580px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-radius: 28px; padding: 56px 44px; position: relative; overflow: hidden; box-shadow: 0 30px 70px rgba(16,16,24,0.06); }
     .mk-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
     .mk-cta-title { font-family: 'Satoshi', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
     .mk-cta-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -766,14 +797,14 @@ export default function Home() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
 
       {/* FLOATING CTA */}
-      <button onClick={() => goTo("intake")} className="floating-cta">✦ Start Your Project</button>
+      <button onClick={() => goTo("intake")} className="floating-cta">Start Your Project</button>
 
       {/* MOBILE DROPDOWN */}
       <div className={`dropdown-menu ${menuOpen ? "open" : ""}`}>
-        <button onClick={() => { goTo("home"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>🏠 Home</button>
-        <button onClick={() => { goTo("makeovers"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>🎨 Makeovers</button>
-        <button onClick={() => { goTo("pricing"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>💰 Pricing</button>
-        <button onClick={() => { goTo("intake"); setMenuOpen(false); }} className="dropdown-cta">✦ Start Your Project</button>
+        <button onClick={() => { goTo("home"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>Home</button>
+        <button onClick={() => { goTo("makeovers"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>Makeovers</button>
+        <button onClick={() => { goTo("pricing"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>Pricing</button>
+        <button onClick={() => { goTo("intake"); setMenuOpen(false); }} className="dropdown-cta">Start Your Project</button>
       </div>
 
       {/* APOLLO NAV */}
@@ -825,12 +856,11 @@ export default function Home() {
               pointerEvents: heroContentFade < 0.3 ? "none" : "auto",
             }}
           >
-            <div className="hero-kicker">AI-Powered Brand Studio</div>
             <h1 className="hero-title">
               Make Your Brand
-              <span className="hero-title-grad">Impossible to Ignore</span>
+              <span className="hero-title-grad">Look Premium</span>
             </h1>
-            <p className="hero-tagline">We create viral short-form content using AI that drives views, followers, and sales.</p>
+            <p className="hero-tagline">High-end visuals and short-form content that make ambitious brands impossible to scroll past.</p>
           </div>
 
           {/* CTAs anchored low so the animation stays in view */}
@@ -842,8 +872,8 @@ export default function Home() {
               pointerEvents: heroCtaFade < 0.3 ? "none" : "auto",
             }}
           >
-            <a href="#contact" className="btn-dark btn-hero">Claim My FREE Visual Makeover</a>
-            <a href="#services" className="btn-ghost btn-hero">See What We Do</a>
+            <button onClick={() => goTo("intake")} className="btn-dark btn-hero">Start Your Project</button>
+            <button onClick={() => goTo("makeovers")} className="btn-ghost btn-hero">View Our Work</button>
           </div>
 
           {/* scroll cue */}
@@ -880,7 +910,7 @@ export default function Home() {
                       transform: `translateY(${(1 - r) * 46}px)`,
                     }}
                   >
-                    <div className="service-card-icon">{s.icon}</div>
+                    <div className="service-card-icon"><Icon name={s.icon} size={26} /></div>
                     <div className="service-card-body">
                       <div className="service-card-title">{s.title}</div>
                       <p className="service-card-desc">{s.desc}</p>
@@ -930,7 +960,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="phone-app">
-                      <div className="phone-app-icon">✦</div>
+                      <div className="phone-app-icon">ZJ</div>
                       <div className="phone-app-name">ZJ Digital</div>
                       <p className="phone-app-sub">Your brand, premium — on every platform.</p>
                       <a href="#contact" className="phone-app-cta">Claim Free Makeover</a>
@@ -965,12 +995,12 @@ export default function Home() {
                 <defs>
                   <radialGradient id="globeFill" cx="42%" cy="38%" r="68%">
                     <stop offset="0%" stopColor="#ffffff" />
-                    <stop offset="62%" stopColor="#eafdff" />
-                    <stop offset="100%" stopColor="#dcf5fb" />
+                    <stop offset="62%" stopColor="#f3effe" />
+                    <stop offset="100%" stopColor="#e7e0fb" />
                   </radialGradient>
                   <linearGradient id="globeLine" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#22d3ee" />
-                    <stop offset="100%" stopColor="#7c3aed" />
+                    <stop offset="0%" stopColor="#818cf8" />
+                    <stop offset="100%" stopColor="#6d28d9" />
                   </linearGradient>
                 </defs>
                 <circle cx="100" cy="100" r="90" fill="url(#globeFill)" stroke="url(#globeLine)" strokeWidth="1.5" opacity="0.9" />
@@ -984,7 +1014,7 @@ export default function Home() {
                 <line x1="100" y1="10" x2="100" y2="190" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
                 {/* digital nodes */}
                 {[[100,10],[100,190],[10,100],[190,100],[38,46],[162,46],[38,154],[162,154],[100,100]].map((p,i)=>(
-                  <circle key={i} cx={p[0]} cy={p[1]} r={i===8?4:3} fill="#22d3ee">
+                  <circle key={i} cx={p[0]} cy={p[1]} r={i===8?4:3} fill="#818cf8">
                     <animate attributeName="opacity" values="0.4;1;0.4" dur={`${2 + (i % 4) * 0.5}s`} repeatCount="indefinite" />
                   </circle>
                 ))}
@@ -1004,7 +1034,7 @@ export default function Home() {
                     opacity: pop,
                   }}
                 >
-                  <span className="orbit-card-icon">{ind.icon}</span>
+                  <span className="orbit-card-icon"><Icon name={ind.icon} size={24} /></span>
                   <span className="orbit-card-label">{ind.label}</span>
                 </div>
               );
@@ -1015,7 +1045,7 @@ export default function Home() {
           <div className="industries-fallback">
             {industries.map((ind) => (
               <div className="orbit-card-static" key={ind.label}>
-                <span className="orbit-card-icon">{ind.icon}</span>
+                <span className="orbit-card-icon"><Icon name={ind.icon} size={24} /></span>
                 <span className="orbit-card-label">{ind.label}</span>
               </div>
             ))}
@@ -1063,13 +1093,13 @@ export default function Home() {
             <p className="contact-sub zj-animate zj-delay-1">Your brand visual identity is your most powerful sales tool. Let us build something exceptional together.</p>
             <div className="contact-options zj-animate zj-delay-2">
               <a href={`mailto:${CONTACT_EMAIL}`} className="contact-option">
-                <div className="contact-option-icon">✉️</div>
+                <div className="contact-option-icon"><Icon name="mail" size={24} /></div>
                 <div className="contact-option-label">Send a Message</div>
                 <div className="contact-option-title">Email Us Directly</div>
                 <div className="contact-option-desc">{CONTACT_EMAIL}</div>
               </a>
               <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="contact-option">
-                <div className="contact-option-icon">📅</div>
+                <div className="contact-option-icon"><Icon name="calendar" size={24} /></div>
                 <div className="contact-option-label">Book a Call</div>
                 <div className="contact-option-title">Schedule a Strategy Call</div>
                 <div className="contact-option-desc">Pick a time that works for you and let us discuss your brand.</div>
@@ -1082,26 +1112,28 @@ export default function Home() {
 
       </> /* end home page */}
 
-      {/* ── MAKEOVERS PAGE — large scroll-scrubbed makeover video ── */}
+      {/* ── MAKEOVERS PAGE — cinematic scroll-scrubbed showcase ── */}
       {currentPage === "makeovers" && (
         <div className="mk-page">
           <section className="mk-show-pin" ref={showSectionRef}>
             <div className="mk-show-stage">
-              <div className="mk-show-copy" style={{ opacity: Math.max(0, 1 - showProgress * 2.2) }}>
-                <div className="mk-show-chip">This is a makeover</div>
-                <h1 className="mk-show-title">A Brand, <em>In Motion</em></h1>
-              </div>
-              <div className="mk-show-media">
+              <div className="mk-show-media" style={{ transform: `scale(${1 + showProgress * 0.04})` }}>
                 <video
                   ref={mkShowRef}
                   className="mk-show-video"
-                  src="/makeover-dense.mp4"
+                  src="/makeover-cinematic.mp4"
                   muted
                   playsInline
                   preload="auto"
                   onLoadedMetadata={() => setMkShowReady(true)}
                   style={{ opacity: mkShowReady ? 1 : 0 }}
                 />
+              </div>
+              <div className="mk-show-veil" />
+              <div className="mk-show-copy" style={{ opacity: Math.max(0, 1 - showProgress * 2), transform: `translateY(${showProgress * -40}px)` }}>
+                <div className="mk-show-chip">The Makeover Studio</div>
+                <h1 className="mk-show-title">High-End Makeovers for<span>Ambitious Brands</span></h1>
+                <p className="mk-show-sub">We transform ordinary brands into premium, scroll-stopping visual identities — cinematic AI visuals and short-form content, crafted to look expensive.</p>
               </div>
               <div className="mk-scroll-cue" style={{ opacity: Math.max(0, 1 - showProgress * 7) }}>
                 Scroll<span />
@@ -1113,8 +1145,8 @@ export default function Home() {
           <section className="mk-cta-section">
             <div className="mk-cta">
               <h2 className="mk-cta-title">Ready for Your Own <em>Makeover?</em></h2>
-              <p>Delivered within 48 hours. Unlimited revisions until you love it.</p>
-              <button onClick={() => goTo("intake")} className="btn-dark btn-hero">Start Your Project</button>
+              <p>Premium visuals, delivered within 48 hours. Unlimited revisions until it's perfect.</p>
+              <button onClick={() => goTo("intake")} className="btn-primary btn-hero">Start Your Project</button>
             </div>
           </section>
         </div>
@@ -1125,7 +1157,7 @@ export default function Home() {
         <div className="pricing-page">
           <div className="section-inner">
             <div style={{ textAlign:"center", marginBottom:24 }}>
-              <div className="section-chip" style={{ margin:"0 auto 20px" }}>💰 Pricing</div>
+              <div className="section-chip" style={{ margin:"0 auto 20px" }}>Pricing</div>
               <h1 className="section-title">Simple, <em>Transparent</em> Pricing</h1>
               <p style={{ fontSize:16, color:"var(--text2)", maxWidth:540, margin:"16px auto 0", fontWeight:600, lineHeight:1.75 }}>No hidden fees. No long contracts. Every package includes unlimited revisions and 48h delivery. Payment via bank transfer.</p>
             </div>
@@ -1137,7 +1169,7 @@ export default function Home() {
               <div className="pricing-grid">
                 <div className="pricing-card">
                   <div className="pricing-name">Starter</div>
-                  <div className="pricing-price"><span>€</span>197</div>
+                  <div className="pricing-price"><span>€</span>700</div>
                   <div className="pricing-period">one-time payment</div>
                   <div className="pricing-divider" />
                   <ul className="pricing-features">
@@ -1150,9 +1182,9 @@ export default function Home() {
                   <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-outline">Start Your Project →</button>
                 </div>
                 <div className="pricing-card featured">
-                  <div className="pricing-badge">⚡ Most Popular</div>
+                  <div className="pricing-badge">Most Popular</div>
                   <div className="pricing-name">Brand Kit</div>
-                  <div className="pricing-price"><span>€</span>397</div>
+                  <div className="pricing-price"><span>€</span>1400</div>
                   <div className="pricing-period">one-time payment</div>
                   <div className="pricing-divider" />
                   <ul className="pricing-features">
@@ -1167,7 +1199,7 @@ export default function Home() {
                 </div>
                 <div className="pricing-card">
                   <div className="pricing-name">Full Launch</div>
-                  <div className="pricing-price"><span>€</span>697</div>
+                  <div className="pricing-price"><span>€</span>2000</div>
                   <div className="pricing-period">one-time payment</div>
                   <div className="pricing-divider" />
                   <ul className="pricing-features">
@@ -1186,7 +1218,7 @@ export default function Home() {
               <div className="pricing-grid">
                 <div className="pricing-card">
                   <div className="pricing-name">Essential</div>
-                  <div className="pricing-price"><span>€</span>297</div>
+                  <div className="pricing-price"><span>€</span>800</div>
                   <div className="pricing-period">per month · cancel anytime</div>
                   <div className="pricing-divider" />
                   <ul className="pricing-features">
@@ -1199,9 +1231,9 @@ export default function Home() {
                   <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-outline">Start Your Project →</button>
                 </div>
                 <div className="pricing-card featured">
-                  <div className="pricing-badge">⚡ Most Popular</div>
+                  <div className="pricing-badge">Most Popular</div>
                   <div className="pricing-name">Growth</div>
-                  <div className="pricing-price"><span>€</span>497</div>
+                  <div className="pricing-price"><span>€</span>1500</div>
                   <div className="pricing-period">per month · cancel anytime</div>
                   <div className="pricing-divider" />
                   <ul className="pricing-features">
@@ -1216,7 +1248,7 @@ export default function Home() {
                 </div>
                 <div className="pricing-card">
                   <div className="pricing-name">Elite</div>
-                  <div className="pricing-price"><span>€</span>897</div>
+                  <div className="pricing-price"><span>€</span>2200</div>
                   <div className="pricing-period">per month · cancel anytime</div>
                   <div className="pricing-divider" />
                   <ul className="pricing-features">
@@ -1233,7 +1265,7 @@ export default function Home() {
             )}
             <div className="pricing-partner-box">
               <div>
-                <div className="section-chip" style={{ marginBottom:16 }}>💼 LinkedIn Coaches</div>
+                <div className="section-chip" style={{ marginBottom:16 }}>For LinkedIn Coaches</div>
                 <div className="pricing-partner-title">Offer AI Makeovers to Your Clients — We Do the Work</div>
                 <div className="pricing-partner-desc">Partner with ZJ Digital and add a premium AI visual upgrade to your coaching packages. You charge your clients, we deliver.</div>
                 <div className="pricing-partner-stats">
@@ -1256,7 +1288,7 @@ export default function Home() {
         <div className="intake-page">
           <div className="section-inner">
             <div style={{ textAlign:"center", marginBottom:56 }}>
-              <div className="section-chip" style={{ margin:"0 auto 20px" }}>📋 Start Your Project</div>
+              <div className="section-chip" style={{ margin:"0 auto 20px" }}>Start Your Project</div>
               <h1 className="section-title">Tell Us About <em>Your Brand</em></h1>
               <p style={{ fontSize:16, color:"var(--text2)", maxWidth:520, margin:"16px auto 0", fontWeight:600, lineHeight:1.75 }}>Fill out this brief and we'll get back to you within 24 hours. The more detail you give us, the better your results.</p>
             </div>
@@ -1273,10 +1305,10 @@ export default function Home() {
 
               {intakeSubmitted ? (
                 <div style={{ textAlign:"center", padding:"32px 0" }}>
-                  <div style={{ fontSize:56, marginBottom:20 }}>🎉</div>
-                  <div style={{ fontSize:26, fontWeight:800, color:"var(--text)", marginBottom:12 }}>You're all set!</div>
+                  <div style={{ width:64, height:64, borderRadius:"50%", margin:"0 auto 24px", display:"flex", alignItems:"center", justifyContent:"center", background:"var(--purple-light)", color:"var(--purple)" }}><Icon name="check" size={30} /></div>
+                  <div style={{ fontSize:26, fontWeight:800, color:"var(--text)", marginBottom:12 }}>You're all set</div>
                   <p style={{ fontSize:15, color:"var(--text2)", fontWeight:600, lineHeight:1.75, marginBottom:32 }}>We've received your brief and will be in touch within 24 hours at <strong>{intakeForm.email}</strong>.</p>
-                  <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ fontSize:15, padding:"16px 36px" }}>📅 Book a Strategy Call</a>
+                  <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ fontSize:15, padding:"16px 36px" }}>Book a Strategy Call</a>
                 </div>
               ) : intakeStep === 1 ? (
                 <div>
@@ -1334,7 +1366,7 @@ export default function Home() {
                   {intakeError && <p style={{ color:"#dc2626", fontSize:14, fontWeight:700, marginBottom:16 }}>{intakeError}</p>}
                   <div style={{ display:"flex", justifyContent:"space-between", marginTop:32 }}>
                     <button className="intake-back" onClick={()=>setIntakeStep(2)}>← Back</button>
-                    <button className="intake-next" disabled={intakeSubmitting} onClick={handleIntakeSubmit}>{intakeSubmitting?"Sending...":"Submit Brief 🚀"}</button>
+                    <button className="intake-next" disabled={intakeSubmitting} onClick={handleIntakeSubmit}>{intakeSubmitting?"Sending…":"Submit Brief"}</button>
                   </div>
                 </div>
               )}
