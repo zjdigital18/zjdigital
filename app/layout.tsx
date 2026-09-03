@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZJ Digital — Make Your Brand Impossible to Ignore",
-  description: "ZJ Digital creates viral AI-powered visuals, product makeovers, and ad creatives that drive views, followers, and sales.",
+  title: "ZJ Digital — Turn Your DMs Into Paying Clients",
+  description: "Done-for-you inbox management. We reply to your incoming messages fast and on-brand so more of them become booked calls and sales. Try it free for 14 days.",
 };
 
 export default function RootLayout({

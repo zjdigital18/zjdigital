@@ -4,33 +4,27 @@ import { useEffect, useState, useRef } from "react";
 
 const CONTACT_EMAIL = "jovan@getjovan.com";
 const CALENDLY_LINK = "https://calendly.com/jovan-getjovan/30min";
-// Hero scrub track: user scrolls this many viewport-heights while the hero stage stays pinned
-const HERO_SCRUB_DISTANCE = 1.25;
-// Services pin: viewport-heights of scroll travel while the services stage stays pinned
-const SERVICES_PIN = 1.7;
-// Industries pin: scroll travel that drives the rotating globe + orbiting cards
-const INDUSTRIES_PIN = 1.8;
-// Makeover showcase: scroll-scrub distance for the makeover product video entrance
-const SHOW_SCRUB = 1.5;
 
-// Clean line-icon set (replaces emojis) — 24x24, inherits color via currentColor
+// Clean line-icon set — 24x24, inherits color via currentColor
 function Icon({ name, size = 24 }: { name: string; size?: number }) {
   const p: Record<string, React.ReactNode> = {
-    sparkle: <><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" /><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" /></>,
-    person: <><circle cx="12" cy="8" r="3.4" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
-    megaphone: <><path d="M4 10v4a1 1 0 0 0 1 1h2l4 4V5L7 9H5a1 1 0 0 0-1 1z" /><path d="M16 8.5a4 4 0 0 1 0 7" /></>,
-    film: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M10 9l5 3-5 3V9z" /></>,
-    layers: <><path d="M12 3l9 5-9 5-9-5 9-5z" /><path d="M3 13l9 5 9-5" /></>,
-    capsule: <><rect x="3.5" y="8.5" width="17" height="7" rx="3.5" transform="rotate(-40 12 12)" /><path d="M9 9l6 6" /></>,
-    dumbbell: <><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12" /></>,
-    target: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><circle cx="12" cy="12" r="1" /></>,
-    bag: <><path d="M5 8h14l-1 12H6L5 8z" /><path d="M9 8a3 3 0 0 1 6 0" /></>,
-    book: <><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4z" /><path d="M5 16h13" /></>,
-    globe: <><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5c2.5 2.4 2.5 14.6 0 17M12 3.5c-2.5 2.4-2.5 14.6 0 17" /></>,
-    mail: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M4 7l8 6 8-6" /></>,
-    calendar: <><rect x="4" y="5" width="16" height="16" rx="2.5" /><path d="M4 9h16M8 3v4M16 3v4" /></>,
+    clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></>,
+    drain: <><path d="M4 5h16M6 5l1.5 9a3 3 0 0 0 3 2.6h3a3 3 0 0 0 3-2.6L21 5" /><path d="M12 17v3" /></>,
+    snail: <><path d="M3 17a5 5 0 0 1 5-5 4 4 0 0 1 4 4 3 3 0 0 1-3 3H3z" /><circle cx="15" cy="12" r="5.5" /><path d="M19 7l2-2" /></>,
+    robot: <><rect x="5" y="8" width="14" height="10" rx="2.5" /><path d="M12 4v4M9 13h.01M15 13h.01M9 8V6M15 8V6" /></>,
     bolt: <><path d="M13 3L5 13h5l-1 8 8-10h-5l1-8z" /></>,
+    chat: <><path d="M4 5h16v11H8l-4 3V5z" /><path d="M8 9h8M8 12h5" /></>,
+    voice: <><path d="M8 4h8M9 4v6a3 3 0 0 0 6 0V4M6 20h12M12 15v5" /></>,
+    convert: <><path d="M4 8h11l-3-3M20 16H9l3 3" /></>,
+    calendar: <><rect x="4" y="5" width="16" height="16" rx="2.5" /><path d="M4 9h16M8 3v4M16 3v4" /></>,
+    search: <><circle cx="11" cy="11" r="6" /><path d="M20 20l-4-4" /></>,
+    rocket: <><path d="M12 3c3 1 5 4 5 8l-2 3H9l-2-3c0-4 2-7 5-8z" /><path d="M9 14l-2 5 4-2M15 14l2 5-4-2M12 9v.01" /></>,
+    shield: <><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" /><path d="M9 12l2 2 4-4" /></>,
     check: <><path d="M5 12.5l4.5 4.5L19 7" /></>,
+    x: <><path d="M6 6l12 12M18 6L6 18" /></>,
+    play: <><circle cx="12" cy="12" r="9" /><path d="M10 8.5l6 3.5-6 3.5v-7z" /></>,
+    arrow: <><path d="M5 12h14M13 6l6 6-6 6" /></>,
+    mail: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M4 7l8 6 8-6" /></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -39,1351 +33,646 @@ function Icon({ name, size = 24 }: { name: string; size?: number }) {
   );
 }
 
+// Count-up stat when scrolled into view
+function useCountUp(target: number, duration = 1800) {
+  const [n, setN] = useState(0);
+  const [go, setGo] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) setGo(true); }, { threshold: 0.4 });
+    if (ref.current) io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!go) return;
+    let s = 0; const step = target / (duration / 16);
+    const t = setInterval(() => { s += step; if (s >= target) { setN(target); clearInterval(t); } else setN(Math.floor(s)); }, 16);
+    return () => clearInterval(t);
+  }, [go, target, duration]);
+  return { n, ref };
+}
+
+function Stat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+  const { n, ref } = useCountUp(value);
+  return (
+    <div ref={ref} className="stat">
+      <div className="stat-num">{n}{suffix}</div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+}
+
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState<"home"|"makeovers"|"pricing"|"intake">("home");
   const [scrollY, setScrollY] = useState(0);
-  const [makeoverOpen, setMakeoverOpen] = useState(false);
-  const makeoverRef = useRef<HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const [pricingTab, setPricingTab] = useState<"onetime"|"monthly">("onetime");
-  const [intakeStep, setIntakeStep] = useState(1);
-  const [intakeSubmitted, setIntakeSubmitted] = useState(false);
-  const [intakeSubmitting, setIntakeSubmitting] = useState(false);
-  const [intakeError, setIntakeError] = useState("");
-  const [intakeForm, setIntakeForm] = useState({
-    fullName:"", email:"", website:"", package:"", brandType:"",
-    linkedin:"", products:"", usedFor:[] as string[], style:"",
-    communicate:[] as string[], background:"", references:"",
-    urgency:"", howFound:"", notes:""
-  });
+  const [form, setForm] = useState({ name: "", email: "", business: "", sells: "", platform: "", volume: "", challenge: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const goTo = (page: "home"|"makeovers"|"pricing"|"intake") => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0 });
-    // Reset all animations so they replay on return
-    document.querySelectorAll(".zj-animate").forEach((el) => el.classList.remove("zj-visible"));
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Scroll-reveal
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("in"); }),
+      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+    );
+    const els = document.querySelectorAll(".reveal");
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  const scrollTo = (id: string) => {
+    setMenuOpen(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const handleIntakeSubmit = async () => {
-    setIntakeSubmitting(true);
-    setIntakeError("");
+  const submit = async () => {
+    if (!form.name || !form.email) { setError("Please add your name and email."); return; }
+    setSubmitting(true); setError("");
     try {
       const res = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: `New Project Brief from ${intakeForm.fullName}`,
-          name: intakeForm.fullName, email: intakeForm.email,
-          website: intakeForm.website, package: intakeForm.package,
-          brand_type: intakeForm.brandType, linkedin: intakeForm.linkedin,
-          products: intakeForm.products, used_for: intakeForm.usedFor.join(", "),
-          style: intakeForm.style, communicate: intakeForm.communicate.join(", "),
-          background: intakeForm.background, references: intakeForm.references,
-          urgency: intakeForm.urgency, how_found: intakeForm.howFound, notes: intakeForm.notes,
+          _subject: `New free-trial request from ${form.name}`,
+          name: form.name, email: form.email, business: form.business,
+          what_they_sell: form.sells, platform: form.platform,
+          messages_per_day: form.volume, biggest_challenge: form.challenge,
         }),
       });
-      if (res.ok) setIntakeSubmitted(true);
-      else setIntakeError("Something went wrong. Please email us at " + CONTACT_EMAIL);
-    } catch { setIntakeError("Something went wrong. Please email us at " + CONTACT_EMAIL); }
-    setIntakeSubmitting(false);
+      if (res.ok) setSubmitted(true);
+      else setError("Something went wrong. Please email us at " + CONTACT_EMAIL);
+    } catch { setError("Something went wrong. Please email us at " + CONTACT_EMAIL); }
+    setSubmitting(false);
   };
 
-  const [windowHeight, setWindowHeight] = useState(900);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [phoneShaking, setPhoneShaking] = useState(false);
-  const phoneRef = useRef<HTMLDivElement>(null);
-
-  // Hero scroll-scrub video
-  const heroVideoRef = useRef<HTMLVideoElement>(null);
-  const [heroVideoReady, setHeroVideoReady] = useState(false);
-
-  // Makeover showcase — scroll-scrubbed product makeover video (entrance)
-  const mkShowRef = useRef<HTMLVideoElement>(null);
-  const [mkShowReady, setMkShowReady] = useState(false);
-  const showSectionRef = useRef<HTMLElement>(null);
-  const [showTop, setShowTop] = useState(0);
-
-  // Pinned services section — scroll-driven card reveal
-  const servicesRef = useRef<HTMLElement>(null);
-  const [servicesTop, setServicesTop] = useState(0);
-
-  // Pinned industries section — scroll-driven rotating globe + orbiting cards
-  const industriesRef = useRef<HTMLElement>(null);
-  const [industriesTop, setIndustriesTop] = useState(0);
-
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    const handleResize = () => { if (window.innerHeight > 0) setWindowHeight(window.innerHeight); };
-    handleResize();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleResize);
-    return () => { window.removeEventListener("scroll", handleScroll); window.removeEventListener("resize", handleResize); };
-  }, []);
-
-  // Track pinned-section offsets so we can map scroll → reveal/rotation progress
-  useEffect(() => {
-    const measure = () => {
-      if (servicesRef.current) setServicesTop(servicesRef.current.offsetTop);
-      if (industriesRef.current) setIndustriesTop(industriesRef.current.offsetTop);
-      if (showSectionRef.current) setShowTop(showSectionRef.current.offsetTop);
-    };
-    measure();
-    const t = setTimeout(measure, 400);
-    window.addEventListener("resize", measure);
-    return () => { window.removeEventListener("resize", measure); clearTimeout(t); };
-  }, [currentPage]);
-
-  // Buzz the phone like an incoming notification while it's on screen
-  useEffect(() => {
-    const el = phoneRef.current;
-    if (!el || currentPage !== "home") return;
-    let interval: ReturnType<typeof setInterval> | undefined;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        interval = setInterval(() => {
-          setPhoneShaking(true);
-          timeout = setTimeout(() => setPhoneShaking(false), 850);
-        }, 4500);
-      } else if (interval) {
-        clearInterval(interval);
-      }
-    }, { threshold: 0.5 });
-    io.observe(el);
-    return () => { io.disconnect(); if (interval) clearInterval(interval); if (timeout) clearTimeout(timeout); };
-  }, [currentPage]);
-
-  // The metadata event can fire before hydration attaches the listener — catch up here
-  useEffect(() => {
-    const v = heroVideoRef.current;
-    if (v && v.readyState >= 1) setHeroVideoReady(true);
-  }, [currentPage]);
-
-  // Scrub the hero video in sync with scroll, smoothed with rAF so the pill rotation feels buttery.
-  // The loop sleeps once the video catches up with the scroll position and is re-kicked by scroll events.
-  useEffect(() => {
-    const v = heroVideoRef.current;
-    if (!v || !heroVideoReady || currentPage !== "home") return;
-    let raf = 0;
-    let active = false;
-    let t = v.currentTime || 0;
-    const settle = () => {
-      const dur = v.duration;
-      if (!dur || isNaN(dur)) { active = false; return; }
-      const progress = Math.min(Math.max(window.scrollY / (window.innerHeight * HERO_SCRUB_DISTANCE), 0), 1);
-      const target = progress * Math.max(dur - 0.05, 0);
-      t += (target - t) * 0.18;
-      if (Math.abs(target - t) > 0.002) {
-        if (v.readyState >= 2) v.currentTime = t;
-        raf = requestAnimationFrame(settle);
-      } else {
-        active = false;
-      }
-    };
-    const kick = () => { if (!active) { active = true; raf = requestAnimationFrame(settle); } };
-    kick();
-    window.addEventListener("scroll", kick, { passive: true });
-    return () => { window.removeEventListener("scroll", kick); cancelAnimationFrame(raf); };
-  }, [heroVideoReady, currentPage]);
-
-  // Makeover showcase: scrub the product video as you scroll through its pinned section
-  useEffect(() => {
-    const v = mkShowRef.current;
-    if (v && v.readyState >= 1) setMkShowReady(true);
-  }, [currentPage]);
-
-  useEffect(() => {
-    const v = mkShowRef.current;
-    if (!v || !mkShowReady || currentPage !== "makeovers") return;
-    let raf = 0;
-    let active = false;
-    let t = v.currentTime || 0;
-    const settle = () => {
-      const dur = v.duration;
-      if (!dur || isNaN(dur)) { active = false; return; }
-      const progress = Math.min(Math.max((window.scrollY - showTop) / (window.innerHeight * SHOW_SCRUB), 0), 1);
-      const target = progress * Math.max(dur - 0.05, 0);
-      t += (target - t) * 0.18;
-      if (Math.abs(target - t) > 0.002) {
-        if (v.readyState >= 2) v.currentTime = t;
-        raf = requestAnimationFrame(settle);
-      } else {
-        active = false;
-      }
-    };
-    const kick = () => { if (!active) { active = true; raf = requestAnimationFrame(settle); } };
-    kick();
-    window.addEventListener("scroll", kick, { passive: true });
-    return () => { window.removeEventListener("scroll", kick); cancelAnimationFrame(raf); };
-  }, [mkShowReady, currentPage, showTop]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const observer = new IntersectionObserver(
-        (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("zj-visible"); }),
-        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
-      );
-      document.querySelectorAll(".zj-animate").forEach((el) => observer.observe(el));
-      return () => observer.disconnect();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [currentPage]);
-
-  const navLinks = ["Services", "Makeovers", "Industries", "Reviews", "Contact"];
-
-  const services = [
-    { icon: "sparkle", title: "Product Visual Makeovers", desc: "We transform ordinary product shots into striking, conversion-driven visuals that make your brand look premium on every platform." },
-    { icon: "person", title: "Service Visual Makeovers", desc: "Give your coaching or consulting brand the visual identity it deserves — polished, professional, and built to attract premium clients." },
-    { icon: "megaphone", title: "Ad Creatives", desc: "High-converting ad visuals for Instagram, Facebook and TikTok. Built to stop the scroll and drive the sale." },
-    { icon: "film", title: "Promotional Videos", desc: "Short-form video content that moves — dynamic, cinematic promos crafted for reels, stories and paid campaigns." },
-    { icon: "layers", title: "Branded Social Content", desc: "A complete, consistent visual library for your website and socials — premium and on-brand, every post, every platform." },
+  const steps = [
+    { icon: "calendar", n: "01", title: "Book a quick call", desc: "We learn your offer, your voice, and where your messages come in. 20 minutes, no pitch-slap." },
+    { icon: "search", n: "02", title: "We build your playbook", desc: "We study your best replies and objections, then map exactly how we'll answer like you would." },
+    { icon: "chat", n: "03", title: "We handle your inbox — free", desc: "For 14 full days we reply to your incoming messages, qualify them, and turn them into booked calls." },
+    { icon: "rocket", n: "04", title: "You watch conversions climb", desc: "See more replies answered and more leads booked. Love it? Continue. If not, you've lost nothing." },
   ];
 
-  const industries = [
-    { label: "Supplement Brands", icon: "capsule" },
-    { label: "Fitness Trainers", icon: "dumbbell" },
-    { label: "Online Coaching Programs", icon: "target" },
-    { label: "E-Commerce Stores", icon: "bag" },
-    { label: "Course Creators", icon: "book" },
-    { label: "Online Businesses", icon: "globe" },
+  const compare = [
+    { label: "Doing it yourself", bad: true, points: ["Steals hours every day", "Replies get slow as you get busy", "You burn out on repetitive chats"] },
+    { label: "Hiring in-house", bad: true, points: ["Expensive salary + training", "Weeks to onboard and manage", "Quality drops the moment you look away"] },
+    { label: "AI chatbots", bad: true, points: ["Reply like a robot", "Kill trust and the sale", "Can't handle real objections"] },
+    { label: "ZJ Digital", bad: false, points: ["Trained humans reply in your voice", "Fast, on-brand, built to convert", "Fully done-for-you — you just show up to the calls"] },
   ];
 
-  const whyUs = [
-    { number: "01", title: "Premium Quality, Fast", desc: "No long waiting periods. Get premium AI-enhanced visuals that rival top agency work, delivered at a pace your business can actually use." },
-    { number: "02", title: "Cross-Platform Ready", desc: "Every visual is optimized for Instagram, TikTok, Facebook, websites, and paid ads. One investment, unlimited reach." },
-    { number: "03", title: "Brand Elevation That Sells", desc: "We craft visuals engineered to build trust, command attention, and drive real results. Not just pretty — powerful." },
-    { number: "04", title: "Affordable Custom Solutions", desc: "Premium results should not require an agency budget. ZJ Digital makes high-end visual production accessible to ambitious brands." },
+  const faqs = [
+    { q: "What exactly do you do?", a: "We manage your incoming messages for you. Real, trained people reply to the DMs and messages you get across your platforms — quickly, in your tone, and built to move the conversation toward a booked call or sale." },
+    { q: "Is it really free for 14 days?", a: "Yes. You get a full 14-day trial so you can see the results before paying anything. No card up front, no commitment. We only talk pricing if you want to continue after you've seen it work." },
+    { q: "Won't it sound like it isn't me?", a: "That's exactly what the setup call and playbook are for. We study how you already talk and reply, so your leads get answers that sound like you — just faster and more consistent." },
+    { q: "Which platforms do you cover?", a: "Wherever your leads message you — Instagram DMs, WhatsApp, Facebook, email, and more. Tell us where your messages come in and we handle it." },
+    { q: "What happens after the 14 days?", a: "If you're getting more booked calls and sales, you continue on a simple plan. If it's not for you, you walk away — no strings, and you keep everything we set up during the trial." },
+    { q: "How fast do you reply?", a: "Fast. Speed is where most sales are won or lost — leads that get a quick, human reply are far more likely to book. That's the whole point of the service." },
   ];
-
-  const reviews = [
-    { name: "Marcus T.", role: "Supplement Brand Founder", text: "ZJ Digital completely transformed how my brand looks online. Within weeks of updating our product visuals, we saw a noticeable jump in conversions. The quality is honestly agency-level.", stars: 5, date: "March 2025" },
-    { name: "Leila R.", role: "Online Fitness Coach", text: "I was skeptical about AI visuals but the results blew me away. My Instagram now looks like a premium fitness brand and my DMs have never been busier. Worth every penny.", stars: 5, date: "February 2025" },
-    { name: "Jordan K.", role: "E-Commerce Store Owner", text: "Fast, professional, and the visuals look incredible. My product pages went from looking amateur to premium overnight. I wish I had found ZJ Digital sooner.", stars: 5, date: "January 2025" },
-    { name: "Priya M.", role: "Coaching Program Creator", text: "The ad creatives they built for my program launch performed better than anything I had run before. Absolutely incredible work and super fast delivery.", stars: 5, date: "March 2025" },
-    { name: "Sam D.", role: "Brand Strategist", text: "The turnaround time and quality are unmatched. ZJ Digital gave my client brand a complete visual overhaul and the feedback was immediate and overwhelmingly positive.", stars: 5, date: "December 2024" },
-    { name: "Alex W.", role: "Online Course Creator", text: "My course launch visuals looked so good that students were commenting on the branding before even starting the content. ZJ Digital is the real deal.", stars: 5, date: "February 2025" },
-  ];
-
-
 
   const css = `
     @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,800,900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      /* Refined ink + violet — clean white space, near-black ink, one restrained violet accent */
-      --bg: #ffffff; --bg2: #f6f6f8; --bg3: #eeeef1; --white: #ffffff;
-      --ink: #0d0d12;
-      --text: #101014; --text2: #55555f; --muted: #9a9aa6;
-      --border: rgba(16,16,24,0.09); --border2: rgba(16,16,24,0.16);
-      --purple: #6d28d9; --purple2: #8b5cf6; --purple3: #c4b5fd;
-      --purple-light: rgba(109,40,217,0.07);
-      --cyan: #4f46e5; --cyan2: #818cf8; --cyan3: #c7d2fe;
-      --cyan-light: rgba(79,70,229,0.07);
-      --grad: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 55%, #5b21b6 100%);
-      --grad2: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%);
-      --grad3: linear-gradient(135deg, #8b5cf6 0%, #818cf8 100%);
+      --bg: #08080c; --bg2: #0e0e15; --panel: #12121c; --panel2: #17172333;
+      --text: #f5f5f8; --text2: #a6a6b6; --muted: #6d6d7e;
+      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+      --accent: #8b5cf6; --accent2: #a78bfa; --accent3: #c4b5fd;
+      --accent-soft: rgba(139,92,246,0.12);
+      --grad: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+      --ok: #34d399; --bad: #f87171;
     }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    ::selection { background: rgba(139,92,246,0.3); }
 
-    .zj-animate { opacity: 0; transform: translateY(36px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
-    .zj-animate.zj-visible { opacity: 1; transform: translateY(0); }
-    .zj-delay-1 { transition-delay: 0.1s; } .zj-delay-2 { transition-delay: 0.2s; }
-    .zj-delay-3 { transition-delay: 0.3s; } .zj-delay-4 { transition-delay: 0.4s; }
-    .zj-delay-5 { transition-delay: 0.5s; } .zj-delay-6 { transition-delay: 0.6s; }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: .08s; } .d2 { transition-delay: .16s; } .d3 { transition-delay: .24s; } .d4 { transition-delay: .32s; }
 
-    /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 48px; height: 76px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; transition: all 0.4s ease; }
-    nav.scrolled { background: rgba(255,255,255,0.72); border-bottom: 1px solid rgba(0,0,0,0.05); backdrop-filter: blur(22px) saturate(1.1); -webkit-backdrop-filter: blur(22px) saturate(1.1); box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
-    .nav-left { display: flex; align-items: center; justify-content: flex-start; }
-    .nav-center { display: flex; align-items: center; justify-content: center; }
-    .nav-right { display: flex; align-items: center; justify-content: flex-end; }
-    .nav-brand { font-family: 'Satoshi', sans-serif; font-size: 26px; font-weight: 800; text-decoration: none; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.02em; }
-    .nav-menu-btn { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: white; border: 1.5px solid var(--border2); padding: 10px 12px; border-radius: 12px; box-shadow: 0 2px 12px rgba(124,58,237,0.08); transition: all 0.3s; }
-    .nav-menu-btn:hover { border-color: var(--purple2); box-shadow: 0 4px 16px rgba(124,58,237,0.15); }
-    .nav-menu-btn span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
-    .nav-cta { background: var(--grad); color: white; padding: 11px 28px; font-size: 13px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; box-shadow: 0 4px 16px rgba(124,58,237,0.3); letter-spacing: 0.02em; }
-    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.45); }
-    .dropdown-menu { display: none; position: fixed; top: 76px; left: 40px; z-index: 998; background: white; border: 1.5px solid var(--border2); border-radius: 20px; padding: 12px; box-shadow: 0 16px 48px rgba(124,58,237,0.15); min-width: 220px; flex-direction: column; gap: 4px; }
-    .dropdown-menu.open { display: flex; animation: dropIn 0.3s cubic-bezier(0.16,1,0.3,1) both; }
-    .dropdown-menu a { color: var(--text2); text-decoration: none; font-size: 15px; font-weight: 700; padding: 12px 18px; border-radius: 12px; transition: all 0.2s; display: block; }
-    .dropdown-menu a:hover { color: var(--purple); background: var(--purple-light); }
-    .dropdown-menu .dropdown-cta { background: var(--grad); color: white; border-radius: 12px; text-align: center; margin-top: 8px; box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
-    .dropdown-menu .dropdown-cta:hover { color: white; background: var(--grad); opacity: 0.9; }
-    @keyframes dropIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+    section { position: relative; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border2); background: rgba(255,255,255,0.03); color: var(--accent2); font-size: 11.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+    .eyebrow.dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 10px var(--accent2); }
+    h2.h { font-family: 'Satoshi', sans-serif; font-size: clamp(30px, 4.4vw, 52px); font-weight: 800; line-height: 1.06; letter-spacing: -0.025em; }
+    h2.h em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .lead { color: var(--text2); font-size: clamp(15px, 1.6vw, 18px); font-weight: 500; line-height: 1.7; }
 
-    /* HERO — full-bleed scroll-scrubbed video (light studio look) */
-    /* hero-video.mp4 is encoded with its background clipped to pure white (ffmpeg colorlevels) — stage must stay #ffffff to match */
-    #hero { position: relative; height: ${100 + HERO_SCRUB_DISTANCE * 100}vh; padding: 0; background: #ffffff; }
-    .hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding: 90px 24px 52px; background: #ffffff; }
-    /* the box matches the drawn video column exactly so the mask feathers the video's REAL edges */
-    .hero-video-box { position: absolute; left: 50%; top: 50%; height: 100%; aspect-ratio: 800 / 1440; z-index: 1; transition: opacity 0.6s ease; will-change: transform; }
-    .hero-video { width: 100%; height: 100%; object-fit: cover; display: block; mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 58%, transparent 98%); -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, black 58%, transparent 98%); }
-    .hero-vignette { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse 110% 85% at 50% 45%, transparent 55%, rgba(255,255,255,0.35) 85%, rgba(255,255,255,0.7) 100%), linear-gradient(to top, rgba(255,255,255,0.85) 0%, transparent 16%), linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, transparent 12%); }
+    /* buttons */
+    .btn { display: inline-flex; align-items: center; gap: 10px; font-family: 'Satoshi', sans-serif; font-weight: 800; border: none; cursor: pointer; text-decoration: none; border-radius: 100px; transition: all 0.28s cubic-bezier(0.16,1,0.3,1); letter-spacing: 0.01em; }
+    .btn-primary { background: var(--grad); color: #fff; padding: 17px 34px; font-size: 15.5px; box-shadow: 0 10px 30px rgba(124,58,237,0.4); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 18px 44px rgba(124,58,237,0.55); }
+    .btn-lg { padding: 20px 44px; font-size: 17px; }
+    .btn-ghost { background: rgba(255,255,255,0.04); color: var(--text); padding: 16px 32px; font-size: 15px; border: 1px solid var(--border2); backdrop-filter: blur(8px); }
+    .btn-ghost:hover { border-color: var(--accent2); color: var(--accent3); transform: translateY(-2px); }
 
-    .hero-content { position: relative; z-index: 5; width: 100%; max-width: 980px; will-change: transform, opacity; }
-    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 7.6vw, 108px); font-weight: 400; line-height: 0.9; color: var(--text); letter-spacing: 0.04em; animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
-    .hero-title-grad { display: block; margin-top: 2px; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-tagline { font-family: 'Satoshi', sans-serif; font-size: clamp(15px, 1.5vw, 18px); color: var(--text2); font-weight: 600; line-height: 1.65; margin: 22px auto 0; max-width: 560px; animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.32s both; }
-    .hero-cta { position: relative; z-index: 5; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; will-change: transform, opacity; }
-    .hero-cta a, .hero-cta button { animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.5s both; }
-    .btn-dark { background: var(--ink); color: #ffffff; padding: 18px 44px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; box-shadow: 0 10px 32px rgba(13,13,18,0.22); }
-    .btn-dark:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(26,21,32,0.35); background: #2a2233; }
-    .btn-ghost { background: rgba(255,255,255,0.6); color: var(--text); padding: 17px 44px; font-size: 15px; font-weight: 800; border: 1.5px solid rgba(26,21,32,0.2); cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; backdrop-filter: blur(10px); }
-    .btn-ghost:hover { border-color: var(--text); background: rgba(255,255,255,0.9); transform: translateY(-2px); }
+    /* nav */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 74px; display: flex; align-items: center; transition: all 0.4s ease; }
+    nav.scrolled { background: rgba(8,8,12,0.72); border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); }
+    .nav-in { max-width: 1120px; margin: 0 auto; padding: 0 28px; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-family: 'Satoshi', sans-serif; font-size: 23px; font-weight: 800; letter-spacing: -0.02em; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; cursor: pointer; border: none; }
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links button { background: none; border: none; color: var(--text2); font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 14.5px; padding: 8px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .nav-links button:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-cta { background: var(--grad); color: #fff !important; padding: 11px 22px !important; border-radius: 100px !important; font-weight: 800 !important; box-shadow: 0 6px 20px rgba(124,58,237,0.35); }
+    .burger { display: none; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); padding: 11px 12px; border-radius: 11px; cursor: pointer; }
+    .burger span { width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+    .mobile-menu { display: none; }
 
-    /* scroll cue — bottom-right corner, clear of the CTAs */
-    .hero-scroll-cue { position: absolute; bottom: 40px; right: 48px; z-index: 7; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; pointer-events: none; }
-    .hero-scroll-cue span { display: block; width: 1.5px; height: 44px; background: linear-gradient(to bottom, transparent, #7c3aed); animation: scrollCue 1.8s ease-in-out infinite; }
-    @keyframes scrollCue { 0%{transform:scaleY(0);transform-origin:top;} 45%{transform:scaleY(1);transform-origin:top;} 55%{transform:scaleY(1);transform-origin:bottom;} 100%{transform:scaleY(0);transform-origin:bottom;} }
+    /* HERO */
+    #hero { padding: 150px 0 90px; text-align: center; overflow: hidden; }
+    #hero::before { content: ''; position: absolute; top: -10%; left: 50%; transform: translateX(-50%); width: 900px; height: 600px; background: radial-gradient(ellipse at center, rgba(124,58,237,0.28), transparent 62%); filter: blur(30px); pointer-events: none; z-index: 0; }
+    #hero .wrap { position: relative; z-index: 1; }
+    .hero-h1 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(52px, 8vw, 108px); line-height: 0.92; letter-spacing: 0.01em; margin: 26px auto 0; max-width: 15ch; }
+    .hero-h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { color: var(--text2); font-size: clamp(16px, 1.8vw, 20px); line-height: 1.6; max-width: 620px; margin: 24px auto 0; font-weight: 500; }
+    .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 38px; }
+    .hero-trust { margin-top: 20px; color: var(--muted); font-size: 13.5px; font-weight: 600; display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+    .hero-trust span { display: inline-flex; align-items: center; gap: 7px; }
+    .hero-trust svg { color: var(--accent2); }
 
-    /* BUTTONS */
-    .btn-primary { background: var(--grad); color: white; padding: 18px 44px; font-size: 15px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; box-shadow: 0 8px 32px rgba(124,58,237,0.35); letter-spacing: 0.02em; }
-    .btn-hero { padding: 22px 52px !important; font-size: 17px !important; }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(124,58,237,0.5); }
-    .btn-secondary { background: white; color: var(--purple); padding: 17px 44px; font-size: 15px; font-weight: 800; border: 2px solid var(--border2); cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; }
-    .btn-secondary:hover { border-color: var(--purple); background: var(--purple-light); transform: translateY(-2px); }
+    /* VSL */
+    .vsl { position: relative; max-width: 860px; margin: 56px auto 0; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid var(--border2); background: linear-gradient(160deg, #14101f, #0c0a14); box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.12); display: flex; align-items: center; justify-content: center; }
+    .vsl::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(124,58,237,0.18), transparent 70%); }
+    .vsl-inner { position: relative; text-align: center; }
+    .vsl-play { width: 84px; height: 84px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; color: #fff; margin: 0 auto 18px; box-shadow: 0 16px 40px rgba(124,58,237,0.5); animation: pulse 2.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{ box-shadow: 0 16px 40px rgba(124,58,237,0.4); } 50%{ box-shadow: 0 16px 60px rgba(124,58,237,0.7); } }
+    .vsl-label { color: var(--text); font-weight: 700; font-size: 16px; }
+    .vsl-note { color: var(--muted); font-size: 13px; margin-top: 4px; }
 
-    /* FLOATING CTA */
-    .floating-cta { position: fixed; right: 24px; bottom: 32px; z-index: 900; background: var(--grad); color: white; padding: 14px 24px; border-radius: 100px; font-size: 13px; font-weight: 800; text-decoration: none; box-shadow: 0 8px 32px rgba(124,58,237,0.4); transition: all 0.3s; font-family: 'Satoshi', sans-serif; letter-spacing: 0.02em; animation: fadeSlideUp 1s cubic-bezier(0.16,1,0.3,1) 1.2s both; }
-    .floating-cta:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 16px 40px rgba(124,58,237,0.5); }
+    /* marquee */
+    .marquee { margin-top: 70px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 22px 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+    .marquee-track { display: flex; gap: 0; white-space: nowrap; animation: scroll 26s linear infinite; }
+    .marquee-item { display: inline-flex; align-items: center; gap: 14px; padding: 0 30px; font-weight: 800; font-size: 15px; color: var(--text2); letter-spacing: 0.02em; }
+    .marquee-item::after { content: '✦'; color: var(--accent); margin-left: 30px; font-size: 11px; }
+    @keyframes scroll { to { transform: translateX(-50%); } }
 
-    /* SECTION CTA BANNER */
-    .cta-banner { background: var(--grad); border-radius: 28px; padding: 56px 64px; text-align: center; margin-top: 64px; position: relative; overflow: hidden; }
-    .cta-banner::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
-    .cta-banner h3 { font-family: 'Satoshi', sans-serif; font-size: clamp(24px, 4vw, 40px); font-weight: 800; color: white; margin-bottom: 12px; position: relative; letter-spacing: -0.02em; }
-    .cta-banner p { color: rgba(255,255,255,0.8); font-size: 16px; margin-bottom: 32px; font-weight: 600; position: relative; }
-    .btn-white { background: white; color: var(--purple); padding: 16px 40px; font-size: 14px; font-weight: 800; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 100px; transition: all 0.3s; font-family: 'Satoshi', sans-serif; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-    /* PHONE CTA — realistic retina device */
-    .phone-cta { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 72px; }
-    .phone-copy { max-width: 460px; }
-    .phone-copy h3 { font-family: 'Satoshi', sans-serif; font-size: clamp(30px, 4vw, 50px); font-weight: 800; color: var(--text); line-height: 1.08; letter-spacing: -0.025em; margin-top: 18px; }
-    .phone-copy h3 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .phone-copy p { font-size: 16.5px; color: var(--text2); line-height: 1.7; font-weight: 600; margin-top: 20px; }
-    .phone-copy-actions { display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap; }
+    /* section header */
+    .sec { padding: 100px 0; }
+    .sec-head { text-align: center; max-width: 680px; margin: 0 auto 60px; }
+    .sec-head .lead { margin: 18px auto 0; }
 
-    /* stage + ambient glow */
-    .phone-stage { position: relative; flex-shrink: 0; justify-self: center; }
-    .phone-glow { position: absolute; inset: -70px; background: radial-gradient(ellipse at 50% 55%, rgba(124,58,237,0.26), rgba(8,145,178,0.12) 45%, transparent 72%); filter: blur(44px); z-index: 0; animation: glowPulse 5s ease-in-out infinite; pointer-events: none; }
-    @keyframes glowPulse { 0%,100%{opacity:0.4;} 50%{opacity:0.72;} }
+    /* problem cards */
+    .grid { display: grid; gap: 18px; }
+    .g4 { grid-template-columns: repeat(4, 1fr); }
+    .g3 { grid-template-columns: repeat(3, 1fr); }
+    .g2 { grid-template-columns: repeat(2, 1fr); }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 30px 26px; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .card:hover { transform: translateY(-5px); border-color: var(--border2); background: #16161f; }
+    .card-ico { width: 52px; height: 52px; border-radius: 14px; background: var(--accent-soft); color: var(--accent2); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+    .card-ico.red { background: rgba(248,113,113,0.1); color: var(--bad); }
+    .card h3 { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+    .card p { color: var(--text2); font-size: 14.5px; line-height: 1.65; margin-top: 8px; font-weight: 500; }
 
-    /* titanium frame */
-    .phone-device { position: relative; z-index: 1; width: 384px; padding: 15px; border-radius: 66px;
-      background: linear-gradient(135deg, #8c8c90 0%, #3a3a3d 20%, #1b1b1e 50%, #2f2f33 80%, #76767a 100%);
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,0.10),
-        inset 0 2px 4px rgba(255,255,255,0.28),
-        inset 0 -3px 5px rgba(0,0,0,0.55),
-        0 1px 0 rgba(0,0,0,0.5),
-        0 60px 120px rgba(20,10,40,0.42),
-        0 28px 56px rgba(0,0,0,0.32);
-      animation: phoneFloat 6s ease-in-out infinite; }
-    @keyframes phoneFloat { 0%,100%{ transform: translateY(0) rotate(-1deg); } 50%{ transform: translateY(-18px) rotate(1deg); } }
-    @keyframes phoneBuzz {
-      0%,100%{ transform: translateX(0) rotate(-1deg); }
-      15%{ transform: translateX(-6px) rotate(-2.4deg); } 30%{ transform: translateX(6px) rotate(2.4deg); }
-      45%{ transform: translateX(-5px) rotate(-1.8deg); } 60%{ transform: translateX(5px) rotate(1.8deg); }
-      75%{ transform: translateX(-3px) rotate(-1deg); } 88%{ transform: translateX(2px) rotate(0.6deg); } }
-    .phone-buzz { animation: phoneBuzz 0.85s ease-in-out !important; }
+    /* solution split */
+    .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+    .sol-list { list-style: none; margin-top: 26px; display: flex; flex-direction: column; gap: 16px; }
+    .sol-list li { display: flex; gap: 14px; align-items: flex-start; }
+    .sol-check { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; background: var(--accent-soft); color: var(--accent2); display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .sol-list b { font-weight: 800; }
+    .sol-list p { color: var(--text2); font-size: 14.5px; margin-top: 2px; font-weight: 500; }
+    .sol-visual { background: linear-gradient(160deg, #17121f, #0e0c15); border: 1px solid var(--border); border-radius: 24px; padding: 30px; }
+    .chat-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+    .chat-av { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; background: #24202e; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: var(--text2); }
+    .chat-av.us { background: var(--grad); color: #fff; }
+    .bubble { background: #1c1b26; border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; padding: 12px 15px; font-size: 14px; color: var(--text); max-width: 82%; }
+    .bubble.us { background: linear-gradient(135deg, rgba(139,92,246,0.22), rgba(124,58,237,0.14)); border-color: rgba(139,92,246,0.3); border-radius: 16px 4px 16px 16px; margin-left: auto; }
+    .chat-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; font-weight: 800; color: var(--ok); letter-spacing: 0.04em; }
 
-    /* side buttons */
-    .phone-btn-mute, .phone-btn-volup, .phone-btn-voldown { position:absolute; left:-3px; width:3px; background:linear-gradient(to right,#55555a,#28282b); border-radius:2px 0 0 2px; box-shadow:-1px 0 1px rgba(0,0,0,0.3); }
-    .phone-btn-mute { top:118px; height:30px; }
-    .phone-btn-volup { top:166px; height:48px; }
-    .phone-btn-voldown { top:226px; height:48px; }
-    .phone-btn-power { position:absolute; right:-3px; top:182px; width:3px; height:82px; background:linear-gradient(to left,#55555a,#28282b); border-radius:0 2px 2px 0; box-shadow:1px 0 1px rgba(0,0,0,0.3); }
+    /* steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .step { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 30px 24px; }
+    .step-n { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: transparent; -webkit-text-stroke: 1.4px var(--accent); letter-spacing: 0.04em; line-height: 1; }
+    .step-ico { width: 46px; height: 46px; border-radius: 12px; background: var(--accent-soft); color: var(--accent2); display: flex; align-items: center; justify-content: center; margin: 16px 0 16px; }
+    .step h3 { font-size: 17px; font-weight: 800; }
+    .step p { color: var(--text2); font-size: 14px; margin-top: 8px; line-height: 1.6; font-weight: 500; }
 
-    /* retina screen */
-    .phone-screen { position: relative; width: 354px; aspect-ratio: 354 / 766; border-radius: 52px; overflow: hidden;
-      background: linear-gradient(165deg, #2a1b54 0%, #3a2a78 26%, #245a82 68%, #0e7490 100%);
-      box-shadow: inset 0 0 0 2px #050509; }
-    /* iOS-style wallpaper orbs */
-    .phone-screen::before { content:''; position:absolute; width:240px; height:240px; left:-60px; top:60px; border-radius:50%; background:radial-gradient(circle, rgba(196,181,253,0.55), transparent 65%); filter:blur(20px); }
-    .phone-screen::after { content:''; position:absolute; width:220px; height:220px; right:-50px; bottom:90px; border-radius:50%; background:radial-gradient(circle, rgba(34,211,238,0.45), transparent 65%); filter:blur(22px); }
-    /* dynamic island */
-    .phone-island { position:absolute; top:14px; left:50%; transform:translateX(-50%); width:108px; height:32px; background:#000; border-radius:20px; z-index:8; display:flex; align-items:center; justify-content:flex-end; padding-right:12px; }
-    .phone-island-cam { width:11px; height:11px; border-radius:50%; background:#0a0a12; box-shadow:inset 0 0 0 2px #1c1c2e, 0 0 3px rgba(60,130,255,0.4); }
-    /* glass reflection */
-    .phone-glass { position:absolute; inset:0; z-index:7; pointer-events:none; border-radius:52px; background:linear-gradient(125deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.05) 16%, transparent 36%); overflow:hidden; }
-    .phone-glass::after { content:''; position:absolute; top:-40%; left:-70%; width:45%; height:180%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent); transform:rotate(16deg); animation:glassSweep 7s ease-in-out infinite; }
-    @keyframes glassSweep { 0%,68%{ left:-70%; } 100%{ left:150%; } }
+    /* compare */
+    .compare { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .comp { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; }
+    .comp.win { background: linear-gradient(170deg, rgba(139,92,246,0.16), rgba(124,58,237,0.05)); border-color: rgba(139,92,246,0.4); box-shadow: 0 20px 50px rgba(124,58,237,0.14); }
+    .comp-label { font-size: 16px; font-weight: 800; margin-bottom: 18px; letter-spacing: -0.01em; }
+    .comp.win .comp-label { color: var(--accent3); }
+    .comp ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .comp li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text2); font-weight: 500; line-height: 1.5; }
+    .comp li svg { flex-shrink: 0; margin-top: 1px; }
+    .ic-bad { color: var(--bad); } .ic-ok { color: var(--ok); }
+    .comp.win li { color: var(--text); }
 
-    /* screen UI */
-    .phone-ui { position:relative; z-index:6; height:100%; display:flex; flex-direction:column; padding:16px 22px 14px; }
-    .phone-status { display:flex; justify-content:space-between; align-items:center; padding:2px 8px 0; }
-    .phone-time { font-family:'Satoshi',sans-serif; font-size:15px; font-weight:800; color:#fff; letter-spacing:-0.01em; }
-    .phone-status-icons { display:flex; align-items:center; gap:6px; }
-    .phone-signal { display:flex; align-items:flex-end; gap:2px; height:11px; }
-    .phone-signal span { width:3px; background:#fff; border-radius:1px; }
-    .phone-signal span:nth-child(1){height:4px;} .phone-signal span:nth-child(2){height:6px;} .phone-signal span:nth-child(3){height:9px;} .phone-signal span:nth-child(4){height:11px;}
-    .phone-wifi { width:16px; height:12px; border-radius:2px; background:conic-gradient(from 225deg at 50% 100%, #fff 0deg, #fff 90deg, transparent 90deg); -webkit-mask:radial-gradient(circle at 50% 100%, transparent 2px, #000 2.5px); mask:radial-gradient(circle at 50% 100%, transparent 2px, #000 2.5px); }
-    .phone-batt { width:24px; height:12px; border:1.5px solid rgba(255,255,255,0.7); border-radius:3px; padding:1.5px; position:relative; }
-    .phone-batt::after { content:''; position:absolute; right:-3px; top:50%; transform:translateY(-50%); width:2px; height:5px; background:rgba(255,255,255,0.7); border-radius:0 1px 1px 0; }
-    .phone-batt-fill { height:100%; width:72%; background:#fff; border-radius:1.5px; }
-    /* app card */
-    .phone-app { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:0 6px; }
-    .phone-app-icon { width:78px; height:78px; border-radius:22px; background:var(--grad); display:flex; align-items:center; justify-content:center; font-family:'Satoshi',sans-serif; font-weight:800; font-size:30px; letter-spacing:-0.02em; color:#fff; box-shadow:0 14px 34px rgba(109,40,217,0.45), inset 0 1px 0 rgba(255,255,255,0.4); animation:appIconPop 0.7s cubic-bezier(0.16,1,0.3,1) both; }
-    @keyframes appIconPop { from{ transform:scale(0.6); opacity:0; } to{ transform:scale(1); opacity:1; } }
-    .phone-app-name { font-family:'Satoshi',sans-serif; font-size:23px; font-weight:800; color:#fff; }
-    .phone-app-sub { font-size:13.5px; color:rgba(255,255,255,0.78); line-height:1.6; font-weight:600; text-align:center; max-width:210px; margin-top:-4px; }
-    .phone-app-cta { margin-top:8px; background:#fff; color:#1a1520; font-family:'Satoshi',sans-serif; font-size:15px; font-weight:800; padding:15px 30px; border-radius:100px; text-decoration:none; box-shadow:0 10px 28px rgba(0,0,0,0.28); transition:transform 0.3s; }
-    .phone-app-cta:hover { transform:translateY(-2px); }
-    .phone-app-trust { display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:6px; }
-    .phone-app-stars { color:#fbbf24; font-size:14px; letter-spacing:2px; }
-    .phone-app-trust span { font-size:11px; color:rgba(255,255,255,0.7); font-weight:700; letter-spacing:0.04em; }
-    .phone-homebar { width:128px; height:5px; background:rgba(255,255,255,0.55); border-radius:3px; margin:6px auto 2px; }
-    .btn-white:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+    /* stats band */
+    .stats-band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 46px; background: linear-gradient(150deg, #14101f, #0c0a13); border: 1px solid var(--border); border-radius: 26px; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 6vw, 72px); line-height: 1; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-label { color: var(--text2); font-weight: 600; font-size: 14px; margin-top: 8px; }
 
+    /* proof */
+    .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .proof-card { aspect-ratio: 9/13; border-radius: 18px; border: 1px solid var(--border2); background: linear-gradient(165deg, #16111f, #0d0b13); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; position: relative; overflow: hidden; }
+    .proof-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 30%, rgba(124,58,237,0.14), transparent 65%); }
+    .proof-play { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; color: var(--accent2); position: relative; }
+    .proof-text { color: var(--muted); font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; position: relative; }
 
-    /* SECTION COMMONS */
-    section { padding: 120px 40px; }
-    .section-inner { max-width: 1160px; margin: 0 auto; }
-    .section-chip { display: inline-flex; align-items: center; gap: 8px; background: var(--purple-light); color: var(--purple); padding: 7px 18px; border-radius: 100px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(124,58,237,0.15); }
-    .section-chip.cyan { background: var(--cyan-light); color: var(--cyan); border-color: rgba(8,145,178,0.15); }
-    .section-title { font-family: 'Satoshi', sans-serif; font-size: clamp(36px,5vw,58px); font-weight: 800; line-height: 1.1; color: var(--text); letter-spacing: -0.025em; }
-    .section-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .section-title .cyan-em { font-style: normal; background: var(--grad2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    /* guarantee */
+    .guarantee { display: flex; gap: 30px; align-items: center; background: linear-gradient(150deg, rgba(139,92,246,0.14), rgba(124,58,237,0.04)); border: 1px solid rgba(139,92,246,0.3); border-radius: 26px; padding: 44px 48px; }
+    .guarantee-ico { flex-shrink: 0; width: 84px; height: 84px; border-radius: 22px; background: var(--grad); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 16px 40px rgba(124,58,237,0.4); }
+    .guarantee h3 { font-size: clamp(22px, 3vw, 32px); font-weight: 800; letter-spacing: -0.02em; }
+    .guarantee p { color: var(--text2); font-size: 15.5px; margin-top: 8px; font-weight: 500; }
 
-    /* SERVICES — pinned scroll-reveal */
-    .services-pin { position: relative; height: ${100 + SERVICES_PIN * 100}vh; background: var(--white); padding: 0; }
-    .services-stage { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; align-items: center; overflow: hidden; }
-    .services-stage-inner { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 40px; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 64px; align-items: center; }
-    .services-title-col { position: relative; }
-    .services-title-col .section-chip { margin-bottom: 22px; }
-    .services-title-col .section-title { font-size: clamp(34px, 4vw, 54px); }
-    .services-title-sub { font-size: 16px; color: var(--text2); line-height: 1.75; font-weight: 600; margin-top: 20px; max-width: 420px; }
-    .services-progress { display: flex; gap: 9px; margin-top: 36px; }
-    .services-dot { width: 28px; height: 4px; border-radius: 100px; background: var(--border2); transition: background 0.4s ease, transform 0.4s ease; }
-    .services-dot.on { background: var(--grad); transform: scaleY(1.5); }
-    /* card stack */
-    .services-cards-col { display: flex; flex-direction: column; gap: 16px; }
-    .service-card { display: flex; align-items: center; gap: 22px; background: var(--bg); border: 1.5px solid var(--border); border-radius: 22px; padding: 22px 26px; will-change: transform, opacity; box-shadow: 0 10px 30px rgba(124,58,237,0.04); }
-    .service-card-icon { width: 58px; height: 58px; flex-shrink: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--purple); background: var(--purple-light); }
-    .service-card:nth-child(even) .service-card-icon { background: var(--cyan-light); color: var(--cyan); }
-    .service-card-body { flex: 1; }
-    .service-card-title { font-family: 'Satoshi', sans-serif; font-size: 19px; font-weight: 800; color: var(--text); line-height: 1.25; }
-    .service-card-desc { font-size: 14.5px; color: var(--text2); line-height: 1.6; font-weight: 600; margin-top: 6px; }
-    .service-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--border2); letter-spacing: 0.04em; flex-shrink: 0; }
-    /* CTA section that follows the pin */
-    .services-cta-section { background: var(--white); padding: 40px 40px 120px; }
+    /* form / CTA */
+    #apply { padding: 100px 0 110px; }
+    .apply-card { max-width: 720px; margin: 0 auto; background: linear-gradient(165deg, #13111d, #0b0a11); border: 1px solid var(--border2); border-radius: 28px; padding: 52px; position: relative; overflow: hidden; }
+    .apply-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
+    .apply-head { text-align: center; margin-bottom: 34px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+    .field input, .field textarea, .field select { width: 100%; background: #0c0b12; border: 1px solid var(--border2); border-radius: 13px; padding: 14px 16px; color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; font-size: 15px; outline: none; transition: all 0.25s; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--muted); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .apply-note { text-align: center; color: var(--muted); font-size: 13px; margin-top: 18px; }
+    .form-err { color: var(--bad); font-size: 14px; text-align: center; margin-top: 14px; font-weight: 600; }
+    .success { text-align: center; padding: 20px 0; }
+    .success-ico { width: 68px; height: 68px; border-radius: 50%; background: var(--accent-soft); color: var(--accent2); display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; }
 
-    /* INDUSTRIES — pinned rotating digital globe + orbiting cards */
-    .industries-pin { position: relative; height: ${100 + INDUSTRIES_PIN * 100}vh; background: var(--bg2); padding: 0; }
-    .industries-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; align-items: center; background: radial-gradient(ellipse 80% 60% at 50% 60%, #ffffff 0%, var(--bg2) 70%); }
-    .industries-heading { text-align: center; padding: 92px 24px 0; position: relative; z-index: 3; }
-    .industries-heading .section-title { font-size: clamp(32px, 4.5vw, 54px); }
-    /* orbit field */
-    .orbit { position: relative; flex: 1; width: 100%; max-width: 760px; }
-    .orbit-glow { position: absolute; left: 50%; top: 50%; width: 360px; height: 360px; transform: translate(-50%,-50%); background: radial-gradient(circle, rgba(34,211,238,0.18), rgba(124,58,237,0.08) 50%, transparent 72%); filter: blur(30px); pointer-events: none; }
-    .globe { position: absolute; left: 50%; top: 50%; width: 250px; height: 250px; will-change: transform; filter: drop-shadow(0 20px 50px rgba(8,145,178,0.22)); }
-    .globe svg { width: 100%; height: 100%; display: block; }
-    .globe-ring { position: absolute; left: 50%; top: 50%; width: 330px; height: 330px; border: 1.5px dashed rgba(8,145,178,0.3); border-radius: 50%; will-change: transform; }
-    .orbit-card { position: absolute; left: 50%; top: 50%; width: 158px; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 18px 14px; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: 0 14px 34px rgba(8,145,178,0.1); will-change: transform, opacity; }
-    .orbit-card-icon { display: inline-flex; color: var(--purple); }
-    .orbit-card-label { font-family: 'Satoshi', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--text); text-align: center; line-height: 1.3; }
-    /* mobile fallback hidden on desktop */
-    .industries-fallback { display: none; }
-    .orbit-card-static { display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 20px 14px; background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; box-shadow: 0 12px 30px rgba(8,145,178,0.08); }
+    /* faq */
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q { width: 100%; background: none; border: none; color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 17px; text-align: left; padding: 24px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .faq-q span.plus { flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px; background: var(--accent-soft); color: var(--accent2); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: transform 0.3s; }
+    .faq-item.open .faq-q span.plus { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .faq-item.open .faq-a { max-height: 320px; }
+    .faq-a p { color: var(--text2); font-size: 15px; line-height: 1.7; padding: 0 0 24px; font-weight: 500; max-width: 90%; }
 
+    /* footer */
+    footer { border-top: 1px solid var(--border); padding: 50px 0 40px; }
+    .foot-in { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .foot-links { display: flex; gap: 24px; }
+    .foot-links a { color: var(--text2); text-decoration: none; font-weight: 600; font-size: 14px; }
+    .foot-links a:hover { color: var(--text); }
+    .foot-copy { color: var(--muted); font-size: 13px; }
 
+    /* floating cta */
+    .float-cta { position: fixed; right: 22px; bottom: 24px; z-index: 900; background: var(--grad); color: #fff; border: none; cursor: pointer; padding: 15px 26px; border-radius: 100px; font-family: 'Satoshi', sans-serif; font-weight: 800; font-size: 14px; box-shadow: 0 12px 34px rgba(124,58,237,0.5); animation: floatIn 0.6s cubic-bezier(0.16,1,0.3,1) 1s both; }
+    .float-cta:hover { transform: translateY(-3px); }
+    @keyframes floatIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
-    /* REVIEWS */
-    #reviews { background: var(--bg2); }
-    .reviews-header { text-align: center; margin-bottom: 64px; }
-    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-    .review-card { background: var(--white); border-radius: 24px; padding: 40px 36px; border: 1.5px solid var(--border); transition: all 0.4s; display: flex; flex-direction: column; gap: 20px; }
-    .review-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(124,58,237,0.1); border-color: var(--border2); }
-    .review-stars { display: flex; gap: 3px; }
-    .review-star { font-size: 16px; color: #f59e0b; }
-    .review-text { font-size: 15px; color: var(--text2); line-height: 1.8; font-weight: 600; font-style: italic; flex: 1; }
-    .review-footer { display: flex; align-items: center; gap: 14px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
-    .review-avatar { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'Satoshi', sans-serif; font-size: 16px; font-weight: 800; color: white; background: var(--grad); }
-    .review-card:nth-child(even) .review-avatar { background: var(--grad2); }
-    .review-name { font-family: 'Satoshi', sans-serif; font-size: 15px; font-weight: 800; color: var(--text); }
-    .review-role { font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 2px; }
-    .review-date { font-size: 11px; color: var(--muted); margin-left: auto; font-weight: 700; }
-
-    /* CONTACT */
-    #contact { background: var(--white); position: relative; overflow: hidden; }
-    .contact-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(124,58,237,0.06) 0%, transparent 60%); pointer-events: none; }
-    .contact-inner { max-width: 800px; margin: 0 auto; text-align: center; position: relative; }
-    .contact-sub { font-size: 17px; color: var(--text2); line-height: 1.8; margin: 24px auto 56px; max-width: 520px; font-weight: 600; }
-    .contact-options { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
-    .contact-option { padding: 44px 40px; border: 1.5px solid var(--border); border-radius: 24px; text-align: left; transition: all 0.4s; text-decoration: none; display: block; background: var(--bg); }
-    .contact-option:hover { border-color: var(--purple2); background: var(--purple-light); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(124,58,237,0.1); }
-    .contact-option-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--purple-light); color: var(--purple); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-    .contact-option:last-child .contact-option-icon { background: var(--cyan-light); color: var(--cyan); }
-    .contact-option-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; font-weight: 800; }
-    .contact-option:last-child .contact-option-label { color: var(--cyan); }
-    .contact-option-title { font-family: 'Satoshi', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
-    .contact-option-desc { font-size: 13px; color: var(--text2); line-height: 1.7; font-weight: 600; }
-    .contact-note { font-size: 13px; color: var(--muted); font-weight: 700; }
-    .contact-note strong { color: var(--text2); }
-
-    /* FOOTER */
-    footer { background: var(--text); color: rgba(255,255,255,0.45); padding: 40px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-    .footer-brand { font-family: 'Satoshi', sans-serif; font-size: 20px; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .footer-copy { font-size: 12px; font-weight: 700; }
-    .footer-links { display: flex; gap: 28px; }
-    .footer-links a { font-size: 12px; color: rgba(255,255,255,0.4); text-decoration: none; font-weight: 700; transition: color 0.3s; }
-    .footer-links a:hover { color: var(--purple3); }
-
-    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.85); } }
-
-    /* MAKEOVER CTA SECTION */
-    .makeover-cta-section { background: var(--white); padding: 100px 40px; overflow: hidden; }
-    .makeover-cta-inner { display: flex; flex-direction: column; align-items: center; gap: 0; }
-    .makeover-preview-strip { display: flex; gap: 12px; margin-bottom: 56px; overflow: hidden; width: 100%; max-width: 960px; mask-image: linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%); }
-    .makeover-preview-thumb { position: relative; flex-shrink: 0; width: 148px; height: 110px; border-radius: 14px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.1); transition: transform 0.3s; }
-    .makeover-preview-thumb:hover { transform: scale(1.05); }
-    .thumb-before, .thumb-after { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .thumb-before { filter: grayscale(0.4) brightness(0.85); }
-    .thumb-after { clip-path: inset(0 50% 0 0); transition: clip-path 0.4s ease; }
-    .makeover-preview-thumb:hover .thumb-after { clip-path: inset(0 0% 0 0); }
-    .makeover-cta-text { text-align: center; max-width: 620px; }
-    .makeover-cta-sub { font-size: 16px; color: var(--text2); line-height: 1.8; font-weight: 600; margin: 20px auto 36px; max-width: 520px; }
-    .makeover-open-btn { background: var(--grad); color: white; padding: 20px 52px; border-radius: 100px; font-size: 17px; font-weight: 900; border: none; cursor: pointer; font-family: 'Satoshi', sans-serif; box-shadow: 0 10px 36px rgba(124,58,237,0.4); transition: all 0.3s; letter-spacing: 0.02em; animation: fixGlow 2.5s ease-in-out infinite; }
-    .makeover-open-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 48px rgba(124,58,237,0.55); }
-    /* MAKEOVER GRID */
-    .makeover-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .makeover-card { position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 4/5; cursor: col-resize; box-shadow: 0 8px 32px rgba(0,0,0,0.12); transition: box-shadow 0.3s, transform 0.3s; background: #eee; user-select: none; }
-    .makeover-card:hover { box-shadow: 0 20px 56px rgba(124,58,237,0.2); transform: translateY(-4px); }
-    .makeover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-    .makeover-after-wrap { position: absolute; inset: 0; transition: clip-path 0.05s linear; }
-    .makeover-divider { position: absolute; top: 0; bottom: 0; width: 3px; background: white; box-shadow: 0 0 12px rgba(0,0,0,0.3); transform: translateX(-50%); transition: left 0.05s linear; pointer-events: none; }
-    .makeover-handle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
-    .makeover-label { position: absolute; bottom: 12px; font-size: 11px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; pointer-events: none; }
-    .makeover-label-before { left: 12px; background: rgba(0,0,0,0.5); color: white; }
-    .makeover-label-after { right: 12px; background: linear-gradient(135deg,#7c3aed,#0891b2); color: white; }
-
-    /* ── TABLET (max 900px) ── */
     @media (max-width: 900px) {
-      nav { padding: 0 20px; }
       .nav-links { display: none; }
-      .nav-cta { display: none; }
-      .nav-menu-btn { display: flex; }
-      section { padding: 72px 20px; }
-      .section-inner { padding: 0; }
-      /* Hero */
-      #hero { padding: 0; }
-      .hero-stage { padding-bottom: 40px; }
-      /* Services — unpin and stack on tablet/mobile */
-      .services-pin { height: auto; }
-      .services-stage { position: static; height: auto; padding: 72px 0; }
-      .services-stage-inner { grid-template-columns: 1fr; gap: 32px; padding: 0 20px; }
-      .services-title-sub { max-width: 100%; }
-      .service-card { opacity: 1 !important; transform: none !important; }
-      /* Industries — unpin, static globe + grid */
-      .industries-pin { height: auto; }
-      .industries-stage { position: static; height: auto; padding-bottom: 72px; }
-      .orbit { display: none; }
-      .industries-fallback { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; max-width: 520px; margin: 40px auto 0; padding: 0 20px; }
-      .phone-cta { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 48px; }
-      /* Makeover showcase on mobile */
-      .mk-show-copy { top: 84px; padding: 0 18px; }
-      .phone-copy { max-width: 560px; }
-      .phone-copy-actions { justify-content: center; }
-      /* Reviews */
-      .reviews-grid { grid-template-columns: 1fr 1fr; }
-      /* Contact */
-      .contact-options { grid-template-columns: 1fr; }
-      .makeover-grid { grid-template-columns: repeat(2, 1fr); }
-      .makeover-preview-strip { gap: 8px; }
-      .makeover-preview-thumb { width: 120px; height: 90px; }
-      /* Footer */
-      footer { flex-direction: column; text-align: center; align-items: center; gap: 12px; }
-      .footer-links { justify-content: center; }
-      /* Misc */
-      .cta-banner { padding: 40px 24px; }
-      .floating-cta { right: 14px; bottom: 18px; font-size: 12px; padding: 11px 16px; }
-      .dropdown-menu { left: 0; right: 0; border-radius: 0; }
-      /* Pricing */
-      .pricing-grid { grid-template-columns: 1fr; }
-      .pricing-partner-box { grid-template-columns: 1fr; padding: 32px 24px; gap: 24px; }
-      .pricing-page { padding: 60px 20px 80px; }
-      /* Intake */
-      .intake-card { padding: 36px 24px; }
-      .intake-page { padding: 60px 20px 80px; }
+      .burger { display: flex; }
+      .mobile-menu { display: none; position: fixed; top: 74px; left: 16px; right: 16px; z-index: 999; background: rgba(14,14,21,0.97); border: 1px solid var(--border2); border-radius: 18px; padding: 14px; backdrop-filter: blur(20px); flex-direction: column; gap: 4px; }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu button { background: none; border: none; color: var(--text); text-align: left; font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 15px; padding: 13px 16px; border-radius: 11px; cursor: pointer; }
+      .mobile-menu .m-cta { background: var(--grad); text-align: center; font-weight: 800; margin-top: 6px; }
+      .g4, .g3, .steps, .compare, .proof-grid { grid-template-columns: 1fr 1fr; }
+      .split { grid-template-columns: 1fr; gap: 36px; }
+      .stats-band { grid-template-columns: 1fr; gap: 30px; padding: 36px; }
+      .guarantee { flex-direction: column; text-align: center; padding: 36px 26px; }
+      .apply-card { padding: 36px 24px; }
+      .sec { padding: 76px 0; }
     }
-
-    /* ── MOBILE (max 600px) ── */
-    @media (max-width: 600px) {
-      /* Nav */
-      nav { padding: 0 16px; height: 64px; }
-      .nav-brand { font-size: 20px; }
-      /* Hero */
-      .hero-stage { padding: 92px 16px 36px; }
-      .hero-title { font-size: clamp(42px, 12vw, 64px); letter-spacing: 0.04em; }
-      .hero-title-grad { font-size: inherit; -webkit-text-stroke-width: 1.5px; }
-      .hero-tagline { font-size: 14px; margin-top: 14px; }
-      .hero-cta { flex-direction: column; align-items: center; gap: 12px; width: 100%; }
-      .btn-hero { width: 100% !important; padding: 17px 24px !important; font-size: 15px !important; text-align: center; }
-      .hero-kicker { font-size: 10px; letter-spacing: 0.16em; padding: 8px 16px; }
-      .hero-scroll-cue { display: none; }
-      /* Services */
-      .service-card { padding: 18px 18px; gap: 16px; }
-      .service-card-icon { width: 50px; height: 50px; font-size: 22px; }
-      .service-card-title { font-size: 17px; }
-      .service-card-num { font-size: 24px; }
-      /* Phone */
-      .phone-cta { gap: 40px; }
-      .phone-device { width: 300px; padding: 12px; border-radius: 52px; }
-      .phone-screen { width: 276px; border-radius: 42px; }
-      /* Industries */
-      .industries-fallback { grid-template-columns: 1fr 1fr; }
-      /* Reviews */
-      .reviews-grid { grid-template-columns: 1fr; gap: 16px; }
-      .review-card { padding: 28px 22px; }
-      /* CTA banner */
-      .cta-banner { padding: 36px 20px; border-radius: 20px; }
-      .cta-banner h3 { font-size: 22px; }
-      /* Contact */
-      .contact-options { grid-template-columns: 1fr; gap: 16px; }
-      .contact-option { padding: 32px 24px; }
-      /* Floating CTA */
-      .floating-cta { right: 12px; bottom: 16px; font-size: 12px; padding: 10px 14px; }
-      /* Section typography */
-      .section-title { font-size: clamp(28px, 7vw, 42px); }
-      .makeover-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-      .makeover-open-btn { width: 100%; padding: 18px 24px; font-size: 15px; }
-      .makeover-preview-thumb { width: 95px; height: 72px; }
-      /* Footer */
-      footer { padding: 28px 20px; gap: 10px; }
-      .footer-links { gap: 20px; }
+    @media (max-width: 560px) {
+      .wrap { padding: 0 18px; }
+      .g4, .g3, .g2, .steps, .compare, .proof-grid { grid-template-columns: 1fr; }
+      .field-row { grid-template-columns: 1fr; }
+      #hero { padding: 124px 0 70px; }
+      .hero-cta { flex-direction: column; }
+      .hero-cta .btn { width: 100%; justify-content: center; }
+      .float-cta { right: 14px; bottom: 16px; padding: 13px 20px; font-size: 13px; }
     }
-
-    /* ── SMALL MOBILE (max 380px) ── */
-    @media (max-width: 380px) {
-      .hero-title { font-size: 48px; }
-      .phone-device { width: 270px; }
-      .phone-screen { width: 246px; }
-      .nav-brand { font-size: 18px; }
-    }
-
-    /* ── APOLLO NAV OVERRIDE ── */
-    nav { padding: 0 48px; height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .nav-left, .nav-center, .nav-right { display: contents; }
-    .nav-links { display: flex; align-items: center; gap: 2px; flex: 1; justify-content: center; }
-    .nav-link { font-size: 14px; font-weight: 700; color: var(--text2); text-decoration: none; padding: 8px 13px; border-radius: 10px; transition: all 0.2s; white-space: nowrap; font-family: 'Satoshi', sans-serif; background: none; border: none; cursor: pointer; }
-    .nav-link:hover { color: var(--purple); background: var(--purple-light); }
-    .nav-link.active { color: var(--purple); background: var(--purple-light); }
-    /* nav over a dark section (makeovers) — light text */
-    nav.nav-on-dark .nav-link { color: rgba(245,243,255,0.78); }
-    nav.nav-on-dark .nav-link:hover, nav.nav-on-dark .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); }
-    nav.nav-on-dark .nav-menu-btn { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.22); }
-    nav.nav-on-dark .nav-menu-btn span { background: #fff; }
-    @media (max-width: 900px) { .nav-links { display: none; } }
-
-    /* ── PRICING PAGE ── */
-    .pricing-page { padding: 80px 40px 120px; background: var(--bg); min-height: 80vh; }
-    .pricing-toggle { display: flex; align-items: center; justify-content: center; margin: 36px auto 56px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 100px; padding: 5px; width: fit-content; }
-    .pricing-toggle-btn { padding: 12px 32px; border-radius: 100px; font-size: 15px; font-weight: 800; cursor: pointer; border: none; background: transparent; color: var(--muted); font-family: 'Satoshi', sans-serif; transition: all 0.3s; }
-    .pricing-toggle-btn.active { background: var(--grad); color: white; box-shadow: 0 4px 16px rgba(124,58,237,0.3); }
-    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
-    .pricing-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 28px; padding: 44px 38px; display: flex; flex-direction: column; transition: all 0.4s; position: relative; overflow: hidden; }
-    .pricing-card:hover { transform: translateY(-6px); box-shadow: 0 24px 56px rgba(124,58,237,0.12); }
-    .pricing-card.featured { border-color: var(--purple); box-shadow: 0 8px 40px rgba(124,58,237,0.15); }
-    .pricing-card.featured::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad); }
-    .pricing-badge { display:inline-flex; align-items:center; gap:6px; background:var(--grad); color:white; padding:5px 16px; border-radius:100px; font-size:12px; font-weight:800; margin-bottom:20px; width:fit-content; }
-    .pricing-name { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; font-family:'Satoshi',sans-serif; }
-    .pricing-price { font-size:56px; font-weight:900; line-height:1; color:var(--text); margin-bottom:4px; letter-spacing:-0.03em; font-family:'Satoshi',sans-serif; }
-    .pricing-price span { font-size:24px; font-weight:700; color:var(--muted); vertical-align:super; }
-    .pricing-period { font-size:13px; color:var(--muted); font-weight:700; margin-bottom:28px; }
-    .pricing-divider { height:1px; background:var(--border); margin-bottom:28px; }
-    .pricing-features { list-style:none; display:flex; flex-direction:column; gap:14px; flex:1; margin-bottom:32px; }
-    .pricing-features li { display:flex; align-items:flex-start; gap:12px; font-size:15px; color:var(--text2); font-weight:600; line-height:1.5; }
-    .pricing-check { width:22px; height:22px; border-radius:50%; background:var(--grad); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; color:white; margin-top:1px; }
-    .pricing-cta { display:block; text-align:center; padding:18px 28px; border-radius:100px; font-size:15px; font-weight:800; text-decoration:none; transition:all 0.3s; font-family:'Satoshi',sans-serif; margin-top:auto; cursor:pointer; border:none; }
-    .pricing-cta-grad { background:var(--grad); color:white; box-shadow:0 6px 20px rgba(124,58,237,0.35); }
-    .pricing-cta-grad:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(124,58,237,0.5); }
-    .pricing-cta-outline { background:transparent; color:var(--purple); border:1.5px solid var(--purple) !important; }
-    .pricing-cta-outline:hover { background:var(--purple-light); transform:translateY(-2px); }
-    .pricing-partner-box { background:linear-gradient(135deg,rgba(124,58,237,0.05),rgba(8,145,178,0.05)); border:1.5px solid var(--border2); border-radius:28px; padding:48px 56px; display:grid; grid-template-columns:1fr auto; align-items:center; gap:40px; position:relative; overflow:hidden; margin-bottom:40px; }
-    .pricing-partner-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad); }
-    .pricing-partner-title { font-size:26px; font-weight:800; color:var(--text); margin-bottom:12px; font-family:'Satoshi',sans-serif; }
-    .pricing-partner-desc { font-size:15px; color:var(--text2); line-height:1.75; font-weight:600; }
-    .pricing-partner-stats { display:flex; gap:36px; margin-top:24px; }
-    .pricing-partner-stat-num { font-size:28px; font-weight:900; background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-family:'Satoshi',sans-serif; }
-    .pricing-partner-stat-label { font-size:12px; color:var(--muted); font-weight:700; }
-    .pricing-custom { text-align:center; padding:28px; background:var(--white); border:1.5px solid var(--border); border-radius:20px; font-size:15px; color:var(--text2); font-weight:600; }
-    .pricing-custom a { color:var(--purple); font-weight:800; text-decoration:none; }
-    @media(max-width:900px){ .pricing-grid{grid-template-columns:1fr;} .pricing-partner-box{grid-template-columns:1fr;padding:32px 24px;} }
-
-    /* ── INTAKE PAGE ── */
-    .intake-page { padding: 80px 40px 120px; background: var(--bg2); min-height: 80vh; }
-    .intake-card { background:var(--white); border:1.5px solid var(--border); border-radius:28px; padding:52px 56px; position:relative; overflow:hidden; max-width:680px; margin:0 auto; }
-    .intake-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad); }
-    .intake-field { margin-bottom:24px; }
-    .intake-field label { display:block; font-size:12px; font-weight:800; color:var(--text); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:10px; }
-    .intake-field input, .intake-field textarea { width:100%; padding:14px 18px; border:1.5px solid var(--border2); border-radius:14px; font-size:15px; font-family:'Satoshi',sans-serif; font-weight:500; color:var(--text); background:var(--bg); outline:none; transition:all 0.3s; resize:none; }
-    .intake-field input:focus, .intake-field textarea:focus { border-color:var(--purple); box-shadow:0 0 0 4px var(--purple-light); background:white; }
-    .intake-field input::placeholder, .intake-field textarea::placeholder { color:var(--muted); }
-    .intake-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .intake-choice { padding:12px 16px; border:1.5px solid var(--border2); border-radius:12px; font-size:13px; font-weight:700; color:var(--text2); cursor:pointer; background:var(--bg); transition:all 0.25s; text-align:left; font-family:'Satoshi',sans-serif; }
-    .intake-choice:hover { border-color:var(--purple2); color:var(--purple); background:var(--purple-light); }
-    .intake-choice.selected { border-color:var(--purple); background:var(--purple-light); color:var(--purple); font-weight:800; }
-    .intake-next { padding:14px 36px; border-radius:100px; font-size:14px; font-weight:800; cursor:pointer; border:none; background:var(--grad); color:white; font-family:'Satoshi',sans-serif; box-shadow:0 6px 20px rgba(124,58,237,0.3); transition:all 0.3s; }
-    .intake-next:hover { transform:translateY(-2px); }
-    .intake-next:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
-    .intake-back { padding:13px 24px; border-radius:100px; font-size:14px; font-weight:800; cursor:pointer; border:1.5px solid var(--border2); background:transparent; color:var(--text2); font-family:'Satoshi',sans-serif; transition:all 0.3s; }
-    .intake-back:hover { border-color:var(--purple); color:var(--purple); }
-    @media(max-width:640px){ .intake-card{padding:36px 24px;} .intake-choice-grid{grid-template-columns:1fr;} }
-
-    /* ── MAKEOVERS PAGE — cinematic white showcase ── */
-    .mk-page { background: #ffffff; }
-    .mk-show-pin { position: relative; height: ${100 + SHOW_SCRUB * 100}vh; background: #ffffff; padding: 0; }
-    .mk-show-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #edeef1; }
-    /* full-bleed cinematic video — fills the whole stage, no visible box */
-    .mk-show-media { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; transform-origin: center; will-change: transform; }
-    .mk-show-video { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.8s ease; }
-    .mk-show-veil { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(to bottom, rgba(248,248,250,0.92) 0%, rgba(248,248,250,0.45) 24%, transparent 44%, transparent 86%, rgba(237,238,241,0.6) 100%); }
-    /* title overlaid top, fades out as you scroll into the video */
-    .mk-show-copy { position: absolute; top: clamp(94px, 13vh, 150px); left: 0; right: 0; z-index: 5; text-align: center; padding: 0 24px; pointer-events: none; animation: fadeSlideUp 1.1s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-    .mk-show-chip { display: inline-flex; align-items: center; gap: 9px; padding: 8px 20px; border-radius: 100px; border: 1px solid rgba(109,40,217,0.22); background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); color: var(--purple); font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 20px; }
-    .mk-show-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(46px, 6.4vw, 104px); line-height: 0.92; letter-spacing: 0.03em; color: var(--text); text-shadow: 0 2px 30px rgba(255,255,255,0.9); }
-    .mk-show-title span { display: block; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .mk-show-sub { font-family: 'Satoshi', sans-serif; font-size: clamp(15px, 1.5vw, 18px); color: var(--text2); font-weight: 600; line-height: 1.65; margin: 20px auto 0; max-width: 560px; text-shadow: 0 1px 14px rgba(255,255,255,0.95); }
-    .mk-scroll-cue { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; pointer-events: none; }
-    .mk-scroll-cue span { display: block; width: 1.5px; height: 42px; background: linear-gradient(to bottom, transparent, var(--purple)); animation: scrollCue 1.8s ease-in-out infinite; }
-
-    /* CTA */
-    .mk-cta-section { background: #ffffff; padding: 20px 40px 130px; }
-    .mk-cta { text-align: center; max-width: 580px; margin: 0 auto; background: var(--white); border: 1.5px solid var(--border); border-radius: 28px; padding: 56px 44px; position: relative; overflow: hidden; box-shadow: 0 30px 70px rgba(16,16,24,0.06); }
-    .mk-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad); }
-    .mk-cta-title { font-family: 'Satoshi', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
-    .mk-cta-title em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .mk-cta p { font-size: 16px; color: var(--text2); font-weight: 600; margin: 14px auto 28px; }
   `;
-
-  // Hero scrub: 0 = top of page, 1 = sticky stage about to release
-  const heroProgress = windowHeight > 0 ? Math.min(Math.max(scrollY / (windowHeight * HERO_SCRUB_DISTANCE), 0), 1) : 0;
-  // Scroll choreography: headline exits first, CTAs linger, video slowly zooms; the moment the
-  // scrub completes the stage unpins and the next section scrolls straight in (white-on-white, no seam)
-  const heroContentFade = Math.max(0, 1 - Math.max(0, heroProgress - 0.18) * 3.2);
-  const heroCtaFade = Math.max(0, 1 - Math.max(0, heroProgress - 0.55) * 4);
-  const heroVideoScale = 1 + heroProgress * 0.015;
-
-  // Pinned services: scroll travel through the section drives the card reveal
-  const servicesProgress = windowHeight > 0
-    ? Math.min(Math.max((scrollY - servicesTop) / (windowHeight * SERVICES_PIN), 0), 1)
-    : 0;
-  // Each card eases in one after another across the pinned scroll
-  const cardReveal = (i: number) => {
-    const start = 0.06 + i * 0.15;
-    return Math.min(Math.max((servicesProgress - start) / 0.22, 0), 1);
-  };
-
-  // Pinned industries: scroll drives the globe spin and the orbiting card ring
-  const industriesProgress = windowHeight > 0
-    ? Math.min(Math.max((scrollY - industriesTop) / (windowHeight * INDUSTRIES_PIN), 0), 1)
-    : 0;
-  const globeSpin = industriesProgress * 300;        // digital globe rotates as you scroll
-  const ringSpin = -26 + industriesProgress * 52;    // the orbit of cards rotates around it
-  // Each industry card pops + spins in, one after another, in sync with the rotation
-  const orbitReveal = (i: number) => {
-    const start = i * 0.12;
-    return Math.min(Math.max((industriesProgress - start) / 0.26, 0), 1);
-  };
-
-  // makeover showcase scrub progress (entrance video sits at top of the page)
-  const showProgress = windowHeight > 0 ? Math.min(Math.max((scrollY - showTop) / (windowHeight * SHOW_SCRUB), 0), 1) : 0;
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
 
-      {/* FLOATING CTA */}
-      <button onClick={() => goTo("intake")} className="floating-cta">Start Your Project</button>
+      <button className="float-cta" onClick={() => scrollTo("apply")}>Start Free 14-Day Trial</button>
 
-      {/* MOBILE DROPDOWN */}
-      <div className={`dropdown-menu ${menuOpen ? "open" : ""}`}>
-        <button onClick={() => { goTo("home"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>Home</button>
-        <button onClick={() => { goTo("makeovers"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>Makeovers</button>
-        <button onClick={() => { goTo("pricing"); setMenuOpen(false); }} style={{ background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>Pricing</button>
-        <button onClick={() => { goTo("intake"); setMenuOpen(false); }} className="dropdown-cta">Start Your Project</button>
-      </div>
-
-      {/* APOLLO NAV */}
-      <nav className={currentPage === "makeovers" ? "" : scrollY > 60 ? "scrolled" : ""}>
-        <button onClick={() => goTo("home")} className="nav-brand" style={{ border:"none", cursor:"pointer", padding:0 }}>ZJ Digital</button>
-        <div className="nav-links">
-          <button onClick={() => goTo("home")} className={`nav-link${currentPage === "home" ? " active" : ""}`}>Home</button>
-          <button onClick={() => goTo("makeovers")} className={`nav-link${currentPage === "makeovers" ? " active" : ""}`}>Makeovers</button>
-          <button onClick={() => goTo("pricing")} className={`nav-link${currentPage === "pricing" ? " active" : ""}`}>Pricing</button>
-          <button onClick={() => goTo("intake")} className={`nav-link${currentPage === "intake" ? " active" : ""}`}>Start Project</button>
-        </div>
-        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-          <button onClick={() => goTo("intake")} className="nav-cta">Start Your Project</button>
-          <button className="nav-menu-btn" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-            <span /><span /><span />
-          </button>
+      {/* NAV */}
+      <nav className={scrollY > 40 ? "scrolled" : ""}>
+        <div className="nav-in">
+          <button className="brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>ZJ Digital</button>
+          <div className="nav-links">
+            <button onClick={() => scrollTo("how")}>How it works</button>
+            <button onClick={() => scrollTo("why")}>Why us</button>
+            <button onClick={() => scrollTo("faq")}>FAQ</button>
+            <button className="nav-cta" onClick={() => scrollTo("apply")}>Start Free Trial</button>
+          </div>
+          <button className="burger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu"><span /><span /><span /></button>
         </div>
       </nav>
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <button onClick={() => scrollTo("how")}>How it works</button>
+        <button onClick={() => scrollTo("why")}>Why us</button>
+        <button onClick={() => scrollTo("faq")}>FAQ</button>
+        <button className="m-cta" onClick={() => scrollTo("apply")}>Start Free 14-Day Trial</button>
+      </div>
 
-      {/* ── HOME PAGE ── */}
-      {currentPage === "home" && <>
-
-      {/* HERO — full-bleed scroll-scrubbed video */}
+      {/* HERO */}
       <section id="hero">
-        <div className="hero-stage">
-          {/* the video IS the hero — scrubbing it with scroll rotates the pill */}
-          <div
-            className="hero-video-box"
-            style={{ opacity: heroVideoReady ? 1 : 0, transform: `translate(-50%, -50%) scale(${heroVideoScale})` }}
-          >
-            <video
-              ref={heroVideoRef}
-              className="hero-video"
-              src="/hero-video.mp4"
-              muted
-              playsInline
-              preload="auto"
-              onLoadedMetadata={() => setHeroVideoReady(true)}
-            />
+        <div className="wrap">
+          <div className="reveal"><span className="eyebrow dot">Done-for-you inbox • Free 14-day trial</span></div>
+          <h1 className="hero-h1 reveal d1">Turn the DMs You&apos;re Ignoring Into <span>Paying Clients</span></h1>
+          <p className="hero-sub reveal d2">We reply to your incoming messages for you — fast, human, and on-brand — so more of them turn into booked calls and sales. You focus on the real work.</p>
+          <div className="hero-cta reveal d3">
+            <button className="btn btn-primary btn-lg" onClick={() => scrollTo("apply")}>Start Your Free 14-Day Trial <Icon name="arrow" size={18} /></button>
+            <button className="btn btn-ghost btn-lg" onClick={() => scrollTo("how")}>See how it works</button>
           </div>
-          <div className="hero-vignette" />
-
-          {/* headline pinned to the top — recedes as you scroll, keeping the animation clear */}
-          <div
-            className="hero-content"
-            style={{
-              transform: `translate3d(0, ${heroProgress * -70}px, 0)`,
-              opacity: heroContentFade,
-              pointerEvents: heroContentFade < 0.3 ? "none" : "auto",
-            }}
-          >
-            <h1 className="hero-title">
-              Make Your Brand
-              <span className="hero-title-grad">Look Premium</span>
-            </h1>
-            <p className="hero-tagline">High-end visuals and short-form content that make ambitious brands impossible to scroll past.</p>
+          <div className="hero-trust reveal d4">
+            <span><Icon name="check" size={16} /> No card required</span>
+            <span><Icon name="check" size={16} /> No commitment</span>
+            <span><Icon name="check" size={16} /> See results first</span>
           </div>
 
-          {/* CTAs anchored low so the animation stays in view */}
-          <div
-            className="hero-cta"
-            style={{
-              transform: `translate3d(0, ${heroProgress * 30}px, 0)`,
-              opacity: heroCtaFade,
-              pointerEvents: heroCtaFade < 0.3 ? "none" : "auto",
-            }}
-          >
-            <button onClick={() => goTo("intake")} className="btn-dark btn-hero">Start Your Project</button>
-            <button onClick={() => goTo("makeovers")} className="btn-ghost btn-hero">View Our Work</button>
-          </div>
-
-          {/* scroll cue */}
-          <div className="hero-scroll-cue" style={{ opacity: Math.max(0, 1 - heroProgress * 7) }}>
-            Scroll
-            <span />
-          </div>
-        </div>
-      </section>
-
-      {/* SERVICES — pinned scroll-reveal: sticky title, cards stack in one by one */}
-      <section id="services" ref={servicesRef} className="services-pin">
-        <div className="services-stage">
-          <div className="services-stage-inner">
-            <div className="services-title-col">
-              <div className="section-chip">What We Do</div>
-              <h2 className="section-title">AI Visuals <em>Built</em> to Sell</h2>
-              <p className="services-title-sub">Every service is designed to make your brand look premium, professional, and impossible to scroll past.</p>
-              <div className="services-progress">
-                {services.map((_, i) => (
-                  <span key={i} className={`services-dot${cardReveal(i) > 0.5 ? " on" : ""}`} />
-                ))}
-              </div>
-            </div>
-            <div className="services-cards-col">
-              {services.map((s, i) => {
-                const r = cardReveal(i);
-                return (
-                  <div
-                    key={s.title}
-                    className="service-card"
-                    style={{
-                      opacity: r,
-                      transform: `translateY(${(1 - r) * 46}px)`,
-                    }}
-                  >
-                    <div className="service-card-icon"><Icon name={s.icon} size={26} /></div>
-                    <div className="service-card-body">
-                      <div className="service-card-title">{s.title}</div>
-                      <p className="service-card-desc">{s.desc}</p>
-                    </div>
-                    <div className="service-card-num">{String(i + 1).padStart(2, "0")}</div>
-                  </div>
-                );
-              })}
+          {/* VSL placeholder */}
+          <div className="vsl reveal d4">
+            <div className="vsl-inner">
+              <div className="vsl-play"><Icon name="play" size={34} /></div>
+              <div className="vsl-label">Watch how it works</div>
+              <div className="vsl-note">Video coming soon</div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* SERVICES CTA */}
-      <section className="services-cta-section">
-        <div className="section-inner">
-          <div className="phone-cta">
-            {/* Left: clean call-to-action */}
-            <div className="phone-copy zj-animate">
-              <div className="section-chip">Get Started</div>
-              <h3>Turn Your Content Into a <em>Growth Machine</em></h3>
-              <p>Join 500+ brands that already look premium online. Premium AI visuals, delivered in days — not months.</p>
-              <div className="phone-copy-actions">
-                <button onClick={() => goTo("intake")} className="btn-dark btn-hero">Start Your Project</button>
-                <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn-ghost btn-hero">Book a Call</a>
-              </div>
-            </div>
-
-            {/* Right: realistic retina phone */}
-            <div className="phone-stage zj-animate zj-delay-2">
-              <div className="phone-glow" />
-              <div ref={phoneRef} className={`phone-device${phoneShaking ? " phone-buzz" : ""}`}>
-                <span className="phone-btn-mute" />
-                <span className="phone-btn-volup" />
-                <span className="phone-btn-voldown" />
-                <span className="phone-btn-power" />
-                <div className="phone-screen">
-                  <div className="phone-island"><span className="phone-island-cam" /></div>
-                  <div className="phone-glass" />
-                  <div className="phone-ui">
-                    <div className="phone-status">
-                      <span className="phone-time">9:41</span>
-                      <div className="phone-status-icons">
-                        <div className="phone-signal"><span/><span/><span/><span/></div>
-                        <span className="phone-wifi" />
-                        <div className="phone-batt"><div className="phone-batt-fill" /></div>
-                      </div>
-                    </div>
-                    <div className="phone-app">
-                      <div className="phone-app-icon">ZJ</div>
-                      <div className="phone-app-name">ZJ Digital</div>
-                      <p className="phone-app-sub">Your brand, premium — on every platform.</p>
-                      <a href="#contact" className="phone-app-cta">Claim Free Makeover</a>
-                      <div className="phone-app-trust">
-                        <span className="phone-app-stars">★★★★★</span>
-                        <span>Trusted by 500+ brands</span>
-                      </div>
-                    </div>
-                    <div className="phone-homebar" />
-                  </div>
+          {/* marquee */}
+          <div className="marquee reveal">
+            <div className="marquee-track">
+              {[...Array(2)].map((_, k) => (
+                <div style={{ display: "flex" }} key={k}>
+                  {["More booked calls", "Faster replies", "In your voice", "No robotic AI", "Done for you", "Free for 14 days", "More sales closed"].map((t) => (
+                    <span className="marquee-item" key={t + k}>{t}</span>
+                  ))}
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* INDUSTRIES — pinned: rotating digital globe with orbiting "who it's for" cards */}
-      <section id="industries" ref={industriesRef} className="industries-pin">
-        <div className="industries-stage">
-          <div className="industries-heading">
-            <div className="section-chip cyan">Who We Help</div>
-            <h2 className="section-title">Built for Brands That <span className="cyan-em">Sell Online</span></h2>
+      {/* PROBLEM */}
+      <section className="sec">
+        <div className="wrap">
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">The problem</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Your inbox is a <em>leaking bucket</em></h2>
+            <p className="lead reveal d2">Every day, leads message you ready to buy — and most of them slip away before they ever get a good reply.</p>
           </div>
-
-          {/* desktop: rotating globe + orbiting cards */}
-          <div className="orbit">
-            <div className="orbit-glow" />
-            <div className="globe-ring" style={{ transform: `translate(-50%,-50%) rotate(${-globeSpin * 0.6}deg)` }} />
-            <div className="globe" style={{ transform: `translate(-50%,-50%) rotate(${globeSpin}deg)` }}>
-              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="globeFill" cx="42%" cy="38%" r="68%">
-                    <stop offset="0%" stopColor="#ffffff" />
-                    <stop offset="62%" stopColor="#f3effe" />
-                    <stop offset="100%" stopColor="#e7e0fb" />
-                  </radialGradient>
-                  <linearGradient id="globeLine" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#818cf8" />
-                    <stop offset="100%" stopColor="#6d28d9" />
-                  </linearGradient>
-                </defs>
-                <circle cx="100" cy="100" r="90" fill="url(#globeFill)" stroke="url(#globeLine)" strokeWidth="1.5" opacity="0.9" />
-                {/* latitude lines */}
-                <ellipse cx="100" cy="100" rx="90" ry="30" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
-                <ellipse cx="100" cy="100" rx="90" ry="62" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.35" />
-                <line x1="10" y1="100" x2="190" y2="100" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
-                {/* meridian lines */}
-                <ellipse cx="100" cy="100" rx="30" ry="90" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
-                <ellipse cx="100" cy="100" rx="62" ry="90" fill="none" stroke="url(#globeLine)" strokeWidth="1" opacity="0.35" />
-                <line x1="100" y1="10" x2="100" y2="190" stroke="url(#globeLine)" strokeWidth="1" opacity="0.45" />
-                {/* digital nodes */}
-                {[[100,10],[100,190],[10,100],[190,100],[38,46],[162,46],[38,154],[162,154],[100,100]].map((p,i)=>(
-                  <circle key={i} cx={p[0]} cy={p[1]} r={i===8?4:3} fill="#818cf8">
-                    <animate attributeName="opacity" values="0.4;1;0.4" dur={`${2 + (i % 4) * 0.5}s`} repeatCount="indefinite" />
-                  </circle>
-                ))}
-              </svg>
-            </div>
-
-            {industries.map((ind, i) => {
-              const baseAngle = i * 60;
-              const pop = orbitReveal(i);
-              const a = baseAngle + ringSpin;
-              return (
-                <div
-                  key={ind.label}
-                  className="orbit-card"
-                  style={{
-                    transform: `translate(-50%,-50%) rotate(${a}deg) translateY(-230px) rotate(${-a + (1 - pop) * -50}deg) scale(${0.5 + pop * 0.5})`,
-                    opacity: pop,
-                  }}
-                >
-                  <span className="orbit-card-icon"><Icon name={ind.icon} size={24} /></span>
-                  <span className="orbit-card-label">{ind.label}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* mobile fallback: static globe + grid */}
-          <div className="industries-fallback">
-            {industries.map((ind) => (
-              <div className="orbit-card-static" key={ind.label}>
-                <span className="orbit-card-icon"><Icon name={ind.icon} size={24} /></span>
-                <span className="orbit-card-label">{ind.label}</span>
+          <div className="grid g4">
+            {[
+              { i: "drain", t: "Too many messages", d: "You&apos;re flooded with DMs every day and physically can&apos;t keep up with all of them." },
+              { i: "clock", t: "It eats your time", d: "Answering every message steals hours you should spend on higher-value work." },
+              { i: "snail", t: "Leads go cold", d: "People expect fast answers. A slow reply and the sale is already gone to someone else." },
+              { i: "robot", t: "AI replies like trash", d: "Bots sound robotic, fumble real objections, and quietly kill the trust you need to close." },
+            ].map((c, k) => (
+              <div className={`card reveal d${k + 1}`} key={c.t}>
+                <div className="card-ico red"><Icon name={c.i} size={24} /></div>
+                <h3 dangerouslySetInnerHTML={{ __html: c.t }} />
+                <p dangerouslySetInnerHTML={{ __html: c.d }} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-
-      {/* REVIEWS */}
-      <section id="reviews">
-        <div className="section-inner">
-          <div className="reviews-header zj-animate">
-            <div className="section-chip" style={{ margin: "0 auto 20px" }}>Client Reviews</div>
-            <h2 className="section-title">Real Results, <em>Real Brands</em></h2>
-            <p style={{ fontSize: 16, color: "var(--text2)", marginTop: 16, fontWeight: 600 }}>Don't just take our word for it — here's what our clients say.</p>
+      {/* SOLUTION */}
+      <section className="sec" style={{ background: "var(--bg2)" }}>
+        <div className="wrap">
+          <div className="split">
+            <div>
+              <div className="reveal"><span className="eyebrow">What we do</span></div>
+              <h2 className="h reveal d1" style={{ marginTop: 18 }}>We turn your inbox into a <em>sales machine</em></h2>
+              <p className="lead reveal d2" style={{ marginTop: 16 }}>Real, trained people reply to your incoming messages for you — quickly, in your voice, and built to move every conversation toward a booked call or sale.</p>
+              <ul className="sol-list">
+                {[
+                  { b: "Fast, human replies", p: "Leads get answered in minutes, not hours — by a person, not a bot." },
+                  { b: "Sounds exactly like you", p: "We learn your tone and offer so every reply feels on-brand." },
+                  { b: "Built to convert", p: "We qualify, handle objections, and push toward the booked call." },
+                  { b: "Completely done-for-you", p: "You stop babysitting your inbox and just show up to the calls." },
+                ].map((s, k) => (
+                  <li className={`reveal d${k + 1}`} key={s.b}>
+                    <span className="sol-check"><Icon name="check" size={16} /></span>
+                    <div><b>{s.b}</b><p>{s.p}</p></div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="sol-visual reveal d2">
+              <div className="chat-row">
+                <div className="chat-av">L</div>
+                <div className="bubble">Hey, is this still available? How much?</div>
+              </div>
+              <div className="chat-row">
+                <div className="bubble us">Hey! Yes it is. Quick question so I point you the right way — what are you trying to achieve with it?</div>
+                <div className="chat-av us">ZJ</div>
+              </div>
+              <div className="chat-row">
+                <div className="chat-av">L</div>
+                <div className="bubble">Mostly want more clients honestly</div>
+              </div>
+              <div className="chat-row">
+                <div className="bubble us">Perfect — that&apos;s exactly what we do. Grab a quick call here and we&apos;ll map it out for you.</div>
+                <div className="chat-av us">ZJ</div>
+              </div>
+              <div className="chat-tag"><Icon name="check" size={13} /> BOOKED IN UNDER 3 MINUTES</div>
+            </div>
           </div>
-          <div className="reviews-grid">
-            {reviews.map((r, i) => (
-              <div className={`review-card zj-animate zj-delay-${Math.min(i + 1, 6)}`} key={r.name}>
-                <div className="review-stars">{Array.from({ length: r.stars }).map((_, j) => <span className="review-star" key={j}>★</span>)}</div>
-                <p className="review-text">"{r.text}"</p>
-                <div className="review-footer">
-                  <div className="review-avatar">{r.name.charAt(0)}</div>
-                  <div>
-                    <div className="review-name">{r.name}</div>
-                    <div className="review-role">{r.role}</div>
-                  </div>
-                  <div className="review-date">{r.date}</div>
-                </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="sec" id="how">
+        <div className="wrap">
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">How the free 14 days works</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>See it work <em>before you pay anything</em></h2>
+            <p className="lead reveal d2">No risk, no card, no commitment. We prove it first — you decide after.</p>
+          </div>
+          <div className="steps">
+            {steps.map((s, k) => (
+              <div className={`step reveal d${k + 1}`} key={s.n}>
+                <div className="step-n">{s.n}</div>
+                <div className="step-ico"><Icon name={s.icon} size={22} /></div>
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: 44 }} className="reveal">
+            <button className="btn btn-primary btn-lg" onClick={() => scrollTo("apply")}>Claim My Free 14 Days <Icon name="arrow" size={18} /></button>
+          </div>
+        </div>
+      </section>
+
+      {/* WHY US / COMPARE */}
+      <section className="sec" id="why" style={{ background: "var(--bg2)" }}>
+        <div className="wrap">
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">Why us</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>The other options <em>cost you sales</em></h2>
+            <p className="lead reveal d2">There are only a few ways to handle your inbox. Here&apos;s how they really compare.</p>
+          </div>
+          <div className="compare">
+            {compare.map((c, k) => (
+              <div className={`comp ${c.bad ? "" : "win"} reveal d${k + 1}`} key={c.label}>
+                <div className="comp-label">{c.label}</div>
+                <ul>
+                  {c.points.map((p) => (
+                    <li key={p}>
+                      <span className={c.bad ? "ic-bad" : "ic-ok"}><Icon name={c.bad ? "x" : "check"} size={17} /></span>
+                      {p}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CONTACT */}
-      <section id="contact">
-        <div className="contact-bg" />
-        <div className="section-inner">
-          <div className="contact-inner">
-            <div className="zj-animate">
-              <div className="section-chip" style={{ margin: "0 auto 20px" }}>Get In Touch</div>
-              <h2 className="section-title">Ready to Look <em>Premium Online?</em></h2>
-            </div>
-            <p className="contact-sub zj-animate zj-delay-1">Your brand visual identity is your most powerful sales tool. Let us build something exceptional together.</p>
-            <div className="contact-options zj-animate zj-delay-2">
-              <a href={`mailto:${CONTACT_EMAIL}`} className="contact-option">
-                <div className="contact-option-icon"><Icon name="mail" size={24} /></div>
-                <div className="contact-option-label">Send a Message</div>
-                <div className="contact-option-title">Email Us Directly</div>
-                <div className="contact-option-desc">{CONTACT_EMAIL}</div>
-              </a>
-              <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="contact-option">
-                <div className="contact-option-icon"><Icon name="calendar" size={24} /></div>
-                <div className="contact-option-label">Book a Call</div>
-                <div className="contact-option-title">Schedule a Strategy Call</div>
-                <div className="contact-option-desc">Pick a time that works for you and let us discuss your brand.</div>
-              </a>
-            </div>
-            <p className="contact-note zj-animate zj-delay-3"><strong>No pressure. No obligation.</strong> — Just a conversation about what is possible for your brand.</p>
+      {/* STATS band */}
+      <section className="sec" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="stats-band reveal">
+            <Stat value={24} suffix="/7" label="Coverage on your incoming messages" />
+            <Stat value={14} suffix="-day" label="Free trial — see it before you pay" />
+            <Stat value={3} suffix="min" label="Typical time to a fast, human reply" />
           </div>
         </div>
       </section>
 
-      </> /* end home page */}
-
-      {/* ── MAKEOVERS PAGE — cinematic scroll-scrubbed showcase ── */}
-      {currentPage === "makeovers" && (
-        <div className="mk-page">
-          <section className="mk-show-pin" ref={showSectionRef}>
-            <div className="mk-show-stage">
-              <div className="mk-show-media" style={{ transform: `scale(${1 + showProgress * 0.04})` }}>
-                <video
-                  ref={mkShowRef}
-                  className="mk-show-video"
-                  src="/makeover-cinematic.mp4"
-                  muted
-                  playsInline
-                  preload="auto"
-                  onLoadedMetadata={() => setMkShowReady(true)}
-                  style={{ opacity: mkShowReady ? 1 : 0 }}
-                />
+      {/* PROOF placeholder */}
+      <section className="sec" style={{ background: "var(--bg2)" }}>
+        <div className="wrap">
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">Real results</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Watch it work for <em>real businesses</em></h2>
+            <p className="lead reveal d2">Real client walkthroughs and results — dropping here shortly.</p>
+          </div>
+          <div className="proof-grid">
+            {[0, 1, 2].map((k) => (
+              <div className={`proof-card reveal d${k + 1}`} key={k}>
+                <div className="proof-play"><Icon name="play" size={24} /></div>
+                <div className="proof-text">Coming soon</div>
               </div>
-              <div className="mk-show-veil" />
-              <div className="mk-show-copy" style={{ opacity: Math.max(0, 1 - showProgress * 2), transform: `translateY(${showProgress * -40}px)` }}>
-                <div className="mk-show-chip">The Makeover Studio</div>
-                <h1 className="mk-show-title">High-End Makeovers for<span>Ambitious Brands</span></h1>
-                <p className="mk-show-sub">We transform ordinary brands into premium, scroll-stopping visual identities — cinematic AI visuals and short-form content, crafted to look expensive.</p>
-              </div>
-              <div className="mk-scroll-cue" style={{ opacity: Math.max(0, 1 - showProgress * 7) }}>
-                Scroll<span />
-              </div>
-            </div>
-          </section>
-
-          {/* CTA */}
-          <section className="mk-cta-section">
-            <div className="mk-cta">
-              <h2 className="mk-cta-title">Ready for Your Own <em>Makeover?</em></h2>
-              <p>Premium visuals, delivered within 48 hours. Unlimited revisions until it's perfect.</p>
-              <button onClick={() => goTo("intake")} className="btn-primary btn-hero">Start Your Project</button>
-            </div>
-          </section>
+            ))}
+          </div>
         </div>
-      )}
+      </section>
 
-      {/* ── PRICING PAGE ── */}
-      {currentPage === "pricing" && (
-        <div className="pricing-page">
-          <div className="section-inner">
-            <div style={{ textAlign:"center", marginBottom:24 }}>
-              <div className="section-chip" style={{ margin:"0 auto 20px" }}>Pricing</div>
-              <h1 className="section-title">Simple, <em>Transparent</em> Pricing</h1>
-              <p style={{ fontSize:16, color:"var(--text2)", maxWidth:540, margin:"16px auto 0", fontWeight:600, lineHeight:1.75 }}>No hidden fees. No long contracts. Every package includes unlimited revisions and 48h delivery. Payment via bank transfer.</p>
-            </div>
-            <div className="pricing-toggle">
-              <button className={`pricing-toggle-btn${pricingTab==="onetime"?" active":""}`} onClick={()=>setPricingTab("onetime")}>One-Time</button>
-              <button className={`pricing-toggle-btn${pricingTab==="monthly"?" active":""}`} onClick={()=>setPricingTab("monthly")}>Monthly Retainer</button>
-            </div>
-            {pricingTab === "onetime" && (
-              <div className="pricing-grid">
-                <div className="pricing-card">
-                  <div className="pricing-name">Starter</div>
-                  <div className="pricing-price"><span>€</span>700</div>
-                  <div className="pricing-period">one-time payment</div>
-                  <div className="pricing-divider" />
-                  <ul className="pricing-features">
-                    <li><div className="pricing-check">✓</div>20 premium AI visuals</li>
-                    <li><div className="pricing-check">✓</div>Optimised for Instagram, TikTok &amp; ads</li>
-                    <li><div className="pricing-check">✓</div>Unlimited revisions until you love it</li>
-                    <li><div className="pricing-check">✓</div>Delivered within 48 hours</li>
-                    <li><div className="pricing-check">✓</div>High-resolution files included</li>
-                  </ul>
-                  <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-outline">Start Your Project →</button>
-                </div>
-                <div className="pricing-card featured">
-                  <div className="pricing-badge">Most Popular</div>
-                  <div className="pricing-name">Brand Kit</div>
-                  <div className="pricing-price"><span>€</span>1400</div>
-                  <div className="pricing-period">one-time payment</div>
-                  <div className="pricing-divider" />
-                  <ul className="pricing-features">
-                    <li><div className="pricing-check">✓</div>35 premium AI visuals</li>
-                    <li><div className="pricing-check">✓</div>4 short video reels (15–30s)</li>
-                    <li><div className="pricing-check">✓</div>Full ad creative set (Meta + TikTok)</li>
-                    <li><div className="pricing-check">✓</div>Unlimited revisions until you love it</li>
-                    <li><div className="pricing-check">✓</div>Delivered within 48 hours</li>
-                    <li><div className="pricing-check">✓</div>All formats &amp; sizes included</li>
-                  </ul>
-                  <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-grad">Start Your Project →</button>
-                </div>
-                <div className="pricing-card">
-                  <div className="pricing-name">Full Launch</div>
-                  <div className="pricing-price"><span>€</span>2000</div>
-                  <div className="pricing-period">one-time payment</div>
-                  <div className="pricing-divider" />
-                  <ul className="pricing-features">
-                    <li><div className="pricing-check">✓</div>50+ premium AI visuals</li>
-                    <li><div className="pricing-check">✓</div>6 short video reels</li>
-                    <li><div className="pricing-check">✓</div>Complete ad creative suite</li>
-                    <li><div className="pricing-check">✓</div>Website banner &amp; hero visuals</li>
-                    <li><div className="pricing-check">✓</div>Unlimited revisions until you love it</li>
-                    <li><div className="pricing-check">✓</div>Priority 48h delivery</li>
-                  </ul>
-                  <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-outline">Start Your Project →</button>
-                </div>
-              </div>
-            )}
-            {pricingTab === "monthly" && (
-              <div className="pricing-grid">
-                <div className="pricing-card">
-                  <div className="pricing-name">Essential</div>
-                  <div className="pricing-price"><span>€</span>800</div>
-                  <div className="pricing-period">per month · cancel anytime</div>
-                  <div className="pricing-divider" />
-                  <ul className="pricing-features">
-                    <li><div className="pricing-check">✓</div>20 fresh AI visuals per month</li>
-                    <li><div className="pricing-check">✓</div>10 short video reels per month</li>
-                    <li><div className="pricing-check">✓</div>Optimised for all platforms</li>
-                    <li><div className="pricing-check">✓</div>Unlimited revisions until you love it</li>
-                    <li><div className="pricing-check">✓</div>Monthly strategy check-in</li>
-                  </ul>
-                  <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-outline">Start Your Project →</button>
-                </div>
-                <div className="pricing-card featured">
-                  <div className="pricing-badge">Most Popular</div>
-                  <div className="pricing-name">Growth</div>
-                  <div className="pricing-price"><span>€</span>1500</div>
-                  <div className="pricing-period">per month · cancel anytime</div>
-                  <div className="pricing-divider" />
-                  <ul className="pricing-features">
-                    <li><div className="pricing-check">✓</div>35 fresh AI visuals per month</li>
-                    <li><div className="pricing-check">✓</div>20 short video reels per month</li>
-                    <li><div className="pricing-check">✓</div>Monthly ad creative refresh</li>
-                    <li><div className="pricing-check">✓</div>Unlimited revisions until you love it</li>
-                    <li><div className="pricing-check">✓</div>Bi-weekly check-in call</li>
-                    <li><div className="pricing-check">✓</div>Priority 48h turnaround</li>
-                  </ul>
-                  <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-grad">Start Your Project →</button>
-                </div>
-                <div className="pricing-card">
-                  <div className="pricing-name">Elite</div>
-                  <div className="pricing-price"><span>€</span>2200</div>
-                  <div className="pricing-period">per month · cancel anytime</div>
-                  <div className="pricing-divider" />
-                  <ul className="pricing-features">
-                    <li><div className="pricing-check">✓</div>50+ fresh AI visuals per month</li>
-                    <li><div className="pricing-check">✓</div>30+ short video reels per month</li>
-                    <li><div className="pricing-check">✓</div>Full ad creative suite every month</li>
-                    <li><div className="pricing-check">✓</div>Unlimited revisions until you love it</li>
-                    <li><div className="pricing-check">✓</div>Weekly strategy call</li>
-                    <li><div className="pricing-check">✓</div>Fastest priority turnaround</li>
-                  </ul>
-                  <button onClick={()=>goTo("intake")} className="pricing-cta pricing-cta-outline">Start Your Project →</button>
-                </div>
-              </div>
-            )}
-            <div className="pricing-partner-box">
-              <div>
-                <div className="section-chip" style={{ marginBottom:16 }}>For LinkedIn Coaches</div>
-                <div className="pricing-partner-title">Offer AI Makeovers to Your Clients — We Do the Work</div>
-                <div className="pricing-partner-desc">Partner with ZJ Digital and add a premium AI visual upgrade to your coaching packages. You charge your clients, we deliver.</div>
-                <div className="pricing-partner-stats">
-                  <div><div className="pricing-partner-stat-num">€100–€330</div><div className="pricing-partner-stat-label">profit per client</div></div>
-                  <div><div className="pricing-partner-stat-num">48h</div><div className="pricing-partner-stat-label">turnaround</div></div>
-                  <div><div className="pricing-partner-stat-num">100%</div><div className="pricing-partner-stat-label">white-label</div></div>
-                </div>
-              </div>
-              <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="pricing-cta pricing-cta-grad" style={{ whiteSpace:"nowrap", padding:"18px 36px" }}>Let's Partner Up →</a>
-            </div>
-            <div className="pricing-custom">
-              Need something bigger? <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer">Book a free call</a> and we'll build a package around your exact needs.
+      {/* GUARANTEE */}
+      <section className="sec">
+        <div className="wrap">
+          <div className="guarantee reveal">
+            <div className="guarantee-ico"><Icon name="shield" size={40} /></div>
+            <div>
+              <h3>14 days, completely free.</h3>
+              <p>You see more of your messages answered and more leads booked — for two full weeks — before you pay a cent. If it&apos;s not for you, you walk away and keep everything we set up. That&apos;s the whole risk.</p>
             </div>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* ── INTAKE PAGE ── */}
-      {currentPage === "intake" && (
-        <div className="intake-page">
-          <div className="section-inner">
-            <div style={{ textAlign:"center", marginBottom:56 }}>
-              <div className="section-chip" style={{ margin:"0 auto 20px" }}>Start Your Project</div>
-              <h1 className="section-title">Tell Us About <em>Your Brand</em></h1>
-              <p style={{ fontSize:16, color:"var(--text2)", maxWidth:520, margin:"16px auto 0", fontWeight:600, lineHeight:1.75 }}>Fill out this brief and we'll get back to you within 24 hours. The more detail you give us, the better your results.</p>
-            </div>
-            <div className="intake-card">
-              {/* Step dots */}
-              <div style={{ display:"flex", gap:8, marginBottom:40 }}>
-                {["Your Info","Your Brand","Final Details"].map((label,i)=>(
-                  <div key={label} style={{ flex:1, textAlign:"center" }}>
-                    <div style={{ width:32, height:32, borderRadius:"50%", margin:"0 auto 8px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800, background: intakeStep>i+1?"var(--grad)": intakeStep===i+1?"var(--white)":"var(--bg2)", border: intakeStep===i+1?"2px solid var(--purple)":"2px solid var(--border2)", color: intakeStep>i+1?"white": intakeStep===i+1?"var(--purple)":"var(--muted)" }}>{intakeStep>i+1?"✓":i+1}</div>
-                    <div style={{ fontSize:11, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.06em", color: intakeStep===i+1?"var(--purple)":"var(--muted)" }}>{label}</div>
-                  </div>
-                ))}
+      {/* APPLY / FORM */}
+      <section id="apply">
+        <div className="wrap">
+          <div className="apply-card">
+            {submitted ? (
+              <div className="success">
+                <div className="success-ico"><Icon name="check" size={34} /></div>
+                <h2 className="h" style={{ fontSize: 30 }}>You&apos;re in.</h2>
+                <p className="lead" style={{ margin: "14px auto 28px", maxWidth: 460 }}>We&apos;ve got your details. The last step is a quick call so we can set up your free 14 days — grab a time that works for you.</p>
+                <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg"><Icon name="calendar" size={18} /> Book My Call</a>
               </div>
-
-              {intakeSubmitted ? (
-                <div style={{ textAlign:"center", padding:"32px 0" }}>
-                  <div style={{ width:64, height:64, borderRadius:"50%", margin:"0 auto 24px", display:"flex", alignItems:"center", justifyContent:"center", background:"var(--purple-light)", color:"var(--purple)" }}><Icon name="check" size={30} /></div>
-                  <div style={{ fontSize:26, fontWeight:800, color:"var(--text)", marginBottom:12 }}>You're all set</div>
-                  <p style={{ fontSize:15, color:"var(--text2)", fontWeight:600, lineHeight:1.75, marginBottom:32 }}>We've received your brief and will be in touch within 24 hours at <strong>{intakeForm.email}</strong>.</p>
-                  <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ fontSize:15, padding:"16px 36px" }}>Book a Strategy Call</a>
+            ) : (
+              <>
+                <div className="apply-head">
+                  <div className="reveal"><span className="eyebrow dot">Last step</span></div>
+                  <h2 className="h" style={{ marginTop: 16 }}>Start your <em>free 14-day trial</em></h2>
+                  <p className="lead" style={{ marginTop: 14 }}>Tell us a little about your business and book your setup call. Spots are limited — we onboard a handful of clients at a time.</p>
                 </div>
-              ) : intakeStep === 1 ? (
-                <div>
-                  <div style={{ fontSize:22, fontWeight:800, color:"var(--text)", marginBottom:8 }}>Let's start with the basics</div>
-                  <p style={{ fontSize:15, color:"var(--text2)", fontWeight:600, marginBottom:32 }}>Tell us about you and what you're looking for.</p>
-                  <div className="intake-field"><label>Full Name <span style={{color:"var(--purple)"}}>*</span></label><input value={intakeForm.fullName} onChange={e=>setIntakeForm(f=>({...f,fullName:e.target.value}))} placeholder="e.g. John Smith" /></div>
-                  <div className="intake-field"><label>Email Address <span style={{color:"var(--purple)"}}>*</span></label><input type="email" value={intakeForm.email} onChange={e=>setIntakeForm(f=>({...f,email:e.target.value}))} placeholder="you@yourbrand.com" /></div>
-                  <div className="intake-field"><label>Website or Social URL</label><input value={intakeForm.website} onChange={e=>setIntakeForm(f=>({...f,website:e.target.value}))} placeholder="https://yourbrand.com" /></div>
-                  <div className="intake-field">
-                    <label>Package <span style={{color:"var(--purple)"}}>*</span></label>
-                    <div className="intake-choice-grid">
-                      {["Starter — 20 visuals (€197)","Brand Kit — 35 visuals + 4 videos (€397)","Full Launch — 50+ visuals + 6 videos (€697)","Essential Monthly (€297/mo)","Growth Monthly (€497/mo)","Elite Monthly (€897/mo)","Not sure yet"].map(p=>(
-                        <button key={p} className={`intake-choice${intakeForm.package===p?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,package:p}))}>{p}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="intake-field">
-                    <label>Brand Type <span style={{color:"var(--purple)"}}>*</span></label>
-                    <div className="intake-choice-grid">
-                      {["E-Commerce / Product Brand","LinkedIn Coach / Personal Brand","Fitness / Supplement Brand","Course Creator","Online Coaching","Other"].map(t=>(
-                        <button key={t} className={`intake-choice${intakeForm.brandType===t?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,brandType:t}))}>{t}</button>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ display:"flex", justifyContent:"flex-end", marginTop:32 }}>
-                    <button className="intake-next" disabled={!intakeForm.fullName||!intakeForm.email||!intakeForm.package||!intakeForm.brandType} onClick={()=>setIntakeStep(2)}>Continue →</button>
-                  </div>
+                <div className="field-row">
+                  <div className="field"><label>Your name</label><input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="John Smith" /></div>
+                  <div className="field"><label>Email</label><input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="you@business.com" /></div>
                 </div>
-              ) : intakeStep === 2 ? (
-                <div>
-                  <div style={{ fontSize:22, fontWeight:800, color:"var(--text)", marginBottom:8 }}>Tell us about your brand</div>
-                  <p style={{ fontSize:15, color:"var(--text2)", fontWeight:600, marginBottom:32 }}>The more detail, the better your results.</p>
-                  {intakeForm.brandType === "LinkedIn Coach / Personal Brand" ? (<>
-                    <div className="intake-field"><label>LinkedIn Profile URL <span style={{color:"var(--purple)"}}>*</span></label><input value={intakeForm.linkedin} onChange={e=>setIntakeForm(f=>({...f,linkedin:e.target.value}))} placeholder="https://linkedin.com/in/yourname" /></div>
-                    <div className="intake-field"><label>What should your visuals communicate?</label><div className="intake-choice-grid">{["Authority & expertise","Approachable & warm","Premium & high-end","Energetic & bold","Trust & professionalism"].map(o=>(<button key={o} className={`intake-choice${intakeForm.communicate.includes(o)?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,communicate:f.communicate.includes(o)?f.communicate.filter(x=>x!==o):[...f.communicate,o]}))}>{o}</button>))}</div></div>
-                    <div className="intake-field"><label>Background preference</label><div className="intake-choice-grid">{["Clean studio / neutral","Modern office","Outdoor / natural light","You decide"].map(o=>(<button key={o} className={`intake-choice${intakeForm.background===o?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,background:o}))}>{o}</button>))}</div></div>
-                  </>) : (<>
-                    <div className="intake-field"><label>What products need visuals? <span style={{color:"var(--purple)"}}>*</span></label><textarea rows={3} value={intakeForm.products} onChange={e=>setIntakeForm(f=>({...f,products:e.target.value}))} placeholder='e.g. "Protein powder, 3 flavours — need lifestyle + product shots"' /></div>
-                    <div className="intake-field"><label>Where will visuals be used?</label><div className="intake-choice-grid">{["Instagram","TikTok","Meta Ads","Website","All platforms"].map(o=>(<button key={o} className={`intake-choice${intakeForm.usedFor.includes(o)?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,usedFor:f.usedFor.includes(o)?f.usedFor.filter(x=>x!==o):[...f.usedFor,o]}))}>{o}</button>))}</div></div>
-                    <div className="intake-field"><label>Brand style</label><div className="intake-choice-grid">{["Dark & moody","Clean & minimal","Bold & colourful","Natural & organic","Surprise me"].map(o=>(<button key={o} className={`intake-choice${intakeForm.style===o?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,style:o}))}>{o}</button>))}</div></div>
-                  </>)}
-                  <div className="intake-field"><label>Style references (optional)</label><textarea rows={2} value={intakeForm.references} onChange={e=>setIntakeForm(f=>({...f,references:e.target.value}))} placeholder="Paste links or describe what you like..." /></div>
-                  <div style={{ display:"flex", justifyContent:"space-between", marginTop:32 }}>
-                    <button className="intake-back" onClick={()=>setIntakeStep(1)}>← Back</button>
-                    <button className="intake-next" onClick={()=>setIntakeStep(3)}>Continue →</button>
+                <div className="field-row">
+                  <div className="field"><label>Business / website</label><input value={form.business} onChange={(e) => setForm((f) => ({ ...f, business: e.target.value }))} placeholder="@yourbrand or website" /></div>
+                  <div className="field"><label>What do you sell?</label><input value={form.sells} onChange={(e) => setForm((f) => ({ ...f, sells: e.target.value }))} placeholder="e.g. coaching, a service…" /></div>
+                </div>
+                <div className="field-row">
+                  <div className="field">
+                    <label>Where do messages come in?</label>
+                    <select value={form.platform} onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value }))}>
+                      <option value="">Select platform</option>
+                      <option>Instagram DMs</option>
+                      <option>WhatsApp</option>
+                      <option>Facebook / Messenger</option>
+                      <option>Email</option>
+                      <option>Multiple platforms</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label>Messages per day (roughly)</label>
+                    <select value={form.volume} onChange={(e) => setForm((f) => ({ ...f, volume: e.target.value }))}>
+                      <option value="">Select range</option>
+                      <option>Under 20</option>
+                      <option>20–50</option>
+                      <option>50–150</option>
+                      <option>150+</option>
+                    </select>
                   </div>
                 </div>
-              ) : (
-                <div>
-                  <div style={{ fontSize:22, fontWeight:800, color:"var(--text)", marginBottom:8 }}>Almost done!</div>
-                  <p style={{ fontSize:15, color:"var(--text2)", fontWeight:600, marginBottom:32 }}>Just a couple more things.</p>
-                  <div className="intake-field"><label>How urgent is this?</label><div className="intake-choice-grid">{["ASAP — within 48h","This week","Within 2 weeks","No rush"].map(o=>(<button key={o} className={`intake-choice${intakeForm.urgency===o?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,urgency:o}))}>{o}</button>))}</div></div>
-                  <div className="intake-field"><label>How did you find us?</label><div className="intake-choice-grid">{["Instagram","LinkedIn","Google","Referral","Other"].map(o=>(<button key={o} className={`intake-choice${intakeForm.howFound===o?" selected":""}`} onClick={()=>setIntakeForm(f=>({...f,howFound:o}))}>{o}</button>))}</div></div>
-                  <div className="intake-field"><label>Anything else? (optional)</label><textarea rows={3} value={intakeForm.notes} onChange={e=>setIntakeForm(f=>({...f,notes:e.target.value}))} placeholder="Deadlines, special requests, questions..." /></div>
-                  {intakeError && <p style={{ color:"#dc2626", fontSize:14, fontWeight:700, marginBottom:16 }}>{intakeError}</p>}
-                  <div style={{ display:"flex", justifyContent:"space-between", marginTop:32 }}>
-                    <button className="intake-back" onClick={()=>setIntakeStep(2)}>← Back</button>
-                    <button className="intake-next" disabled={intakeSubmitting} onClick={handleIntakeSubmit}>{intakeSubmitting?"Sending…":"Submit Brief"}</button>
-                  </div>
-                </div>
-              )}
-            </div>
+                <div className="field"><label>Biggest challenge with your inbox? (optional)</label><textarea rows={3} value={form.challenge} onChange={(e) => setForm((f) => ({ ...f, challenge: e.target.value }))} placeholder="e.g. I can't keep up and leads go cold…" /></div>
+                <button className="btn btn-primary btn-lg" style={{ width: "100%", justifyContent: "center", marginTop: 8 }} disabled={submitting} onClick={submit}>
+                  {submitting ? "Sending…" : "Start My Free 14-Day Trial"} {!submitting && <Icon name="arrow" size={18} />}
+                </button>
+                {error && <div className="form-err">{error}</div>}
+                <div className="apply-note">No card required · No commitment · We reply within 24 hours</div>
+              </>
+            )}
           </div>
         </div>
-      )}
+      </section>
+
+      {/* FAQ */}
+      <section className="sec" id="faq" style={{ background: "var(--bg2)", paddingTop: 40 }}>
+        <div className="wrap" style={{ maxWidth: 780 }}>
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">FAQ</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Questions, answered</h2>
+          </div>
+          <div className="reveal">
+            {faqs.map((f, i) => (
+              <div className={`faq-item ${openFaq === i ? "open" : ""}`} key={f.q}>
+                <button className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                  {f.q}<span className="plus">+</span>
+                </button>
+                <div className="faq-a"><p>{f.a}</p></div>
+              </div>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: 46 }} className="reveal">
+            <button className="btn btn-primary btn-lg" onClick={() => scrollTo("apply")}>Start Your Free 14-Day Trial <Icon name="arrow" size={18} /></button>
+          </div>
+        </div>
+      </section>
 
       {/* FOOTER */}
       <footer>
-        <div className="footer-brand">ZJ Digital</div>
-        <div className="footer-copy">© {new Date().getFullYear()} ZJ Digital. All rights reserved.</div>
-        <div className="footer-links">
-          <button onClick={() => goTo("home")} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(255,255,255,0.4)", fontSize:12, fontWeight:700 }}>Home</button>
-          <button onClick={() => goTo("makeovers")} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(255,255,255,0.4)", fontSize:12, fontWeight:700 }}>Makeovers</button>
-          <button onClick={() => goTo("pricing")} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(255,255,255,0.4)", fontSize:12, fontWeight:700 }}>Pricing</button>
-          <button onClick={() => goTo("intake")} style={{ background:"none", border:"none", cursor:"pointer", color:"rgba(255,255,255,0.4)", fontSize:12, fontWeight:700 }}>Start Project</button>
+        <div className="wrap foot-in">
+          <button className="brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>ZJ Digital</button>
+          <div className="foot-links">
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer">Book a call</a>
+            <button onClick={() => scrollTo("apply")} style={{ background: "none", border: "none", color: "var(--text2)", cursor: "pointer", fontWeight: 600, fontSize: 14, fontFamily: "Satoshi, sans-serif" }}>Free trial</button>
+          </div>
+          <div className="foot-copy">© {new Date().getFullYear()} ZJ Digital. All rights reserved.</div>
         </div>
       </footer>
     </>
