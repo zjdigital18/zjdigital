@@ -182,8 +182,8 @@ export default function Home() {
     .nav-in { max-width: 1120px; margin: 0 auto; padding: 0 28px; width: 100%; display: flex; align-items: center; justify-content: space-between; }
     .brand { font-family: 'Satoshi', sans-serif; font-size: 23px; font-weight: 800; letter-spacing: -0.02em; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; cursor: pointer; border: none; }
     .nav-links { display: flex; align-items: center; gap: 6px; }
-    .nav-links button { background: none; border: none; color: var(--text2); font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 14.5px; padding: 8px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
-    .nav-links button:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .nav-links button { background: none; border: none; color: var(--accent2); font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 14.5px; padding: 8px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+    .nav-links button:hover { color: var(--accent3); background: rgba(212,175,55,0.08); }
     .nav-cta { background: var(--grad) !important; color: var(--gold-text) !important; padding: 11px 22px !important; border-radius: 100px !important; font-weight: 800 !important; box-shadow: 0 6px 20px rgba(212,175,55,0.35); }
     .nav-cta:hover { color: var(--gold-text) !important; background: var(--grad) !important; transform: translateY(-1px); }
     .burger { display: none; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); padding: 11px 12px; border-radius: 11px; cursor: pointer; }
@@ -333,7 +333,7 @@ export default function Home() {
       .burger { display: flex; }
       .mobile-menu { display: none; position: fixed; top: 74px; left: 16px; right: 16px; z-index: 999; background: rgba(14,14,21,0.97); border: 1px solid var(--border2); border-radius: 18px; padding: 14px; backdrop-filter: blur(20px); flex-direction: column; gap: 4px; }
       .mobile-menu.open { display: flex; }
-      .mobile-menu button { background: none; border: none; color: var(--text); text-align: left; font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 15px; padding: 13px 16px; border-radius: 11px; cursor: pointer; }
+      .mobile-menu button { background: none; border: none; color: var(--accent2); text-align: left; font-family: 'Satoshi', sans-serif; font-weight: 700; font-size: 15px; padding: 13px 16px; border-radius: 11px; cursor: pointer; }
       .mobile-menu .m-cta { background: var(--grad); color: var(--gold-text); text-align: center; font-weight: 800; margin-top: 6px; }
       .g4, .g3, .steps, .compare, .proof-grid { grid-template-columns: 1fr 1fr; }
       .split { grid-template-columns: 1fr; gap: 36px; }
