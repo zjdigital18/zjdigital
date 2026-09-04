@@ -154,9 +154,9 @@ export default function Home() {
       --ok: #25d366; --bad: #f87171;
     }
     html { scroll-behavior: smooth; }
-    body { background-color: var(--bg); background-image: radial-gradient(rgba(212,175,55,0.06) 1px, transparent 1.4px); background-size: 26px 26px; color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    body { background-color: var(--bg); background-image: radial-gradient(rgba(212,175,55,0.16) 1.5px, transparent 1.6px); background-size: 24px 24px; color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
     /* alternating dark sections keep the dot texture instead of a flat fill */
-    .sec-alt { background-color: var(--bg2); background-image: radial-gradient(rgba(212,175,55,0.055) 1px, transparent 1.4px); background-size: 26px 26px; }
+    .sec-alt { background-color: var(--bg2); background-image: radial-gradient(rgba(212,175,55,0.15) 1.5px, transparent 1.6px); background-size: 24px 24px; }
     ::selection { background: rgba(240,207,107,0.3); }
 
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
