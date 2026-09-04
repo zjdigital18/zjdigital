@@ -184,7 +184,8 @@ export default function Home() {
     .nav-links { display: flex; align-items: center; gap: 6px; }
     .nav-links button { background: none; border: none; color: var(--text2); font-family: 'Satoshi', sans-serif; font-weight: 600; font-size: 14.5px; padding: 8px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
     .nav-links button:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-cta { background: var(--grad); color: var(--gold-text) !important; padding: 11px 22px !important; border-radius: 100px !important; font-weight: 800 !important; box-shadow: 0 6px 20px rgba(212,175,55,0.35); }
+    .nav-cta { background: var(--grad) !important; color: var(--gold-text) !important; padding: 11px 22px !important; border-radius: 100px !important; font-weight: 800 !important; box-shadow: 0 6px 20px rgba(212,175,55,0.35); }
+    .nav-cta:hover { color: var(--gold-text) !important; background: var(--grad) !important; transform: translateY(-1px); }
     .burger { display: none; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); padding: 11px 12px; border-radius: 11px; cursor: pointer; }
     .burger span { width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
     .mobile-menu { display: none; }
