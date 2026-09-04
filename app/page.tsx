@@ -382,8 +382,8 @@ export default function Home() {
       <section id="hero">
         <div className="wrap">
           <div className="reveal"><span className="eyebrow dot">Done-for-you inbox • Free 14-day trial</span></div>
-          <h1 className="hero-h1 reveal d1">Turn the DMs You&apos;re Ignoring Into <span>Paying Clients</span></h1>
-          <p className="hero-sub reveal d2">We reply to your incoming messages for you — fast, human, and on-brand — so more of them turn into booked calls and sales. You focus on the real work.</p>
+          <h1 className="hero-h1 reveal d1">Turn the Messages You&apos;re Ignoring Into <span>Paying Clients</span></h1>
+          <p className="hero-sub reveal d2">Your next client is in your messages. We make sure they don&apos;t stay there.</p>
           <div className="hero-cta reveal d3">
             <button className="btn btn-primary btn-lg" onClick={() => scrollTo("apply")}>Start Your Free 14-Day Trial <Icon name="arrow" size={18} /></button>
             <button className="btn btn-ghost btn-lg" onClick={() => scrollTo("how")}>See how it works</button>
