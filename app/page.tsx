@@ -129,6 +129,12 @@ export default function Home() {
     { label: "ZJ Digital", bad: false, points: ["Trained humans reply in your voice", "Fast, on-brand, built to convert", "Fully done-for-you — you just show up to the calls"] },
   ];
 
+  const testimonials = [
+    { name: "Ole Sveum", role: "Cold Email · Outbound · Sales", bio: "Ole leads cold email, outbound and sales. He has generated over $30M in results for clients through targeted email outreach and lead generation.", img: "/testimonials/ole-sveum.jpg", ready: true },
+    { name: "", role: "", bio: "", img: "", ready: false },
+    { name: "", role: "", bio: "", img: "", ready: false },
+  ];
+
   const faqs = [
     { q: "What exactly do you do?", a: "We manage your incoming messages for you. Real, trained people reply to the DMs and messages you get across your platforms — quickly, in your tone, and built to move the conversation toward a booked call or sale." },
     { q: "Is it really free for 14 days?", a: "Yes. You get a full 14-day trial so you can see the results before paying anything. No card up front, no commitment. We only talk pricing if you want to continue after you've seen it work." },
@@ -283,12 +289,23 @@ export default function Home() {
     .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 6vw, 72px); line-height: 1; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .stat-label { color: var(--text2); font-weight: 600; font-size: 14px; margin-top: 8px; }
 
-    /* proof */
+    /* testimonials */
     .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .proof-card { aspect-ratio: 9/13; border-radius: 18px; border: 1px solid var(--border2); background: linear-gradient(165deg, #16111f, #0d0b13); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; position: relative; overflow: hidden; }
-    .proof-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.14), transparent 65%); }
-    .proof-play { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; color: var(--accent2); position: relative; }
-    .proof-text { color: var(--muted); font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; position: relative; }
+    .proof-play { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; color: var(--accent2); }
+    .tcard { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .tcard:hover { transform: translateY(-5px); border-color: var(--border2); box-shadow: 0 26px 60px rgba(0,0,0,0.45); }
+    .tcard-media { position: relative; aspect-ratio: 4/5; overflow: hidden; background: #14161a; }
+    .tcard-media img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; }
+    .tcard-fallback { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 0.05em; color: var(--gold-text); background: var(--grad); }
+    .tcard-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 58px; height: 58px; border-radius: 50%; background: rgba(212,175,55,0.92); color: var(--gold-text); display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 12px 34px rgba(0,0,0,0.5); transition: transform 0.3s; }
+    .tcard:hover .tcard-play { transform: translate(-50%,-50%) scale(1.08); }
+    .tcard-soon { position: absolute; bottom: 12px; right: 12px; z-index: 2; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent2); background: rgba(0,0,0,0.55); padding: 5px 11px; border-radius: 100px; backdrop-filter: blur(4px); }
+    .tcard-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: linear-gradient(165deg, #151109, #0d0b07); }
+    .tcard-body { padding: 22px 22px 26px; }
+    .tcard-name { font-size: 19px; font-weight: 800; letter-spacing: -0.01em; }
+    .tcard-name.muted { color: var(--muted); font-weight: 700; }
+    .tcard-role { color: var(--accent2); font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 5px; }
+    .tcard-bio { color: var(--text2); font-size: 14px; line-height: 1.6; margin-top: 12px; font-weight: 500; }
 
     /* guarantee */
     .guarantee { display: flex; gap: 30px; align-items: center; background: linear-gradient(150deg, rgba(240,207,107,0.14), rgba(212,175,55,0.04)); border: 1px solid rgba(240,207,107,0.3); border-radius: 26px; padding: 44px 48px; }
@@ -558,19 +575,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PROOF placeholder */}
-      <section className="sec sec-alt">
+      {/* TESTIMONIALS */}
+      <section className="sec sec-alt" id="testimonials">
         <div className="wrap">
           <div className="sec-head">
-            <div className="reveal"><span className="eyebrow">Real results</span></div>
-            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Watch it work for <em>real businesses</em></h2>
-            <p className="lead reveal d2">Real client walkthroughs and results — dropping here shortly.</p>
+            <div className="reveal"><span className="eyebrow">Testimonials</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Backed by people who <em>know sales</em></h2>
+            <p className="lead reveal d2">Real people vouching for the work — with their video stories dropping in soon.</p>
           </div>
           <div className="proof-grid">
-            {[0, 1, 2].map((k) => (
-              <div className={`proof-card reveal d${k + 1}`} key={k}>
-                <div className="proof-play"><Icon name="play" size={24} /></div>
-                <div className="proof-text">Coming soon</div>
+            {testimonials.map((t, k) => (
+              <div className={`tcard reveal d${k + 1}`} key={t.name || k}>
+                <div className="tcard-media">
+                  {t.ready ? (
+                    <>
+                      <div className="tcard-fallback">{t.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}</div>
+                      <img src={t.img} alt={t.name} loading="lazy" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                      <div className="tcard-play"><Icon name="play" size={22} /></div>
+                      <div className="tcard-soon">Video soon</div>
+                    </>
+                  ) : (
+                    <div className="tcard-empty"><div className="proof-play"><Icon name="play" size={22} /></div><span>Coming soon</span></div>
+                  )}
+                </div>
+                {t.ready ? (
+                  <div className="tcard-body">
+                    <div className="tcard-name">{t.name}</div>
+                    <div className="tcard-role">{t.role}</div>
+                    <p className="tcard-bio">{t.bio}</p>
+                  </div>
+                ) : (
+                  <div className="tcard-body"><div className="tcard-name muted">More coming</div></div>
+                )}
               </div>
             ))}
           </div>
