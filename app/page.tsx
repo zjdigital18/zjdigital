@@ -24,6 +24,7 @@ function Icon({ name, size = 24 }: { name: string; size?: number }) {
     x: <><path d="M6 6l12 12M18 6L6 18" /></>,
     play: <><circle cx="12" cy="12" r="9" /><path d="M10 8.5l6 3.5-6 3.5v-7z" /></>,
     arrow: <><path d="M5 12h14M13 6l6 6-6 6" /></>,
+    down: <><path d="M12 5v14M6 13l6 6 6-6" /></>,
     mail: <><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="M4 7l8 6 8-6" /></>,
   };
   return (
@@ -153,7 +154,9 @@ export default function Home() {
       --ok: #25d366; --bad: #f87171;
     }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    body { background-color: var(--bg); background-image: radial-gradient(rgba(212,175,55,0.06) 1px, transparent 1.4px); background-size: 26px 26px; color: var(--text); font-family: 'Satoshi', sans-serif; font-weight: 500; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    /* alternating dark sections keep the dot texture instead of a flat fill */
+    .sec-alt { background-color: var(--bg2); background-image: radial-gradient(rgba(212,175,55,0.055) 1px, transparent 1.4px); background-size: 26px 26px; }
     ::selection { background: rgba(240,207,107,0.3); }
 
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
@@ -203,7 +206,10 @@ export default function Home() {
     .hero-trust svg { color: var(--accent2); }
 
     /* VSL */
-    .vsl { position: relative; max-width: 860px; margin: 56px auto 0; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid var(--border2); background: linear-gradient(160deg, #14101f, #0c0a14); box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 0 1px rgba(240,207,107,0.12); display: flex; align-items: center; justify-content: center; }
+    .vsl-cue { display: inline-flex; align-items: center; gap: 9px; margin-top: 46px; color: var(--accent2); font-weight: 800; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .vsl-cue svg { animation: nudge 1.6s ease-in-out infinite; }
+    @keyframes nudge { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(4px); } }
+    .vsl { position: relative; max-width: 860px; margin: 18px auto 0; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid var(--border2); background: linear-gradient(160deg, #1a160c, #0c0a06); box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.14); display: flex; align-items: center; justify-content: center; }
     .vsl::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(212,175,55,0.18), transparent 70%); }
     .vsl-inner { position: relative; text-align: center; }
     .vsl-play { width: 84px; height: 84px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; color: var(--gold-text); margin: 0 auto 18px; box-shadow: 0 16px 40px rgba(212,175,55,0.5); animation: pulse 2.4s ease-in-out infinite; }
@@ -395,7 +401,8 @@ export default function Home() {
             <span><Icon name="check" size={16} /> See results first</span>
           </div>
 
-          {/* VSL placeholder */}
+          {/* video cue + VSL placeholder */}
+          <div className="vsl-cue reveal d4">Click play on the video below to see how everything works <Icon name="down" size={17} /></div>
           <div className="vsl reveal d4">
             <div className="vsl-inner">
               <div className="vsl-play"><Icon name="play" size={34} /></div>
@@ -445,7 +452,7 @@ export default function Home() {
       </section>
 
       {/* SOLUTION */}
-      <section className="sec" style={{ background: "var(--bg2)" }}>
+      <section className="sec sec-alt">
         <div className="wrap">
           <div className="split">
             <div>
@@ -514,7 +521,7 @@ export default function Home() {
       </section>
 
       {/* WHY US / COMPARE */}
-      <section className="sec" id="why" style={{ background: "var(--bg2)" }}>
+      <section className="sec sec-alt" id="why">
         <div className="wrap">
           <div className="sec-head">
             <div className="reveal"><span className="eyebrow">Why us</span></div>
@@ -552,7 +559,7 @@ export default function Home() {
       </section>
 
       {/* PROOF placeholder */}
-      <section className="sec" style={{ background: "var(--bg2)" }}>
+      <section className="sec sec-alt">
         <div className="wrap">
           <div className="sec-head">
             <div className="reveal"><span className="eyebrow">Real results</span></div>
@@ -646,7 +653,7 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="sec" id="faq" style={{ background: "var(--bg2)", paddingTop: 40 }}>
+      <section className="sec sec-alt" id="faq" style={{ paddingTop: 40 }}>
         <div className="wrap" style={{ maxWidth: 780 }}>
           <div className="sec-head">
             <div className="reveal"><span className="eyebrow">FAQ</span></div>
