@@ -67,11 +67,12 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [vslPlaying, setVslPlaying] = useState(false);
+  const [vslStarted, setVslStarted] = useState(false);
   const vslRef = useRef<HTMLVideoElement>(null);
   const playVsl = () => {
     const v = vslRef.current;
     if (!v) return;
+    setVslStarted(true);
     v.play();
     v.focus();
   };
@@ -438,11 +439,10 @@ export default function Home() {
               poster="/hero-vsl-poster.jpg"
               preload="metadata"
               playsInline
-              controls={vslPlaying}
-              onPlay={() => setVslPlaying(true)}
-              onPause={() => setVslPlaying(false)}
+              controls={vslStarted}
+              onPlay={() => setVslStarted(true)}
             />
-            {!vslPlaying && (
+            {!vslStarted && (
               <button className="vsl-cover" onClick={playVsl} aria-label="Play video">
                 <span className="vsl-play"><Icon name="play" size={34} /></span>
                 <span className="vsl-label">Watch how it works</span>
