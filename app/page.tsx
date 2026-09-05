@@ -67,6 +67,14 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [vslPlaying, setVslPlaying] = useState(false);
+  const vslRef = useRef<HTMLVideoElement>(null);
+  const playVsl = () => {
+    const v = vslRef.current;
+    if (!v) return;
+    v.play();
+    v.focus();
+  };
 
   const [form, setForm] = useState({ name: "", email: "", business: "", sells: "", platform: "", volume: "", challenge: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -216,12 +224,15 @@ export default function Home() {
     .vsl-cue svg { animation: nudge 1.6s ease-in-out infinite; }
     @keyframes nudge { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(4px); } }
     .vsl { position: relative; max-width: 860px; margin: 18px auto 0; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid var(--border2); background: linear-gradient(160deg, #1a160c, #0c0a06); box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.14); display: flex; align-items: center; justify-content: center; }
-    .vsl::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(212,175,55,0.18), transparent 70%); }
-    .vsl-inner { position: relative; text-align: center; }
-    .vsl-play { width: 84px; height: 84px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; color: var(--gold-text); margin: 0 auto 18px; box-shadow: 0 16px 40px rgba(212,175,55,0.5); animation: pulse 2.4s ease-in-out infinite; }
+    .vsl::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(212,175,55,0.18), transparent 70%); pointer-events: none; z-index: 0; }
+    .vsl.playing::before { display: none; }
+    .vsl-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; background: #0c0a06; }
+    .vsl-cover { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border: 0; background: transparent; cursor: pointer; text-align: center; }
+    .vsl-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); z-index: -1; }
+    .vsl-play { width: 84px; height: 84px; border-radius: 50%; background: var(--grad); display: flex; align-items: center; justify-content: center; color: var(--gold-text); box-shadow: 0 16px 40px rgba(212,175,55,0.5); animation: pulse 2.4s ease-in-out infinite; transition: transform 0.2s ease; }
+    .vsl-cover:hover .vsl-play { transform: scale(1.06); }
     @keyframes pulse { 0%,100%{ box-shadow: 0 16px 40px rgba(212,175,55,0.4); } 50%{ box-shadow: 0 16px 60px rgba(212,175,55,0.7); } }
-    .vsl-label { color: var(--text); font-weight: 700; font-size: 16px; }
-    .vsl-note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .vsl-label { color: var(--text); font-weight: 700; font-size: 16px; text-shadow: 0 2px 10px rgba(0,0,0,0.6); }
 
     /* marquee */
     .marquee { margin-top: 70px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 22px 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
@@ -418,14 +429,26 @@ export default function Home() {
             <span><Icon name="check" size={16} /> See results first</span>
           </div>
 
-          {/* video cue + VSL placeholder */}
+          {/* video cue + VSL */}
           <div className="vsl-cue reveal d4">Click play on the video below to see how everything works <Icon name="down" size={17} /></div>
-          <div className="vsl reveal d4">
-            <div className="vsl-inner">
-              <div className="vsl-play"><Icon name="play" size={34} /></div>
-              <div className="vsl-label">Watch how it works</div>
-              <div className="vsl-note">Video coming soon</div>
-            </div>
+          <div className={`vsl reveal d4${vslPlaying ? " playing" : ""}`}>
+            <video
+              ref={vslRef}
+              className="vsl-video"
+              src="/hero-vsl.mp4"
+              poster="/hero-vsl-poster.jpg"
+              preload="none"
+              playsInline
+              controls={vslPlaying}
+              onPlay={() => setVslPlaying(true)}
+              onPause={() => setVslPlaying(false)}
+            />
+            {!vslPlaying && (
+              <button className="vsl-cover" onClick={playVsl} aria-label="Play video">
+                <span className="vsl-play"><Icon name="play" size={34} /></span>
+                <span className="vsl-label">Watch how it works</span>
+              </button>
+            )}
           </div>
 
           {/* marquee */}
