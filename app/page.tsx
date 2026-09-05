@@ -225,7 +225,6 @@ export default function Home() {
     @keyframes nudge { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(4px); } }
     .vsl { position: relative; max-width: 860px; margin: 18px auto 0; aspect-ratio: 16/9; border-radius: 20px; overflow: hidden; border: 1px solid var(--border2); background: linear-gradient(160deg, #1a160c, #0c0a06); box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.14); display: flex; align-items: center; justify-content: center; }
     .vsl::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(212,175,55,0.18), transparent 70%); pointer-events: none; z-index: 0; }
-    .vsl.playing::before { display: none; }
     .vsl-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; background: #0c0a06; }
     .vsl-cover { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border: 0; background: transparent; cursor: pointer; text-align: center; }
     .vsl-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); z-index: -1; }
@@ -431,7 +430,7 @@ export default function Home() {
 
           {/* video cue + VSL */}
           <div className="vsl-cue reveal d4">Click play on the video below to see how everything works <Icon name="down" size={17} /></div>
-          <div className={`vsl reveal d4${vslPlaying ? " playing" : ""}`}>
+          <div className="vsl">
             <video
               ref={vslRef}
               className="vsl-video"
