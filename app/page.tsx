@@ -436,7 +436,7 @@ export default function Home() {
               className="vsl-video"
               src="/hero-vsl.mp4"
               poster="/hero-vsl-poster.jpg"
-              preload="none"
+              preload="metadata"
               playsInline
               controls={vslPlaying}
               onPlay={() => setVslPlaying(true)}
