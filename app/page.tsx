@@ -63,6 +63,55 @@ function Stat({ value, suffix, label }: { value: number; suffix: string; label: 
   );
 }
 
+type Testimonial = { name: string; role: string; bio: string; img: string; video: string; poster: string; ready: boolean };
+
+function TestimonialCard({ t, k }: { t: Testimonial; k: number }) {
+  const [started, setStarted] = useState(false);
+  const vref = useRef<HTMLVideoElement>(null);
+  const play = () => {
+    const v = vref.current;
+    if (!v) return;
+    setStarted(true);
+    v.play();
+    v.focus();
+  };
+  const initials = t.name.split(" ").map((w) => w[0]).slice(0, 2).join("");
+  return (
+    <div className={`tcard reveal d${k + 1}`}>
+      <div className="tcard-media">
+        {t.video ? (
+          <>
+            <video ref={vref} className="tcard-video" src={t.video} poster={t.poster} preload="metadata" playsInline controls={started} onPlay={() => setStarted(true)} />
+            {!started && (
+              <button className="tcard-cover" onClick={play} aria-label={`Play ${t.name}'s testimonial`}>
+                <span className="tcard-play"><Icon name="play" size={22} /></span>
+              </button>
+            )}
+          </>
+        ) : t.ready ? (
+          <>
+            <div className="tcard-fallback">{initials}</div>
+            <img src={t.img} alt={t.name} loading="lazy" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+            <div className="tcard-play"><Icon name="play" size={22} /></div>
+            <div className="tcard-soon">Video soon</div>
+          </>
+        ) : (
+          <div className="tcard-empty"><div className="proof-play"><Icon name="play" size={22} /></div><span>Coming soon</span></div>
+        )}
+      </div>
+      {t.ready ? (
+        <div className="tcard-body">
+          <div className="tcard-name">{t.name}</div>
+          {t.role ? <div className="tcard-role">{t.role}</div> : null}
+          {t.bio ? <p className="tcard-bio">{t.bio}</p> : null}
+        </div>
+      ) : (
+        <div className="tcard-body"><div className="tcard-name muted">More coming</div></div>
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -139,9 +188,9 @@ export default function Home() {
   ];
 
   const testimonials = [
-    { name: "Ole Sveum", role: "Cold Email · Outbound · Sales", bio: "Ole leads cold email, outbound and sales. He has generated over $30M in results for clients through targeted email outreach and lead generation.", img: "/testimonials/ole-sveum.jpg", ready: true },
-    { name: "", role: "", bio: "", img: "", ready: false },
-    { name: "", role: "", bio: "", img: "", ready: false },
+    { name: "Ole Sveum", role: "Cold Email · Outbound · Sales", bio: "Ole leads cold email, outbound and sales. He has generated over $30M in results for clients through targeted email outreach and lead generation.", img: "/testimonials/ole-sveum.jpg", video: "", poster: "", ready: true },
+    { name: "Sergej", role: "", bio: "", img: "", video: "/testimonials/sergej.mp4", poster: "/testimonials/sergej-poster.jpg", ready: true },
+    { name: "", role: "", bio: "", img: "", video: "", poster: "", ready: false },
   ];
 
   const faqs = [
@@ -307,6 +356,11 @@ export default function Home() {
     .tcard:hover { transform: translateY(-5px); border-color: var(--border2); box-shadow: 0 26px 60px rgba(0,0,0,0.45); }
     .tcard-media { position: relative; aspect-ratio: 4/5; overflow: hidden; background: #14161a; }
     .tcard-media img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; }
+    .tcard-video { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; background: #14161a; }
+    .tcard-cover { position: absolute; inset: 0; z-index: 3; border: 0; padding: 0; background: transparent; cursor: pointer; }
+    .tcard-cover::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.05) 50%); }
+    .tcard-cover .tcard-play { background: var(--grad); }
+    .tcard:hover .tcard-cover .tcard-play { transform: translate(-50%,-50%) scale(1.08); }
     .tcard-fallback { position: absolute; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 0.05em; color: var(--gold-text); background: var(--grad); }
     .tcard-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 58px; height: 58px; border-radius: 50%; background: rgba(212,175,55,0.92); color: var(--gold-text); display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 12px 34px rgba(0,0,0,0.5); transition: transform 0.3s; }
     .tcard:hover .tcard-play { transform: translate(-50%,-50%) scale(1.08); }
@@ -607,29 +661,7 @@ export default function Home() {
           </div>
           <div className="proof-grid">
             {testimonials.map((t, k) => (
-              <div className={`tcard reveal d${k + 1}`} key={t.name || k}>
-                <div className="tcard-media">
-                  {t.ready ? (
-                    <>
-                      <div className="tcard-fallback">{t.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}</div>
-                      <img src={t.img} alt={t.name} loading="lazy" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-                      <div className="tcard-play"><Icon name="play" size={22} /></div>
-                      <div className="tcard-soon">Video soon</div>
-                    </>
-                  ) : (
-                    <div className="tcard-empty"><div className="proof-play"><Icon name="play" size={22} /></div><span>Coming soon</span></div>
-                  )}
-                </div>
-                {t.ready ? (
-                  <div className="tcard-body">
-                    <div className="tcard-name">{t.name}</div>
-                    <div className="tcard-role">{t.role}</div>
-                    <p className="tcard-bio">{t.bio}</p>
-                  </div>
-                ) : (
-                  <div className="tcard-body"><div className="tcard-name muted">More coming</div></div>
-                )}
-              </div>
+              <TestimonialCard t={t} k={k} key={t.name || k} />
             ))}
           </div>
         </div>
