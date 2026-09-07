@@ -189,7 +189,7 @@ export default function Home() {
 
   const testimonials = [
     { name: "Ole Sveum", role: "Cold Email · Outbound · Sales", bio: "Ole leads cold email, outbound and sales. He has generated over $30M in results for clients through targeted email outreach and lead generation.", img: "/testimonials/ole-sveum.jpg", video: "", poster: "", ready: true },
-    { name: "Sergej", role: "", bio: "", img: "", video: "/testimonials/sergej.mp4", poster: "/testimonials/sergej-poster.jpg", ready: true },
+    { name: "Sergej", role: "Founder & CEO · Infotod", bio: "Sergej is the owner and CEO of Infotod — one of the most successful consultancy and business-info companies in Europe.", img: "", video: "/testimonials/sergej.mp4", poster: "/testimonials/sergej-poster.jpg", ready: true },
     { name: "", role: "", bio: "", img: "", video: "", poster: "", ready: false },
   ];
 
