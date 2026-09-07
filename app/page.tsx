@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 const CONTACT_EMAIL = "jovan@getjovan.com";
 const CALENDLY_LINK = "https://calendly.com/jovan-getjovan/30min";
 
-// Clean line-icon set — 24x24, inherits color via currentColor
+// Clean line-icon set, 24x24, inherits color via currentColor
 function Icon({ name, size = 24 }: { name: string; size?: number }) {
   const p: Record<string, React.ReactNode> = {
     clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" /></>,
@@ -176,7 +176,7 @@ export default function Home() {
   const steps = [
     { icon: "calendar", n: "01", title: "Book a quick call", desc: "We learn your offer, your voice, and where your messages come in. 20 minutes, no pitch-slap." },
     { icon: "search", n: "02", title: "We build your playbook", desc: "We study your best replies and objections, then map exactly how we'll answer like you would." },
-    { icon: "chat", n: "03", title: "We handle your inbox — free", desc: "For 14 full days we reply to your incoming messages, qualify them, and turn them into booked calls." },
+    { icon: "chat", n: "03", title: "We handle your inbox for free", desc: "For 14 full days we reply to your incoming messages, qualify them, and turn them into booked calls." },
     { icon: "rocket", n: "04", title: "You watch conversions climb", desc: "See more replies answered and more leads booked. Love it? Continue. If not, you've lost nothing." },
   ];
 
@@ -184,22 +184,22 @@ export default function Home() {
     { label: "Doing it yourself", bad: true, points: ["Steals hours every day", "Replies get slow as you get busy", "You burn out on repetitive chats"] },
     { label: "Hiring in-house", bad: true, points: ["Expensive salary + training", "Weeks to onboard and manage", "Quality drops the moment you look away"] },
     { label: "AI chatbots", bad: true, points: ["Reply like a robot", "Kill trust and the sale", "Can't handle real objections"] },
-    { label: "ZJ Digital", bad: false, points: ["Trained humans reply in your voice", "Fast, on-brand, built to convert", "Fully done-for-you — you just show up to the calls"] },
+    { label: "ZJ Digital", bad: false, points: ["Real, trained humans reply for you", "Fast, on-brand, built to convert", "Fully done-for-you, so you just show up to the calls"] },
   ];
 
   const testimonials = [
     { name: "Ole Sveum", role: "Cold Email · Outbound · Sales", bio: "Ole leads cold email, outbound and sales. He has generated over $30M in results for clients through targeted email outreach and lead generation.", img: "/testimonials/ole-sveum.jpg", video: "", poster: "", ready: true },
-    { name: "Sergej", role: "Founder & CEO · Infotod", bio: "Sergej is the owner and CEO of Infotod — one of the most successful consultancy and business-info companies in Europe.", img: "", video: "/testimonials/sergej.mp4", poster: "/testimonials/sergej-poster.jpg", ready: true },
+    { name: "Sergej", role: "Founder & CEO · Infotod", bio: "Sergej is the owner and CEO of Infotod, one of the most successful consultancy and business-info companies in Europe.", img: "", video: "/testimonials/sergej.mp4", poster: "/testimonials/sergej-poster.jpg", ready: true },
     { name: "", role: "", bio: "", img: "", video: "", poster: "", ready: false },
   ];
 
   const faqs = [
-    { q: "What exactly do you do?", a: "We manage your incoming messages for you. Real, trained people reply to the DMs and messages you get across your platforms — quickly, in your tone, and built to move the conversation toward a booked call or sale." },
+    { q: "What exactly do you do?", a: "We manage your incoming messages for you. Real, trained people reply to the DMs and messages you get across your platforms, quickly and in your tone, and built to move the conversation toward a booked call or sale." },
     { q: "Is it really free for 14 days?", a: "Yes. You get a full 14-day trial so you can see the results before paying anything. No card up front, no commitment. We only talk pricing if you want to continue after you've seen it work." },
-    { q: "Won't it sound like it isn't me?", a: "That's exactly what the setup call and playbook are for. We study how you already talk and reply, so your leads get answers that sound like you — just faster and more consistent." },
-    { q: "Which platforms do you cover?", a: "Wherever your leads message you — Instagram DMs, WhatsApp, Facebook, email, and more. Tell us where your messages come in and we handle it." },
-    { q: "What happens after the 14 days?", a: "If you're getting more booked calls and sales, you continue on a simple plan. If it's not for you, you walk away — no strings, and you keep everything we set up during the trial." },
-    { q: "How fast do you reply?", a: "Fast. Speed is where most sales are won or lost — leads that get a quick, human reply are far more likely to book. That's the whole point of the service." },
+    { q: "Won't it sound like it isn't me?", a: "That's exactly what the setup call and playbook are for. We study how you already talk and reply, so your leads get answers that sound like you, just faster and more consistent." },
+    { q: "Which platforms do you cover?", a: "Wherever your leads message you: Instagram DMs, WhatsApp, Facebook, email, and more. Tell us where your messages come in and we handle it." },
+    { q: "What happens after the 14 days?", a: "If you're getting more booked calls and sales, you continue on a simple plan. If it's not for you, you walk away with no strings, and you keep everything we set up during the trial." },
+    { q: "How fast do you reply?", a: "Fast. Speed is where most sales are won or lost. Leads that get a quick, human reply are far more likely to book. That's the whole point of the service." },
   ];
 
   const css = `
@@ -207,7 +207,7 @@ export default function Home() {
     @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      /* Black + gold — modeled on aleksajovanovic.net */
+      /* Black + gold, modeled on aleksajovanovic.net */
       --bg: #0a0a0a; --bg2: #0f1115; --panel: #14161a; --panel2: #17181d;
       --text: #f6f3ec; --text2: #a8a49a; --muted: #6f6b60;
       --border: rgba(212,175,55,0.12); --border2: rgba(212,175,55,0.24);
@@ -310,6 +310,7 @@ export default function Home() {
     /* solution split */
     .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
     .sol-list { list-style: none; margin-top: 26px; display: flex; flex-direction: column; gap: 16px; }
+    .sol-list.two { max-width: 880px; margin: 36px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 22px 46px; }
     .sol-list li { display: flex; gap: 14px; align-items: flex-start; }
     .sol-check { flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px; background: var(--accent-soft); color: var(--accent2); display: flex; align-items: center; justify-content: center; margin-top: 1px; }
     .sol-list b { font-weight: 800; }
@@ -425,6 +426,7 @@ export default function Home() {
       .mobile-menu .m-cta { background: var(--grad); color: var(--gold-text); text-align: center; font-weight: 800; margin-top: 6px; }
       .g4, .g3, .steps, .compare, .proof-grid { grid-template-columns: 1fr 1fr; }
       .split { grid-template-columns: 1fr; gap: 36px; }
+      .sol-list.two { grid-template-columns: 1fr; gap: 18px; max-width: 460px; }
       .stats-band, .stats-band.four { grid-template-columns: 1fr 1fr; gap: 30px 20px; padding: 36px; }
       .guarantee { flex-direction: column; text-align: center; padding: 36px 26px; }
       .apply-card { padding: 36px 24px; }
@@ -525,7 +527,7 @@ export default function Home() {
           <div className="sec-head">
             <div className="reveal"><span className="eyebrow">The problem</span></div>
             <h2 className="h reveal d1" style={{ marginTop: 18 }}>Your inbox is a <em>leaking bucket</em></h2>
-            <p className="lead reveal d2">Every day, leads message you ready to buy — and most of them slip away before they ever get a good reply.</p>
+            <p className="lead reveal d2">Every day, leads message you ready to buy, and most of them slip away before they ever get a good reply.</p>
           </div>
           <div className="grid g4">
             {[
@@ -547,55 +549,50 @@ export default function Home() {
       {/* SOLUTION */}
       <section className="sec sec-alt">
         <div className="wrap">
-          <div className="split">
-            <div>
-              <div className="reveal"><span className="eyebrow">What we do</span></div>
-              <h2 className="h reveal d1" style={{ marginTop: 18 }}>We turn your inbox into a <em>sales machine</em></h2>
-              <p className="lead reveal d2" style={{ marginTop: 16 }}>Real, trained people reply to your incoming messages for you — quickly, in your voice, and built to move every conversation toward a booked call or sale.</p>
-              <ul className="sol-list">
-                {[
-                  { b: "Fast, human replies", p: "Leads get answered in minutes, not hours — by a person, not a bot." },
-                  { b: "Sounds exactly like you", p: "We learn your tone and offer so every reply feels on-brand." },
-                  { b: "Built to convert", p: "We qualify, handle objections, and push toward the booked call." },
-                  { b: "Completely done-for-you", p: "You stop babysitting your inbox and just show up to the calls." },
-                ].map((s, k) => (
-                  <li className={`reveal d${k + 1}`} key={s.b}>
-                    <span className="sol-check"><Icon name="check" size={16} /></span>
-                    <div><b>{s.b}</b><p>{s.p}</p></div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="sol-visual reveal d2">
-              <div className="chat-row">
-                <div className="chat-av">L</div>
-                <div className="bubble">Hey, is this still available? How much?</div>
-              </div>
-              <div className="chat-row">
-                <div className="bubble us">Hey! Yes it is. Quick question so I point you the right way — what are you trying to achieve with it?</div>
-                <div className="chat-av us">ZJ</div>
-              </div>
-              <div className="chat-row">
-                <div className="chat-av">L</div>
-                <div className="bubble">Mostly want more clients honestly</div>
-              </div>
-              <div className="chat-row">
-                <div className="bubble us">Perfect — that&apos;s exactly what we do. Grab a quick call here and we&apos;ll map it out for you.</div>
-                <div className="chat-av us">ZJ</div>
-              </div>
-              <div className="chat-tag"><Icon name="check" size={13} /> BOOKED IN UNDER 3 MINUTES</div>
-            </div>
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">What we do</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>We turn your inbox into a <em>sales machine</em></h2>
+            <p className="lead reveal d2">Real, trained people reply to your incoming messages for you, quickly and in your voice, and built to move every conversation toward a booked call or sale.</p>
+          </div>
+          <ul className="sol-list two reveal d2">
+            {[
+              { b: "Fast, human replies", p: "Leads get answered in minutes, not hours, by a person, not a bot." },
+              { b: "Sounds exactly like you", p: "We learn your tone and offer so every reply feels on-brand." },
+              { b: "Built to convert", p: "We qualify, handle objections, and push toward the booked call." },
+              { b: "Completely done-for-you", p: "You stop babysitting your inbox and just show up to the calls." },
+            ].map((s) => (
+              <li key={s.b}>
+                <span className="sol-check"><Icon name="check" size={16} /></span>
+                <div><b>{s.b}</b><p>{s.p}</p></div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="sec" id="testimonials">
+        <div className="wrap">
+          <div className="sec-head">
+            <div className="reveal"><span className="eyebrow">Testimonials</span></div>
+            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Backed by people who <em>know sales</em></h2>
+            <p className="lead reveal d2">Real people vouching for the work, with more video stories dropping in soon.</p>
+          </div>
+          <div className="proof-grid">
+            {testimonials.map((t, k) => (
+              <TestimonialCard t={t} k={k} key={t.name || k} />
+            ))}
           </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="sec" id="how">
+      <section className="sec sec-alt" id="how">
         <div className="wrap">
           <div className="sec-head">
             <div className="reveal"><span className="eyebrow">How the free 14 days works</span></div>
             <h2 className="h reveal d1" style={{ marginTop: 18 }}>See it work <em>before you pay anything</em></h2>
-            <p className="lead reveal d2">No risk, no card, no commitment. We prove it first — you decide after.</p>
+            <p className="lead reveal d2">No risk, no card, no commitment. We prove it first. You decide after.</p>
           </div>
           <div className="steps">
             {steps.map((s, k) => (
@@ -614,7 +611,7 @@ export default function Home() {
       </section>
 
       {/* WHY US / COMPARE */}
-      <section className="sec sec-alt" id="why">
+      <section className="sec" id="why">
         <div className="wrap">
           <div className="sec-head">
             <div className="reveal"><span className="eyebrow">Why us</span></div>
@@ -643,39 +640,10 @@ export default function Home() {
       <section className="sec" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="stats-band four reveal">
-            <div className="stat"><div className="stat-num">$0</div><div className="stat-label">Upfront — nothing to pay to start</div></div>
+            <div className="stat"><div className="stat-num">$0</div><div className="stat-label">Nothing to pay upfront</div></div>
             <Stat value={14} suffix="-day" label="Free trial before you decide" />
             <div className="stat"><div className="stat-num">24/7</div><div className="stat-label">Coverage on your inbox</div></div>
-            <Stat value={100} suffix="%" label="Done-for-you — you just take the calls" />
-          </div>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="sec sec-alt" id="testimonials">
-        <div className="wrap">
-          <div className="sec-head">
-            <div className="reveal"><span className="eyebrow">Testimonials</span></div>
-            <h2 className="h reveal d1" style={{ marginTop: 18 }}>Backed by people who <em>know sales</em></h2>
-            <p className="lead reveal d2">Real people vouching for the work — with their video stories dropping in soon.</p>
-          </div>
-          <div className="proof-grid">
-            {testimonials.map((t, k) => (
-              <TestimonialCard t={t} k={k} key={t.name || k} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* GUARANTEE */}
-      <section className="sec">
-        <div className="wrap">
-          <div className="guarantee reveal">
-            <div className="guarantee-ico"><Icon name="shield" size={40} /></div>
-            <div>
-              <h3>14 days, completely free.</h3>
-              <p>You see more of your messages answered and more leads booked — for two full weeks — before you pay a cent. If it&apos;s not for you, you walk away and keep everything we set up. That&apos;s the whole risk.</p>
-            </div>
+            <Stat value={100} suffix="%" label="Done-for-you, you just take the calls" />
           </div>
         </div>
       </section>
@@ -688,7 +656,7 @@ export default function Home() {
               <div className="success">
                 <div className="success-ico"><Icon name="check" size={34} /></div>
                 <h2 className="h" style={{ fontSize: 30 }}>You&apos;re in.</h2>
-                <p className="lead" style={{ margin: "14px auto 28px", maxWidth: 460 }}>We&apos;ve got your details. The last step is a quick call so we can set up your free 14 days — grab a time that works for you.</p>
+                <p className="lead" style={{ margin: "14px auto 28px", maxWidth: 460 }}>We&apos;ve got your details. The last step is a quick call so we can set up your free 14 days. Grab a time that works for you.</p>
                 <a href={CALENDLY_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-lg"><Icon name="calendar" size={18} /> Book My Call</a>
               </div>
             ) : (
@@ -696,7 +664,7 @@ export default function Home() {
                 <div className="apply-head">
                   <div className="reveal"><span className="eyebrow dot">Last step</span></div>
                   <h2 className="h" style={{ marginTop: 16 }}>Start your <em>free 14-day trial</em></h2>
-                  <p className="lead" style={{ marginTop: 14 }}>Tell us a little about your business and book your setup call. Spots are limited — we onboard a handful of clients at a time.</p>
+                  <p className="lead" style={{ marginTop: 14 }}>Tell us a little about your business and book your setup call. Spots are limited, so we onboard a handful of clients at a time.</p>
                 </div>
                 <div className="field-row">
                   <div className="field"><label>Your name</label><input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="John Smith" /></div>
